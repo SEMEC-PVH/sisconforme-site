@@ -24,6 +24,8 @@ interface Ponto {
   preparar: (page: Page) => Promise<void>;
   alvo: Alvo;
   movimentoReduzido?: boolean;
+  /** Áreas cobertas na captura (o 3D varia de máquina para máquina). */
+  mascara?: (page: Page) => Locator[];
 }
 
 async function rolar(page: Page, id: string, fracao: number) {
@@ -94,6 +96,14 @@ const PONTOS: Ponto[] = [
     alvo: blocoDoArtigo(7),
     movimentoReduzido: true,
   })),
+  {
+    grupo: "conteudo",
+    nome: "sede",
+    preparar: (p) => rolarAte(p, p.locator("#sede")),
+    alvo: (p) => p.locator("#sede"),
+    movimentoReduzido: true,
+    mascara: (p) => [p.locator("[data-palco]")],
+  },
   { grupo: "rodape", nome: "rodape", preparar: (p) => rolarAte(p, p.locator("footer")), alvo: (p) => p.locator("footer") },
   { grupo: "reduzido", nome: "hero", preparar: (p) => rolar(p, "top", 0), alvo: () => null, movimentoReduzido: true },
   { grupo: "reduzido", nome: "historia", preparar: (p) => rolar(p, "como-funciona", 0), alvo: () => null, movimentoReduzido: true },
@@ -109,9 +119,8 @@ async function capturar(browser: Browser, vp: Viewport, ponto: Ponto) {
   await page.evaluate(() => document.fonts.ready);
   await ponto.preparar(page);
   const alvo = ponto.alvo(page);
-  const png = alvo
-    ? await alvo.screenshot({ animations: "disabled", caret: "hide" })
-    : await page.screenshot({ animations: "disabled", caret: "hide" });
+  const opcoes = { animations: "disabled", caret: "hide", mask: ponto.mascara?.(page) } as const;
+  const png = alvo ? await alvo.screenshot(opcoes) : await page.screenshot(opcoes);
   await ctx.close();
   return png;
 }
@@ -258,6 +267,89 @@ test("animacoes · entrar por âncora não deixa conteúdo escondido acima", asy
       .filter((el) => getComputedStyle(el).visibility === "hidden" || parseFloat(getComputedStyle(el).opacity) < 0.99).length;
   }, ANIMADOS);
   expect(escondidosAcima).toBe(0);
+  await ctx.close();
+});
+
+/* ---------- sede em 3D ---------- */
+
+const palco = (page: Page) => page.locator("[data-palco]");
+const leitura = async (page: Page, atributo: string) => Number(await palco(page).getAttribute(atributo));
+
+async function irParaSede(page: Page) {
+  await rolarAte(page, page.locator("#sede"));
+  await page.locator('[data-palco][data-estado="pronto"]').waitFor({ timeout: 20_000 });
+}
+
+/** Diferença entre dois ângulos em graus, no intervalo 0–180. */
+const distanciaAngular = (a: number, b: number) => Math.abs(((a - b + 540) % 360) - 180);
+
+test("sede · o prédio 3D carrega, gira ao arrastar e os botões funcionam", async ({ browser }) => {
+  const ctx = await browser.newContext({ viewport: VIEWPORTS.desktop, reducedMotion: "reduce" });
+  const page = await ctx.newPage();
+  const erros: string[] = [];
+  page.on("pageerror", (e) => erros.push(e.message));
+  await page.goto(SITE, { waitUntil: "load" });
+  await irParaSede(page);
+
+  const azimute0 = await leitura(page, "data-azimute");
+  const distancia0 = await leitura(page, "data-distancia");
+
+  const caixa = (await palco(page).boundingBox())!;
+  await page.mouse.move(caixa.x + caixa.width / 2, caixa.y + caixa.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(caixa.x + caixa.width / 2 + 250, caixa.y + caixa.height / 2, { steps: 10 });
+  await page.mouse.up();
+  await page.waitForTimeout(1000);
+  expect(distanciaAngular(await leitura(page, "data-azimute"), azimute0), "arrastar deveria girar o prédio").toBeGreaterThan(15);
+
+  await page.getByRole("button", { name: "Aproximar" }).click();
+  await page.waitForTimeout(800);
+  const distanciaPerto = await leitura(page, "data-distancia");
+  expect(distanciaPerto).toBeLessThan(distancia0);
+  await page.getByRole("button", { name: "Afastar" }).click();
+  await page.getByRole("button", { name: "Afastar" }).click();
+  await page.waitForTimeout(800);
+  expect(await leitura(page, "data-distancia")).toBeGreaterThan(distanciaPerto);
+
+  await page.getByRole("button", { name: "Voltar à vista inicial" }).click();
+  await page.waitForTimeout(1200);
+  expect(distanciaAngular(await leitura(page, "data-azimute"), azimute0)).toBeLessThan(2);
+  expect(Math.abs((await leitura(page, "data-distancia")) - distancia0) / distancia0).toBeLessThan(0.02);
+
+  // a roda do mouse sobre o prédio rola a página (não dá zoom)
+  const antes = await page.evaluate(() => window.scrollY);
+  await page.mouse.move(caixa.x + caixa.width / 2, caixa.y + caixa.height / 2);
+  await page.mouse.wheel(0, 300);
+  await page.waitForTimeout(600);
+  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(antes);
+
+  expect(erros).toEqual([]);
+  await ctx.close();
+});
+
+for (const movimento of ["no-preference", "reduce"] as const) {
+  test(`sede · giro automático ${movimento === "reduce" ? "desligado" : "ligado"} (${movimento})`, async ({ browser }) => {
+    const ctx = await browser.newContext({ viewport: VIEWPORTS.desktop, reducedMotion: movimento });
+    const page = await ctx.newPage();
+    await page.goto(SITE, { waitUntil: "load" });
+    await irParaSede(page);
+    const a0 = await leitura(page, "data-azimute");
+    await page.waitForTimeout(2500);
+    const giro = distanciaAngular(await leitura(page, "data-azimute"), a0);
+    if (movimento === "reduce") expect(giro).toBeLessThan(0.5);
+    else expect(giro).toBeGreaterThan(2);
+    await ctx.close();
+  });
+}
+
+test("sede · sem JavaScript aparece a imagem do prédio", async ({ browser }) => {
+  const ctx = await browser.newContext({ viewport: VIEWPORTS.desktop, javaScriptEnabled: false });
+  const page = await ctx.newPage();
+  await page.goto(SITE, { waitUntil: "load" });
+  const imagem = page.locator("#sede img");
+  await imagem.scrollIntoViewIfNeeded();
+  await expect(imagem).toBeVisible();
+  expect(await imagem.evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth > 0)).toBe(true);
   await ctx.close();
 });
 
