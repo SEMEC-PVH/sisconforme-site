@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Esboço · Animações GSAP</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ivory:#FAF9F5;--ink:#141413;--ink-2:#3D3D3A;--muted:#6F6D66;--rule:#1F1E1D;--hair:#DEDBD2;--clay:#D97757;--clay-fill:#EBCBB9;--clay-deep:#C15F3C;--green:#3C9A6B;--gold:#D4A12A;--slate:#6B6A66;--sans:"Inter",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+p{margin:0}h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.01em}
+/* seletor */
+.picker{position:fixed;top:14px;left:50%;translate:-50% 0;z-index:10;display:flex;gap:4px;background:#fff;border:1px solid var(--hair);border-radius:999px;padding:4px;box-shadow:0 10px 30px -12px rgba(0,0,0,.25)}
+.picker button{all:unset;cursor:pointer;font-weight:600;font-size:14px;padding:9px 16px;border-radius:999px;color:var(--muted)}
+.picker button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.intro{min-height:100vh;display:grid;place-items:center;text-align:center;padding:0 16px;background:linear-gradient(180deg,#F6E7D8,var(--ivory))}
+.intro h1{font-size:clamp(28px,4vw,44px)}
+.intro p{color:var(--muted);margin-top:12px;max-width:560px;line-height:1.5}
+.intro small{display:block;margin-top:28px;color:var(--clay-deep);font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:12px}
+/* prosa (igual à landing) */
+article{padding:120px 16px 160px}
+.col{max-width:652px;margin:0 auto}.wide{max-width:900px;margin:56px auto}
+.lead{font-size:clamp(22px,2.4vw,28px);line-height:1.3;letter-spacing:-.015em;font-weight:500;margin-bottom:44px}
+.col p{font-size:17.5px;line-height:1.6;color:var(--ink-2)}.col p+p{margin-top:17px}
+h2{font-size:clamp(30px,3.2vw,38px);letter-spacing:-.022em;margin:110px 0 36px;line-height:1.1}
+h3{font-size:24px;margin:56px 0 18px}
+b{font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:14.5px;border:1px solid var(--rule)}
+th,td{border:1px solid var(--rule);padding:14px 13px;text-align:left;vertical-align:top;position:relative}
+thead th{font-weight:600}
+td small,th small{display:block;color:var(--muted);font-size:12.5px;margin-top:3px;font-weight:400}
+.hl{font-weight:600;box-shadow:inset 1.5px 0 0 var(--clay),inset -1.5px 0 0 var(--clay)}
+tbody .hl{background:var(--clay-fill)}
+.tscroll{overflow-x:auto}
+.chartbox{border:1px solid var(--rule);padding:22px}
+.chart-head{display:flex;justify-content:space-between;font-size:14.5px;font-weight:600}.chart-head em{font-style:normal;font-weight:400;color:var(--muted);font-size:13px}
+.chartbox svg{width:100%;height:auto;display:block;margin-top:14px;overflow:visible}
+.chartbox text{font-size:12px;fill:#3d3d3a}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--clay-fill);border:1px solid var(--rule);border-top:5px solid var(--ink);padding:18px 18px 22px}
+.card .k{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+.card p{font-size:16.5px;line-height:1.42}
+.card .who{font-size:14px;margin-top:18px;display:flex;justify-content:space-between}
+.sbs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--rule)}
+.sbs>div{padding:20px 20px 24px}.sbs>div+div{border-left:1px solid var(--rule);background:#F3EFE6}
+.lab{font-size:13px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.lab i{width:9px;height:9px;border-radius:50%;background:var(--slate)}.sbs>div+div .lab i{background:var(--clay)}
+.msg{font-size:14px;line-height:1.55;color:#2c2b28}.msg p+p{margin-top:10px}
+.mono{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;background:rgba(0,0,0,.05);padding:10px;border-radius:4px;display:block;white-space:pre-wrap;margin-top:10px}
+.mono span{display:block}
+@media (max-width:720px){.cards,.sbs{grid-template-columns:1fr}.sbs>div+div{border-left:0;border-top:1px solid var(--rule)}table{min-width:620px}}
+.fim{text-align:center;color:var(--muted);padding:80px 16px 140px}
+</style>
+</head>
+<body>
+
+<div class="picker" role="group" aria-label="Estilo de animação">
+  <button data-estilo="suave" aria-pressed="true">A · Suave</button>
+  <button data-estilo="editorial" aria-pressed="false">B · Editorial</button>
+  <button data-estilo="dinamico" aria-pressed="false">C · Dinâmico</button>
+</div>
+
+<section class="intro">
+  <div>
+    <h1>(aqui termina a história da Dona Ana)</h1>
+    <p>Escolha um estilo no topo e role a página. Ao trocar de estilo, a página volta para cá e as animações recomeçam.</p>
+    <small>Role para baixo ↓</small>
+  </div>
+</section>
+
+<article>
+  <div class="col">
+    <p class="lead" data-anim="lead">Apresentamos o SISConforme, o portal de autorregularização do ISSQN de Porto Velho. Ele mostra a cada contribuinte as mesmas divergências que a malha fiscal encontra — antes que elas virem auto de infração.</p>
+    <p data-anim="p">O SISConforme é o primeiro serviço da Secretaria da Receita Municipal da Secretaria Municipal de Economia construído sobre cruzamento de dados massivos. O sistema cruza diversas fontes de dados: as notas fiscais, as declarações e pagamentos do Simples Nacional e os meios de recebimentos financeiros.</p>
+    <p data-anim="p"><b>Transparência.</b> A empresa acessa, competência por competência, todos os dados que o Fisco também acessa.</p>
+    <p data-anim="p"><b>Autorregularização.</b> No mesmo fluxo, o contribuinte pode se regularizar, inclusive antes mesmo de ser notificado.</p>
+    <h2 data-anim="h">Cruzamento e custo da conformidade</h2>
+    <p data-anim="p">O maior ganho do SISConforme está no momento em que a divergência aparece. No portal, o alerta chega enquanto a correção ainda é voluntária.</p>
+  </div>
+
+  <div class="wide tscroll" data-anim="tabela">
+    <table>
+      <thead><tr><th></th><th class="hl">SISConforme</th><th>Fiscalização de ofício</th><th>Atendimento presencial</th></tr></thead>
+      <tbody>
+        <tr><th>Quando a empresa descobre<small>após o fato gerador</small></th><td class="hl">Na competência seguinte<small>alerta no portal</small></td><td>Meses ou anos depois<small>na intimação</small></td><td>Quando procura a secretaria</td></tr>
+        <tr><th>Multa de ofício<small>CTN, art. 138</small></th><td class="hl">Não se aplica<small>denúncia espontânea</small></td><td>Aplica-se<small>lançamento de ofício</small></td><td>Depende do momento</td></tr>
+        <tr><th>Canal de resolução</th><td class="hl">100% digital<small>e-CNPJ ou gov.br</small></td><td>Processo administrativo</td><td>Balcão da SEMEC</td></tr>
+        <tr><th>Revisão humana<small>antes do contato</small></th><td class="hl">Sempre<small>auditor valida a malha</small></td><td>Sempre</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col"><h3 data-anim="h">Como o cruzamento se comporta</h3>
+    <p data-anim="p">A maior parte das divergências veio de receita por cartão sem nota correspondente.</p></div>
+
+  <div class="wide chartbox" data-anim="grafico">
+    <div class="chart-head"><span>Divergências por competência</span><em>Quantidade de alertas · dados ilustrativos</em></div>
+    <svg viewBox="0 0 820 360" id="grafico"></svg>
+  </div>
+
+  <div class="col"><p data-anim="p">Cada perfil de usuário encontra no portal uma visão diferente da mesma informação:</p></div>
+  <div class="wide cards" data-anim="cards">
+    <div class="card"><p class="k">Cenário</p><p>A clínica recebeu R$ 97,5 mil no cartão em maio, mas emitiu R$ 71,3 mil em notas. O alerta aparece com a diferença calculada, e a responsável emite as notas faltantes no mesmo dia, sem multa.</p><div class="who"><b>Empresa do Simples Nacional</b><span>PJ</span></div></div>
+    <div class="card"><p class="k">Cenário</p><p>Um escritório com 140 clientes vê num único painel quais empresas têm alerta aberto, ordenadas por valor, e trata as divergências no fechamento do mês.</p><div class="who"><b>Escritório de contabilidade</b><span>CRC</span></div></div>
+  </div>
+
+  <div class="col"><h2 data-anim="h">Comunicação</h2>
+    <p data-anim="p">Uma divergência fiscal não precisa ser uma carta difícil de entender. Comparamos a notificação tradicional com o alerta do SISConforme.</p></div>
+  <div class="wide sbs" data-anim="sbs">
+    <div><p class="lab"><i></i>Notificação tradicional</p><div class="msg"><p>Fica o contribuinte acima qualificado NOTIFICADO a apresentar, no prazo de 10 (dez) dias, documentação comprobatória referente às operações do período de apuração 05/2026, tendo em vista indícios de omissão de receitas…</p></div></div>
+    <div><p class="lab"><i></i>Alerta SISConforme</p><div class="msg"><p><b>Maio de 2026: R$ 26.240,00 recebidos por cartão sem nota fiscal correspondente.</b></p><p>Você pode resolver sem multa até o início de qualquer fiscalização:</p><span class="mono"><span>1. Emitir as NFS-e faltantes da competência 05/2026</span><span>2. Retificar o PGDAS de maio</span><span>3. Ou justificar (ex.: venda de mercadoria, estorno)</span></span></div></div>
+  </div>
+
+  <div class="col"><h2 data-anim="h">Segurança</h2>
+    <p data-anim="p">Dado fiscal é sigiloso por lei. O SISConforme foi desenhado a partir do art. 198 do CTN e da LGPD.</p>
+    <h3 data-anim="h">Autenticação</h3>
+    <p data-anim="p">A entrada é feita com certificado digital e-CNPJ ou pelo Login Único gov.br. Não existem senhas próprias do portal para vazar ou esquecer.</p>
+    <h3 data-anim="h">Autorização por objeto</h3>
+    <p data-anim="p">Cada consulta é filtrada pelo CNPJ do titular no backend, e não na tela.</p>
+  </div>
+</article>
+<p class="fim">Fim do esboço.</p>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger, SplitText);
+
+/* gráfico (mesma geometria da landing) */
+const months=['jan','fev','mar','abr','mai','jun','jul','ago'];
+const SERIES=[{c:'#D97757',v:[412,398,436,421,455,430,402,388]},{c:'#3C9A6B',v:[138,141,129,150,162,147,133,128]},{c:'#D4A12A',v:[96,102,91,110,118,104,99,94]}];
+(function(){const W=820,H=360,L=56,R=20,T=16,B=48,iw=W-L-R,ih=H-T-B,y=v=>T+ih-(v/500)*ih,x=i=>L+iw*(i+.5)/8;let g='';
+  for(let v=0;v<=500;v+=100)g+=`<line class="grade" x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="${v?'#E2DFD6':'#141413'}"/><text x="${L-12}" y="${y(v)+4}" text-anchor="end">${v}</text>`;
+  months.forEach((m,i)=>g+=`<text x="${x(i)}" y="${H-B+22}" text-anchor="middle">${m}/26</text>`);
+  SERIES.forEach(s=>{g+=`<polyline class="linha" fill="none" stroke="${s.c}" stroke-width="2.2" points="${s.v.map((v,i)=>x(i)+','+y(v)).join(' ')}"/>`;
+    s.v.forEach((v,i)=>g+=`<circle class="ponto" cx="${x(i)}" cy="${y(v)}" r="5.5" fill="${s.c}" stroke="#2b2a27"/>`)});
+  document.getElementById('grafico').innerHTML=g;})();
+
+const $$=s=>[...document.querySelectorAll(s)];
+let mm=null, splits=[];
+
+function prepararLinhas(){ // traço "desenhável"
+  $$('.linha').forEach(l=>{const n=l.getTotalLength();l.style.strokeDasharray=n;l.style.strokeDashoffset=n});
+}
+
+const ESTILOS={
+  /* A · Suave: tudo surge com um leve deslize, em sequência */
+  suave(){
+    gsap.set('[data-anim="lead"],[data-anim="p"],[data-anim="h"]',{autoAlpha:0,y:24});
+    ScrollTrigger.batch('[data-anim="lead"],[data-anim="p"],[data-anim="h"]',{start:'top 88%',
+      onEnter:els=>gsap.to(els,{autoAlpha:1,y:0,duration:.7,ease:'power2.out',stagger:.08})});
+    gsap.from('tbody tr',{autoAlpha:0,y:16,duration:.5,stagger:.1,ease:'power2.out',scrollTrigger:{trigger:'table',start:'top 80%'}});
+    prepararLinhas();
+    const tg=gsap.timeline({scrollTrigger:{trigger:'#grafico',start:'top 75%'}});
+    tg.to('.linha',{strokeDashoffset:0,duration:1.4,ease:'power2.inOut',stagger:.15})
+      .from('.ponto',{scale:0,transformOrigin:'center',duration:.3,stagger:.02},'-=.6');
+    gsap.from('.card',{autoAlpha:0,y:30,duration:.7,stagger:.15,ease:'power2.out',scrollTrigger:{trigger:'.cards',start:'top 80%'}});
+    gsap.from('.sbs>div',{autoAlpha:0,y:24,duration:.7,stagger:.2,ease:'power2.out',scrollTrigger:{trigger:'.sbs',start:'top 80%'}});
+  },
+
+  /* B · Editorial: títulos sobem linha a linha, destaque da coluna SISConforme, alerta "escrito" */
+  editorial(){
+    $$('[data-anim="h"],[data-anim="lead"]').forEach(el=>{
+      const s=SplitText.create(el,{type:'lines',mask:'lines',autoSplit:true,onSplit(self){
+        return gsap.from(self.lines,{yPercent:110,duration:.9,ease:'power4.out',stagger:.08,scrollTrigger:{trigger:el,start:'top 85%'}});
+      }});splits.push(s);
+    });
+    gsap.set('[data-anim="p"]',{autoAlpha:0,y:12});
+    ScrollTrigger.batch('[data-anim="p"]',{start:'top 88%',onEnter:els=>gsap.to(els,{autoAlpha:1,y:0,duration:.8,ease:'power2.out',stagger:.1})});
+    const tt=gsap.timeline({scrollTrigger:{trigger:'table',start:'top 75%'}});
+    tt.from('thead th',{autoAlpha:0,y:-10,duration:.4,stagger:.06})
+      .from('tbody th',{autoAlpha:0,x:-16,duration:.4,stagger:.08},'<.1')
+      .from('tbody td:not(.hl)',{autoAlpha:0,duration:.4,stagger:.03},'<.2')
+      // destaque da coluna: um "marca-texto" que desce pela coluna SISConforme
+      .fromTo('tbody td.hl',{backgroundColor:'rgba(235,203,185,0)'},{backgroundColor:'rgba(235,203,185,1)',duration:.35,stagger:.12},'>-.1');
+    prepararLinhas();
+    const tg=gsap.timeline({scrollTrigger:{trigger:'#grafico',start:'top 75%'}});
+    tg.from('.grade',{scaleX:0,transformOrigin:'left center',duration:.6,stagger:.05})
+      .to('.linha',{strokeDashoffset:0,duration:1.6,ease:'power1.inOut',stagger:.2},'-=.2')
+      .from('.ponto',{scale:0,transformOrigin:'center',duration:.25,ease:'back.out(3)',stagger:.03},'-=1.2');
+    gsap.from('.card',{autoAlpha:0,x:60,duration:.8,stagger:.18,ease:'power3.out',scrollTrigger:{trigger:'.cards',start:'top 80%'}});
+    const ts=gsap.timeline({scrollTrigger:{trigger:'.sbs',start:'top 75%'}});
+    ts.from('.sbs>div:first-child',{autoAlpha:0,duration:.5})
+      .to('.sbs>div:first-child .msg',{opacity:.45,duration:.6},'+=.2')
+      .from('.sbs>div:last-child',{autoAlpha:0,x:30,duration:.6,ease:'power3.out'},'<')
+      .from('.mono span',{autoAlpha:0,x:-10,duration:.35,stagger:.25});
+  },
+
+  /* C · Dinâmico: animações presas ao scroll (avançam e voltam com a rolagem) */
+  dinamico(){
+    $$('[data-anim="h"]').forEach(el=>gsap.fromTo(el,{autoAlpha:.1,letterSpacing:'.08em',x:-30},{autoAlpha:1,letterSpacing:'-.022em',x:0,ease:'none',scrollTrigger:{trigger:el,start:'top 95%',end:'top 55%',scrub:true}}));
+    $$('[data-anim="lead"],[data-anim="p"]').forEach(el=>gsap.fromTo(el,{autoAlpha:.15,y:40},{autoAlpha:1,y:0,ease:'none',scrollTrigger:{trigger:el,start:'top 95%',end:'top 65%',scrub:true}}));
+    $$('tbody tr').forEach((tr,i)=>gsap.fromTo(tr,{x:i%2?80:-80,autoAlpha:0},{x:0,autoAlpha:1,ease:'none',scrollTrigger:{trigger:tr,start:'top 95%',end:'top 70%',scrub:true}}));
+    prepararLinhas();
+    gsap.to('.linha',{strokeDashoffset:0,ease:'none',scrollTrigger:{trigger:'#grafico',start:'top 85%',end:'bottom 60%',scrub:true}});
+    gsap.fromTo('.ponto',{scale:0,transformOrigin:'center'},{scale:1,stagger:.02,ease:'none',scrollTrigger:{trigger:'#grafico',start:'top 60%',end:'bottom 50%',scrub:true}});
+    $$('.card').forEach((c,i)=>gsap.fromTo(c,{y:i?120:40,rotate:i?3:-2},{y:0,rotate:0,ease:'none',scrollTrigger:{trigger:'.cards',start:'top 100%',end:'top 50%',scrub:true}}));
+    gsap.fromTo('.sbs>div:first-child',{xPercent:-12,autoAlpha:.3},{xPercent:0,autoAlpha:1,ease:'none',scrollTrigger:{trigger:'.sbs',start:'top 95%',end:'top 55%',scrub:true}});
+    gsap.fromTo('.sbs>div:last-child',{xPercent:12,autoAlpha:.3},{xPercent:0,autoAlpha:1,ease:'none',scrollTrigger:{trigger:'.sbs',start:'top 95%',end:'top 55%',scrub:true}});
+  }
+};
+function aplicar(nome){
+  if(mm)mm.revert();
+  splits.forEach(s=>s.revert());splits=[];
+  $$('.linha').forEach(l=>{l.style.strokeDasharray='';l.style.strokeDashoffset=''});
+  gsap.set('*',{clearProps:'all'});
+  window.scrollTo(0,0);
+  mm=gsap.matchMedia();
+  mm.add('(prefers-reduced-motion: no-preference)',()=>{ESTILOS[nome]();});
+  requestAnimationFrame(()=>ScrollTrigger.refresh());
+  document.querySelectorAll('.picker button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.estilo===nome));
+}
+document.querySelectorAll('.picker button').forEach(b=>b.addEventListener('click',()=>aplicar(b.dataset.estilo)));
+aplicar('suave');
+</script>
+</body>
+</html>

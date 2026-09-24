@@ -12,9 +12,7 @@ src/components/         Nav, SideNav, Hero, Footer, BrandMark, Introducao, Cruza
   historia/              HistoriaDonaAna, Ana, objetos, roteiro (seção "como funciona")
 src/lib/scroll.ts       Utilitários de scroll (hero, história, âncoras)
 tests/unit/             Testes unitários (Vitest)
-tests/e2e/              Teste de paridade visual (Playwright)
-site/index.html         Landing original (HTML, CSS e JS num arquivo só). Referência de paridade
-                         visual para tests/e2e/paridade.spec.ts — não é mais servida diretamente.
+tests/e2e/              Regressão visual (Playwright) + fotos de referência em regressao.spec.ts-snapshots/
 public/                 Tudo o que o site serve; usado pelo Next.js sem mudanças.
   img/hero/             As três imagens do hero (.webp)
   img/og-image.jpg      Imagem de compartilhamento (Open Graph)
@@ -42,10 +40,14 @@ npm run dev          # http://localhost:3000
 
 ```powershell
 npm test             # unitários (Vitest)
-npm run test:paridade  # build + comparação visual com site/index.html (Playwright, usa o Chrome instalado)
+npm run test:visual  # build + comparação com as fotos de referência (Playwright, usa o Chrome instalado)
 ```
 
-As capturas e diferenças ficam em `test-results/paridade/`.
+Se um teste falhar, a captura nova e a diferença ficam em `test-results/`.
+Para aceitar uma mudança visual intencional, atualize as referências:
+`npx playwright test --update-snapshots` (depois de `npm run build`).
+
+A versão HTML original da landing está em `_arquivo/landing-html/index.html`.
 
 ## Publicar na rede interna
 

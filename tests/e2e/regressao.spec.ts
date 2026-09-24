@@ -1,20 +1,22 @@
-import fs from "node:fs";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
 import { expect, test, type Browser, type Locator, type Page } from "@playwright/test";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 
-const ORIGINAL = pathToFileURL(path.resolve(__dirname, "../../site/index.html")).href;
-const NOVO = "http://localhost:4173/";
-const SAIDA = path.resolve(__dirname, "../../test-results/paridade");
-/** Fração máxima de pixels diferentes aceita por captura (pior caso medido: 0.08%). */
+/**
+ * Regressão visual contra as fotos de referência em regressao.spec.ts-snapshots/.
+ * A referência é a página aprovada; para aceitar uma mudança visual intencional:
+ *   npx playwright test --update-snapshots
+ */
+const SITE = "http://localhost:4173/";
+/** Fração máxima de pixels diferentes aceita por captura. */
 const LIMITE = 0.003;
 
 const VIEWPORTS = {
   desktop: { width: 1280, height: 800 },
   celular: { width: 390, height: 844 },
 } as const;
+type Viewport = (typeof VIEWPORTS)[keyof typeof VIEWPORTS];
 
 type Alvo = (page: Page) => Locator | null; // null = captura da tela inteira
 interface Ponto {
@@ -56,6 +58,11 @@ const clicarAba = (bloco: number, nome: string) => async (page: Page) => {
   await rolarAte(page, alvo);
 };
 
+/**
+ * As seções de conteúdo têm animações de entrada (GSAP); elas são capturadas com
+ * "reduzir movimento" para comparar sempre o estado final. As animações em si são
+ * cobertas pelo teste "animacoes" abaixo.
+ */
 const PONTOS: Ponto[] = [
   { grupo: "hero", nome: "topo", preparar: (p) => rolar(p, "top", 0), alvo: () => null },
   { grupo: "hero", nome: "meio", preparar: (p) => rolar(p, "top", 0.35), alvo: () => null },
@@ -72,26 +79,34 @@ const PONTOS: Ponto[] = [
     nome: `bloco${n}`,
     preparar: (p) => rolarAte(p, p.locator(`article > div:nth-child(${n})`)),
     alvo: blocoDoArtigo(n),
+    movimentoReduzido: true,
   })),
-  { grupo: "conteudo", nome: "grafico-regularizacao", preparar: clicarAba(5, "Regularização após o alerta"), alvo: blocoDoArtigo(5) },
+  {
+    grupo: "conteudo",
+    nome: "grafico-regularizacao",
+    preparar: clicarAba(5, "Regularização após o alerta"),
+    alvo: blocoDoArtigo(5),
+    movimentoReduzido: true,
+  },
   ...["Contador", "Auditor", "Procurador"].map<Ponto>((nome) => ({
     grupo: "conteudo",
     nome: `carrossel-${nome.toLowerCase()}`,
     preparar: clicarAba(7, nome),
     alvo: blocoDoArtigo(7),
+    movimentoReduzido: true,
   })),
   { grupo: "rodape", nome: "rodape", preparar: (p) => rolarAte(p, p.locator("footer")), alvo: (p) => p.locator("footer") },
   { grupo: "reduzido", nome: "hero", preparar: (p) => rolar(p, "top", 0), alvo: () => null, movimentoReduzido: true },
   { grupo: "reduzido", nome: "historia", preparar: (p) => rolar(p, "como-funciona", 0), alvo: () => null, movimentoReduzido: true },
 ];
 
-async function capturar(browser: Browser, url: string, vp: { width: number; height: number }, ponto: Ponto) {
+async function capturar(browser: Browser, vp: Viewport, ponto: Ponto) {
   const ctx = await browser.newContext({
     viewport: vp,
     reducedMotion: ponto.movimentoReduzido ? "reduce" : "no-preference",
   });
   const page = await ctx.newPage();
-  await page.goto(url, { waitUntil: "load" });
+  await page.goto(SITE, { waitUntil: "load" });
   await page.evaluate(() => document.fonts.ready);
   await ponto.preparar(page);
   const alvo = ponto.alvo(page);
@@ -102,48 +117,35 @@ async function capturar(browser: Browser, url: string, vp: { width: number; heig
   return png;
 }
 
-function comparar(a: Buffer, b: Buffer, prefixo: string): number {
-  fs.mkdirSync(SAIDA, { recursive: true });
-  fs.writeFileSync(`${prefixo}-original.png`, a);
-  fs.writeFileSync(`${prefixo}-novo.png`, b);
-  const A = PNG.sync.read(a);
-  const B = PNG.sync.read(b);
-  if (A.width !== B.width || A.height !== B.height) {
-    console.log(`${prefixo}: tamanhos diferentes ${A.width}x${A.height} (original) × ${B.width}x${B.height} (novo)`);
-    return 1;
-  }
-  const diff = new PNG({ width: A.width, height: A.height });
-  const n = pixelmatch(A.data, B.data, diff.data, A.width, A.height, { threshold: 0.1 });
-  fs.writeFileSync(`${prefixo}-diff.png`, PNG.sync.write(diff));
-  return n / (A.width * A.height);
-}
-
 for (const [nomeVp, vp] of Object.entries(VIEWPORTS)) {
   for (const ponto of PONTOS) {
     test(`${ponto.grupo} · ${nomeVp} · ${ponto.nome}`, async ({ browser }) => {
-      const original = await capturar(browser, ORIGINAL, vp, ponto);
-      const novo = await capturar(browser, NOVO, vp, ponto);
-      const razao = comparar(original, novo, path.join(SAIDA, `${nomeVp}-${ponto.grupo}-${ponto.nome}`));
-      expect(razao, `pixels diferentes: ${(razao * 100).toFixed(2)}%`).toBeLessThan(LIMITE);
+      const png = await capturar(browser, vp, ponto);
+      expect(png).toMatchSnapshot(`${nomeVp}-${ponto.grupo}-${ponto.nome}.png`, { maxDiffPixelRatio: LIMITE });
     });
   }
 }
 
+/** Fração de pixels diferentes entre duas capturas do mesmo tamanho (1 se o tamanho difere). */
+function diferenca(a: Buffer, b: Buffer): number {
+  const A = PNG.sync.read(a);
+  const B = PNG.sync.read(b);
+  if (A.width !== B.width || A.height !== B.height) return 1;
+  const n = pixelmatch(A.data, B.data, null, A.width, A.height, { threshold: 0.1 });
+  return n / (A.width * A.height);
+}
+
 /**
- * Captura a primeira pintura: original com JS normal (como as demais capturas), novo com
- * JS desabilitado (sem hidratação) — para garantir que os defaults de CSS já batem com o
- * que o JS escreveria em p=0 (ou p=0.6 sob prefers-reduced-motion).
+ * Primeira pintura: a página sem JavaScript (antes da hidratação) deve ser igual à
+ * página com JavaScript no topo — os defaults de CSS precisam bater com o que o JS
+ * escreve em p=0.
  */
-async function capturarPrimeiraPintura(browser: Browser, url: string, vp: { width: number; height: number }, comJs: boolean) {
+async function capturarTopo(browser: Browser, vp: Viewport, comJs: boolean) {
   const ctx = await browser.newContext({ viewport: vp, javaScriptEnabled: comJs });
   const page = await ctx.newPage();
-  await page.goto(url, { waitUntil: "load" });
-  if (comJs) {
-    await page.evaluate(() => document.fonts.ready);
-  } else {
-    await page.waitForLoadState("load");
-    await page.waitForTimeout(700);
-  }
+  await page.goto(SITE, { waitUntil: "load" });
+  if (comJs) await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(700);
   const png = await page.screenshot({ animations: "disabled", caret: "hide" });
   await ctx.close();
   return png;
@@ -151,9 +153,9 @@ async function capturarPrimeiraPintura(browser: Browser, url: string, vp: { widt
 
 for (const [nomeVp, vp] of Object.entries(VIEWPORTS)) {
   test(`primeira-pintura · ${nomeVp} · hero`, async ({ browser }) => {
-    const original = await capturarPrimeiraPintura(browser, ORIGINAL, vp, true);
-    const novo = await capturarPrimeiraPintura(browser, NOVO, vp, false);
-    const razao = comparar(original, novo, path.join(SAIDA, `${nomeVp}-primeira-pintura-hero`));
+    const comJs = await capturarTopo(browser, vp, true);
+    const semJs = await capturarTopo(browser, vp, false);
+    const razao = diferenca(comJs, semJs);
     expect(razao, `pixels diferentes: ${(razao * 100).toFixed(2)}%`).toBeLessThan(LIMITE);
   });
 }
@@ -166,15 +168,14 @@ test("console · sem erros ao percorrer a página", async ({ browser }) => {
   page.on("console", (m) => {
     if (m.type() === "error") erros.push(m.text());
   });
-  await page.goto(NOVO, { waitUntil: "load" });
+  await page.goto(SITE, { waitUntil: "load" });
   const altura = await page.evaluate(() => document.documentElement.scrollHeight);
   for (let y = 0; y < altura; y += 400) {
     await page.evaluate((v) => window.scrollTo(0, v), y);
     await page.waitForTimeout(30);
   }
   for (const aba of ["Regularização após o alerta", "Contador", "Auditor", "Procurador"]) {
-    const tab = page.getByRole("tab", { name: aba });
-    if (await tab.count()) await tab.click();
+    await page.getByRole("tab", { name: aba }).click();
   }
   await ctx.close();
   expect(erros).toEqual([]);
@@ -189,13 +190,11 @@ async function esperarNoTopo(page: Page, id: string) {
 test("ancoras · links internos levam às seções", async ({ browser }) => {
   const ctx = await browser.newContext({ viewport: VIEWPORTS.desktop });
   const page = await ctx.newPage();
-  await page.goto(NOVO, { waitUntil: "load" });
+  await page.goto(SITE, { waitUntil: "load" });
 
   // rodapé
   for (const id of ["introducao", "cruzamento", "comunicacao", "seguranca", "disponibilidade"]) {
-    const link = page.locator(`footer a[href="#${id}"]`).first();
-    if ((await link.count()) === 0) continue;
-    await link.click();
+    await page.locator(`footer a[href="#${id}"]`).first().click();
     await esperarNoTopo(page, id);
   }
 
@@ -204,23 +203,20 @@ test("ancoras · links internos levam às seções", async ({ browser }) => {
   const totalMenu = await linksMenu.count();
   for (let i = 0; i < totalMenu; i++) {
     const link = linksMenu.nth(i);
-    const href = await link.getAttribute("href");
-    const id = href?.slice(1) ?? "";
-    if (!id || id === "top") continue;
-    if ((await page.locator(`#${id}`).count()) === 0) continue;
+    const id = (await link.getAttribute("href"))?.slice(1) ?? "";
+    if (!id || id === "top" || (await page.locator(`#${id}`).count()) === 0) continue;
     await link.click();
     await esperarNoTopo(page, id);
   }
 
-  // sumário do hero (só visível/clicável com o titleblock exibido, ~p>=0.5; o original mostra a partir de p≈0.3)
+  // sumário do hero (clicável quando o bloco do título está visível, p≈0.7)
   await rolar(page, "top", 0.7);
   const linksToc = page.locator("#top ol a");
   const totalToc = await linksToc.count();
   for (let i = 0; i < totalToc; i++) {
     const link = linksToc.nth(i);
-    const href = await link.getAttribute("href");
-    const id = href?.slice(1) ?? "";
-    if (!id) continue;
+    const id = (await link.getAttribute("href"))?.slice(1) ?? "";
+    if (!id || (await page.locator(`#${id}`).count()) === 0) continue;
     await link.click();
     await esperarNoTopo(page, id);
     await rolar(page, "top", 0.7);
