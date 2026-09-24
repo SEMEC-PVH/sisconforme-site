@@ -50,12 +50,19 @@ As capturas e diferenças ficam em `test-results/paridade/`.
 ## Publicar na rede interna
 
 ```powershell
-.\scripts\publicar.ps1
+.\scripts\publicar.ps1 -SiteUrl "http://10.102.2.21:8080"
 python -m http.server 8080 --directory D:\dev\sisconforme-publicar
 ```
 
 O endereço para os colegas é `http://<seu-ip>:8080` (a porta 8080 precisa estar liberada no firewall).
 A fonte Inter vai embutida no build: a página funciona mesmo em computadores sem internet.
+
+`-SiteUrl` é opcional: quando informado, define `NEXT_PUBLIC_SITE_URL` durante o build para que a
+imagem de Open Graph (`og:image`) aponte para o endereço publicado, em vez de `http://localhost:3000`.
+
+O build usa caminhos absolutos (`/_next/…`, `/img/…`), então `out/` precisa ser servido na raiz de um
+servidor web — não abra `index.html` direto via `file://` nem sirva a pasta a partir de uma subpasta.
+Para publicar em uma subpasta, configure `basePath` em `next.config.ts`.
 
 ## Identidade visual
 
