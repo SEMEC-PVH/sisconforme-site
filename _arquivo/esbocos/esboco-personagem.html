@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Esboço · Personagem SISConforme</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ivory:#FAF9F5;--ink:#141413;--muted:#6F6D66;--hair:#DEDBD2;
+  --clay:#D97757;--clay-fill:#EBCBB9;--clay-deep:#C15F3C;
+  --green:#3C9A6B;--gold:#D4A12A;--stone:#C9C5BA;
+  --skin:#C68A62;--skin-sh:#A96F4B;--hairc:#2B1D16;
+  --serif:"Source Serif 4",Georgia,serif;--sans:"Inter",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--sans)}
+header{max-width:1080px;margin:0 auto;padding:56px 16px 8px}
+.tag{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-deep);font-weight:600}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5vw,48px);margin:.3em 0 .2em}
+header p{color:var(--muted);max-width:640px;line-height:1.55}
+.sheet{max-width:1080px;margin:24px auto 0;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:#fff;border:1px solid var(--hair);border-radius:14px;padding:16px 16px 20px;text-align:center}
+.card svg{width:100%;max-width:220px;height:auto;display:block;margin:0 auto}
+.card b{display:block;font-family:var(--serif);font-size:20px;margin-top:8px}
+.card span{font-size:13px;color:var(--muted)}
+.hint{max-width:1080px;margin:64px auto 0;padding:0 16px;text-align:center;color:var(--muted)}
+.hint strong{display:block;font-family:var(--serif);font-size:26px;color:var(--ink);font-weight:600;margin-bottom:6px}
+
+/* ---------- scroll scene ---------- */
+.scroll{height:520vh;position:relative;margin-top:40px}
+.pin{position:sticky;top:0;height:100vh;display:grid;place-items:center;overflow:hidden}
+.stage{position:relative;width:100vw;height:100vh;background:linear-gradient(180deg,#F6E7D8 0%,var(--ivory) 70%);
+  transform-origin:center;will-change:transform,border-radius;overflow:hidden}
+.ana{position:absolute;left:6%;bottom:0;width:min(34vw,420px)}
+.ana svg{width:100%;height:auto;display:block}
+.tanks{position:absolute;right:4%;bottom:6%;width:min(52vw,760px);height:auto}
+.caption{position:absolute;left:50%;top:7%;transform:translateX(-50%);width:min(92vw,760px);text-align:center;
+  font-family:var(--serif);font-size:clamp(20px,3vw,34px);line-height:1.25;transition:opacity .3s}
+.caption small{display:block;font-family:var(--sans);font-size:clamp(12px,1.3vw,15px);color:var(--muted);margin-top:8px;letter-spacing:.02em}
+.phone{position:absolute;left:32%;bottom:12%;width:min(24vw,260px);background:var(--ink);border-radius:28px;padding:12px;
+  box-shadow:0 30px 60px -20px rgba(0,0,0,.4)}
+.phone .scr{background:var(--ivory);border-radius:18px;padding:14px;font-size:clamp(10px,1vw,13px);line-height:1.4}
+.phone .scr .t{font-size:.85em;color:var(--clay-deep);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.phone .scr .v{font-family:var(--serif);font-size:1.35em;margin:6px 0}
+.phone .scr .btn{margin-top:10px;background:var(--green);color:#fff;border-radius:999px;text-align:center;padding:7px;font-weight:600}
+.progress{position:absolute;left:0;bottom:0;height:4px;background:var(--clay)}
+footer{padding:80px 16px 120px;text-align:center;color:var(--muted)}
+@media (max-width:700px){
+  .ana{width:48vw;left:-2%}
+  .tanks{width:62vw;right:2%;bottom:18%}
+  .phone{left:auto;right:6%;bottom:4%;width:46vw}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">Esboço · descartável</div>
+  <h1>Conheça a Dona Ana</h1>
+  <p>Dona de uma clínica em Porto Velho. Recebe no cartão, emite nota fiscal… quase sempre. Abaixo, a ficha com as expressões que ela usaria no vídeo e, mais embaixo, uma prévia do efeito com o scroll controlando a animação.</p>
+</header>
+
+<section class="sheet" id="sheet"></section>
+
+<div class="hint">
+  <strong>Agora role devagar ↓</strong>
+  Role para cima e para baixo: a animação acompanha o scroll nos dois sentidos.
+</div>
+
+<section class="scroll" id="scroll">
+  <div class="pin">
+    <div class="stage" id="stage">
+      <div class="caption" id="caption"></div>
+      <div class="ana" id="ana"></div>
+      <svg class="tanks" viewBox="0 0 760 560" id="tanks" aria-hidden="true"></svg>
+      <div class="phone" id="phone">
+        <div class="scr">
+          <div class="t">● Alerta SISConforme</div>
+          <div class="v">Maio/2026: R$ 26.240</div>
+          recebidos no cartão sem nota fiscal correspondente.
+          <div class="btn">Emitir notas faltantes</div>
+        </div>
+      </div>
+      <div class="progress" id="bar"></div>
+    </div>
+  </div>
+</section>
+
+<footer>Fim do esboço. O vídeo final teria mais cenas, como a carta tradicional e o contador.</footer>
+
+<script>
+/* ---------- personagem ---------- */
+const FACES={
+  neutra:{
+    brows:'M78 104 Q86 99 94 103 M106 103 Q114 99 122 104',
+    eyes:'<circle cx="86" cy="118" r="4.2"/><circle cx="114" cy="118" r="4.2"/>',
+    mouth:'<path d="M89 138 Q100 147 111 138" fill="none" stroke="#141413" stroke-width="3" stroke-linecap="round"/>'
+  },
+  preocupada:{
+    brows:'M78 107 Q86 104 94 99 M106 99 Q114 104 122 107',
+    eyes:'<circle cx="86" cy="119" r="4"/><circle cx="114" cy="119" r="4"/>',
+    mouth:'<path d="M91 143 Q100 135 109 143" fill="none" stroke="#141413" stroke-width="3" stroke-linecap="round"/>'
+  },
+  confusa:{ /* coçando a cabeça */
+    tilt:6,
+    brows:'M78 100 Q86 95 94 99 M106 103 Q114 101 122 103',
+    eyes:'<circle cx="89" cy="114" r="4.2"/><circle cx="117" cy="114" r="4.2"/>',
+    mouth:'<path d="M95 141 Q103 140 110 135" fill="none" stroke="#141413" stroke-width="3" stroke-linecap="round"/>',
+    front:`<path d="M146 238 L184 172 L154 102" fill="none" stroke="var(--clay-deep)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="152" cy="96" r="10" fill="var(--skin)"/>
+      <g fill="none" stroke="#9D988D" stroke-width="3" stroke-linecap="round">
+        <path d="M34 66 q6 -10 12 0 t12 0 t12 0"/><path d="M40 50 q5 -8 10 0 t10 0"/></g>`
+  },
+  aliviada:{
+    brows:'M78 101 Q86 96 94 100 M106 100 Q114 96 122 101',
+    eyes:'<path d="M80 119 Q86 113 92 119 M108 119 Q114 113 120 119" fill="none" stroke="#141413" stroke-width="3" stroke-linecap="round"/>',
+    mouth:'<path d="M87 135 Q100 153 113 135 Z" fill="#141413"/><path d="M93 142 Q100 148 107 142 Z" fill="#D97757"/>'
+  }
+};
+function prop(expr){
+  if(expr==='confusa') return `
+    <g transform="rotate(-8 128 212)">
+      <rect x="104" y="180" width="54" height="68" rx="3" fill="#fff" stroke="#C9C5BA" stroke-width="2"/>
+      <g stroke="#C9C5BA" stroke-width="2.4" stroke-linecap="round">
+        <path d="M112 192h38M112 200h38M112 208h32M112 216h38M112 224h26M112 232h36"/></g>
+    </g>
+    <text x="150" y="72" font-family="Source Serif 4,Georgia" font-size="40" font-weight="600" fill="#C15F3C">?</text>`;
+  if(expr==='preocupada') return `
+    <path d="M142 92 Q136 104 142 108 Q148 104 142 92Z" fill="#8CC7E0"/>`;
+  if(expr==='aliviada') return `
+    <rect x="112" y="178" width="34" height="60" rx="6" fill="#141413"/>
+    <rect x="116" y="184" width="26" height="46" rx="3" fill="#FAF9F5"/>
+    <path d="M122 206 l5 5 l10 -11" fill="none" stroke="#3C9A6B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <g fill="#D4A12A"><path d="M160 80 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 l8 -3z"/><path d="M40 70 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2z"/></g>`;
+  return '';
+}
+function ana(expr){
+  const f=FACES[expr], holding=!f.front&&(expr==='confusa'||expr==='aliviada'),
+    tilt=`transform="rotate(${f.tilt||0} 100 165)"`;
+  return `<svg viewBox="0 0 200 260" role="img" aria-label="Dona Ana, ${expr}">
+    <!-- cabelo atrás -->
+    <path ${tilt} d="M56 118 C50 70 82 54 102 56 C130 58 152 78 146 122 L150 172 Q138 182 126 170 L126 146 L74 146 L74 170 Q62 182 50 172 Z" fill="var(--hairc)"/>
+    <!-- corpo -->
+    <path d="M36 262 C38 204 68 186 100 186 C132 186 162 204 164 262 Z" fill="var(--clay)"/>
+    <path d="M86 186 L100 214 L114 186 Z" fill="#FAF9F5"/>
+    <path d="M100 214 L84 190 L74 196 L92 240 Z M100 214 L116 190 L126 196 L108 240 Z" fill="var(--clay-deep)" opacity=".55"/>
+    <rect x="90" y="150" width="20" height="40" rx="8" fill="var(--skin-sh)"/>
+    <circle cx="100" cy="206" r="3" fill="var(--gold)"/>
+    <g ${tilt}>
+    <!-- orelhas + brincos -->
+    <ellipse cx="62" cy="120" rx="7" ry="10" fill="var(--skin-sh)"/><ellipse cx="138" cy="120" rx="7" ry="10" fill="var(--skin-sh)"/>
+    <circle cx="61" cy="133" r="3.4" fill="var(--gold)"/><circle cx="139" cy="133" r="3.4" fill="var(--gold)"/>
+    <!-- rosto -->
+    <ellipse cx="100" cy="116" rx="38" ry="44" fill="var(--skin)"/>
+    <ellipse cx="80" cy="132" rx="7" ry="4.5" fill="var(--clay)" opacity=".35"/><ellipse cx="120" cy="132" rx="7" ry="4.5" fill="var(--clay)" opacity=".35"/>
+    <path d="M100 118 Q97 128 101 130" fill="none" stroke="var(--skin-sh)" stroke-width="2.4" stroke-linecap="round"/>
+    <!-- franja -->
+    <path d="M61 112 C58 72 88 60 104 64 C128 68 142 86 139 114 C130 92 114 84 98 86 C80 88 68 98 61 112 Z" fill="var(--hairc)"/>
+    <!-- expressão -->
+    <path d="${f.brows}" fill="none" stroke="var(--hairc)" stroke-width="3.6" stroke-linecap="round"/>
+    <g fill="#141413">${f.eyes}</g>
+    ${f.mouth}
+    </g>
+    ${f.front||''}
+    ${holding?`<path d="M56 236 Q76 252 112 222" fill="none" stroke="var(--clay-deep)" stroke-width="20" stroke-linecap="round"/>`:''}
+    ${f.front?"":prop(expr)}
+    ${holding?`<circle cx="116" cy="220" r="9" fill="var(--skin)"/>`:''}
+  </svg>`;
+}
+
+/* ficha */
+const LABELS={neutra:['Neutra','apresentação'],confusa:['Confusa','coça a cabeça: não entendeu a notificação'],
+  preocupada:['Preocupada','descobre a divergência'],aliviada:['Aliviada','resolveu pelo portal, sem multa']};
+document.getElementById('sheet').innerHTML=Object.keys(LABELS).map(k=>
+  `<div class="card">${ana(k)}<b>${LABELS[k][0]}</b><span>${LABELS[k][1]}</span></div>`).join('');
+
+/* ---------- caixas d'água ---------- */
+const TANKS=[{n:'Cartão',c:'#D4A12A',v:97.5},{n:'NFS-e',c:'#D97757',v:71.3},{n:'PGDAS',c:'#3C9A6B',v:71.3}];
+const TOP=90,H=300,W=150;
+const tanksEl=document.getElementById('tanks');
+tanksEl.innerHTML=TANKS.map((t,i)=>{const x=40+i*240;return `
+  <g>
+    <g stroke="#6F6D66" stroke-width="6" stroke-linecap="round">
+      <path d="M${x+20} ${TOP+H} L${x+6} 540 M${x+W-20} ${TOP+H} L${x+W-6} 540 M${x+W/2} ${TOP+H} L${x+W/2} 540"/>
+      <path d="M${x+14} ${TOP+H+70} L${x+W-14} ${TOP+H+70}" stroke-width="4"/>
+    </g>
+    <clipPath id="c${i}"><rect x="${x}" y="${TOP}" width="${W}" height="${H}" rx="14"/></clipPath>
+    <rect x="${x}" y="${TOP}" width="${W}" height="${H}" rx="14" fill="#fff"/>
+    <g clip-path="url(#c${i})"><rect id="w${i}" x="${x}" y="${TOP+H}" width="${W}" height="0" fill="${t.c}" opacity=".85"/></g>
+    <rect id="o${i}" x="${x}" y="${TOP}" width="${W}" height="${H}" rx="14" fill="none" stroke="#141413" stroke-width="4"/>
+    <ellipse cx="${x+W/2}" cy="${TOP}" rx="${W/2}" ry="14" fill="#FAF9F5" stroke="#141413" stroke-width="4"/>
+    <text x="${x+W/2}" y="${TOP-30}" text-anchor="middle" font-family="Inter" font-weight="600" font-size="22" fill="#141413">${t.n}</text>
+    <text id="l${i}" x="${x+W/2}" y="${TOP+H-16}" text-anchor="middle" font-family="Source Serif 4" font-weight="600" font-size="24" fill="#141413"></text>
+  </g>`}).join('')+`
+  <g id="gap" opacity="0">
+    <path d="M${40+W+12} ${TOP+H-H*0.975} L${40+240-12} ${TOP+H-H*0.975}" stroke="#C15F3C" stroke-width="3" stroke-dasharray="8 6"/>
+    <path d="M${280+W/2} ${TOP+H-H*0.975+4} L${280+W/2} ${TOP+H-H*0.713-4}" stroke="#C15F3C" stroke-width="4" marker-end=""/>
+    <rect x="${280+W/2-72}" y="${TOP+H-H*0.87-18}" width="144" height="36" rx="18" fill="#C15F3C"/>
+    <text x="${280+W/2}" y="${TOP+H-H*0.87+7}" text-anchor="middle" font-family="Inter" font-weight="600" font-size="18" fill="#fff">− R$ 26.240</text>
+  </g>`;
+
+/* ---------- coreografia ---------- */
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const seg=(p,a,b)=>clamp((p-a)/(b-a));
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const STEPS=[
+  [0,'neutra','Esta é a Dona Ana.','Dona de uma clínica em Porto Velho'],
+  [.28,'neutra','O SISConforme cruza três fontes de dados.','Cartão, notas fiscais (NFS-e) e declaração do Simples (PGDAS)'],
+  [.46,'preocupada','Em maio, as caixas não bateram.','R$ 97,5 mil no cartão, mas só R$ 71,3 mil em notas'],
+  [.62,'neutra','O portal avisa antes de virar multa.','Em linguagem direta: o que houve, quanto e o que fazer'],
+  [.78,'aliviada','Ela emite as notas no mesmo dia.','Tudo em dia, sem multa e sem ir à Prefeitura']
+];
+const stage=document.getElementById('stage'),scroller=document.getElementById('scroll'),
+  anaEl=document.getElementById('ana'),cap=document.getElementById('caption'),
+  phone=document.getElementById('phone'),gap=document.getElementById('gap'),bar=document.getElementById('bar');
+let curStep=-1;
+function money(v){return 'R$ '+v.toFixed(1).replace('.',',')+' mil'}
+function render(){
+  const r=scroller.getBoundingClientRect(),total=scroller.offsetHeight-innerHeight;
+  const p=clamp(-r.top/total);
+  // 1. cartão cresce até tela cheia
+  const g=ease(seg(p,0,.2));
+  stage.style.transform=`scale(${.42+.58*g})`;
+  stage.style.borderRadius=`${(1-g)*40}px`;
+  // 2. caixas enchem
+  const fill=ease(seg(p,.28,.44)), fix=ease(seg(p,.8,.94));
+  TANKS.forEach((t,i)=>{
+    const v=i===0?t.v*fill:(t.v*fill+(97.5-t.v)*fix);
+    const h=H*v/100;
+    const w=document.getElementById('w'+i);w.setAttribute('y',TOP+H-h);w.setAttribute('height',h);
+    document.getElementById('l'+i).textContent=fill>0?money(v):'';
+    document.getElementById('o'+i).setAttribute('stroke',i>0&&p>.46&&fix<1?'#C15F3C':(fix>=1?'#3C9A6B':'#141413'));
+  });
+  // 3. divergência
+  gap.setAttribute('opacity',seg(p,.46,.52)*(1-seg(p,.8,.86)));
+  // 4. alerta no celular
+  const ph=ease(seg(p,.62,.72)),phOut=seg(p,.78,.83);
+  phone.style.opacity=ph*(1-phOut);
+  phone.style.transform=`translateY(${(1-ph)*60}px)`;
+  // expressão + legenda
+  let s=0;STEPS.forEach((st,i)=>{if(p>=st[0])s=i});
+  if(s!==curStep){curStep=s;anaEl.innerHTML=ana(STEPS[s][1]);cap.innerHTML=`${STEPS[s][2]}<small>${STEPS[s][3]}</small>`}
+  cap.style.opacity=g<1?g:1;
+  bar.style.width=(p*100)+'%';
+}
+addEventListener('scroll',()=>requestAnimationFrame(render),{passive:true});
+addEventListener('resize',render);
+render();
+</script>
+</body>
+</html>

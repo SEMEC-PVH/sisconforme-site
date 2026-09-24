@@ -1,0 +1,420 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Portal de autorregularização do ISSQN de Porto Velho."><meta property="og:title" content="SISConforme"><meta property="og:image" content="img/og-image.jpg">
+<title>SISConforme</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --ivory:#FAF9F5; --ink:#141413; --ink-2:#3D3D3A; --muted:#6F6D66; --rule:#1F1E1D; --hair:#DEDBD2;
+  --clay:#D97757; --clay-fill:#EBCBB9; --clay-deep:#C15F3C;
+  --green:#3C9A6B; --gold:#D4A12A; --slate:#6B6A66; --stone:#C9C5BA;
+  --night:#141413; --night-ink:#F2EDE4; --night-muted:#9D988D;
+  --serif:"Source Serif 4","Tiempos Text","Iowan Old Style",Georgia,serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{overflow-x:clip;max-width:100%}
+html{scroll-behavior:smooth}
+body{background:var(--ivory);color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased;margin:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--clay);outline-offset:3px}
+p{margin:0}
+h1,h2,h3{margin:0;font-weight:500;text-wrap:balance}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;left:0;right:0;top:0;z-index:50;padding-top:env(safe-area-inset-top,0px);transition:background .3s,color .3s;color:#fff}
+.nav.solid{background:rgba(250,249,245,.94);backdrop-filter:blur(8px);color:var(--ink)}
+.nav-in{max-width:1320px;margin:0 auto;padding:0 clamp(16px,4vw,48px);height:68px;display:flex;align-items:center;gap:32px;font-family:var(--sans);font-size:15.5px;font-weight:500}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none;font-weight:600;letter-spacing:-.01em}
+.nav ul{list-style:none;display:flex;gap:30px;margin:0 0 0 auto;padding:0}
+.nav ul a{text-decoration:none}
+.nav ul .dd::after{content:"";display:inline-block;width:6px;height:6px;border-right:1.4px solid currentColor;border-bottom:1.4px solid currentColor;transform:rotate(45deg);margin:0 0 3px 8px}
+.split{display:flex;border-radius:8px;overflow:hidden;background:#fff;color:var(--ink);border:1px solid rgba(0,0,0,.08)}
+.nav.solid .split{background:var(--ink);color:var(--ivory)}
+.split a{padding:9px 16px;text-decoration:none}
+.split span{padding:9px 13px;border-left:1px solid rgba(128,128,128,.3);display:grid;place-items:center}
+.split span::after{content:"";width:6px;height:6px;border-right:1.4px solid currentColor;border-bottom:1.4px solid currentColor;transform:rotate(45deg) translate(-1px,-1px)}
+@media (max-width:900px){.nav ul{display:none}.split{margin-left:auto}}
+
+/* ---------- scroll hero ---------- */
+.intro{height:280vh;position:relative;background:#0e0d0c}
+.stage{position:sticky;top:0;height:100vh;overflow:hidden;display:flex}
+.panel{position:relative;height:100%;overflow:hidden;flex:1 1 0;min-width:0}
+.panel img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;display:block}
+.panel.c::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,0) 30%,rgba(0,0,0,0) 70%,rgba(0,0,0,.35));pointer-events:none}
+.hero-copy{z-index:1}.hint{z-index:1}
+.panel.c{flex:0 0 var(--cw,42%);box-shadow:0 0 0 1px rgba(0,0,0,.6)}
+.hero-copy{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#F4EFE6;pointer-events:none}
+.hero-copy > *{grid-area:1/1}
+.introducing{font-size:clamp(40px,5.2vw,64px);font-weight:500;letter-spacing:-.01em;text-shadow:0 2px 30px rgba(0,0,0,.25)}
+.titleblock{display:flex;flex-direction:column;align-items:center;gap:0;pointer-events:auto;width:min(92%,760px)}
+.date{font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.92}
+.titleblock h1{font-size:clamp(56px,10vw,128px);line-height:1;letter-spacing:-.02em;margin:22px 0 40px;text-shadow:0 2px 40px rgba(0,0,0,.25)}
+.toc{list-style:none;margin:0;padding:0;width:min(100%,370px);display:grid;gap:6px;font-size:15px}
+.toc a{display:flex;align-items:baseline;gap:8px;text-decoration:none}
+.toc .n{font-family:var(--sans);font-size:11.5px;opacity:.85}
+.toc .dots{flex:1;border-bottom:1px dotted rgba(244,239,230,.45);transform:translateY(-4px)}
+.toc a:hover .t{text-decoration:underline;text-underline-offset:3px}
+.hint{position:absolute;bottom:28px;left:0;right:0;text-align:center;font-family:var(--sans);font-size:13px;color:rgba(244,239,230,.6)}
+
+/* ---------- article ---------- */
+.side{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:40;display:grid;gap:12px;padding:10px 0;opacity:0;transition:opacity .3s}
+.side.on{opacity:1}
+.side a{display:flex;align-items:center;gap:12px;text-decoration:none;font-family:var(--sans);font-size:12.5px;color:var(--muted)}
+.side a i{display:block;width:16px;height:1px;background:#9C988F;transition:width .2s,background .2s}
+.side a span{opacity:0;transition:opacity .2s;white-space:nowrap;background:var(--ivory);padding:2px 6px}
+.side:hover a span{opacity:1}
+.side a.active i{width:24px;background:var(--ink);height:1.5px}
+.side a.active{color:var(--ink)}
+@media (max-width:1100px){.side{display:none}}
+
+article{padding:120px 16px 80px}
+.col{max-width:652px;margin:0 auto}
+.wide{max-width:900px;margin:0 auto}
+.lead{font-size:clamp(24px,2.6vw,31px);line-height:1.22;letter-spacing:-.005em;margin-bottom:44px}
+.prose p,.prose li{font-size:18.5px;line-height:1.46;color:var(--ink)}
+.prose p+p,.prose p+ul,.prose ul+p{margin-top:17px}
+.prose b{font-weight:600}
+.prose a{text-underline-offset:3px;text-decoration-thickness:1px}
+.prose h2{font-size:clamp(32px,3.4vw,40px);letter-spacing:-.012em;margin:110px 0 36px;line-height:1.1}
+.prose h3{font-size:24px;margin:56px 0 18px}
+.prose ul{padding-left:22px;margin:0}
+.prose li+li{margin-top:8px}
+.block{margin:56px auto}
+.foot{font-family:var(--sans);font-size:14.5px;line-height:1.45;color:#5d5b55}
+.foot p+p{margin-top:10px}
+.foot sup{font-size:10px}
+.caption{font-family:var(--sans);font-size:14px;color:#5d5b55;text-align:center;margin-top:18px;line-height:1.45}
+
+/* table */
+.tscroll{overflow-x:auto}
+table.cmp{border-collapse:collapse;width:100%;min-width:760px;font-family:var(--sans);font-size:14.5px;font-variant-numeric:tabular-nums;border:1px solid var(--rule)}
+.cmp th,.cmp td{border:1px solid var(--rule);padding:14px 13px;vertical-align:top;text-align:left;width:19%}
+.cmp th:first-child,.cmp td:first-child{width:24%}
+.cmp thead th{font-weight:600;font-size:14px;padding-block:18px}
+.cmp tbody th{font-weight:600}
+.cmp tbody th small{display:block;font-weight:400;color:var(--muted);margin-top:4px;font-size:13.5px}
+.cmp td small{display:block;color:var(--muted);font-size:12.5px;margin-top:3px}
+.cmp .hl{background:var(--clay-fill);font-weight:600;box-shadow:inset 1.5px 0 0 var(--clay),inset -1.5px 0 0 var(--clay)}
+.cmp thead .hl{background:transparent;box-shadow:inset 1.5px 0 0 var(--clay),inset -1.5px 0 0 var(--clay),inset 0 1.5px 0 var(--clay)}
+.cmp tbody tr:last-child .hl{box-shadow:inset 1.5px 0 0 var(--clay),inset -1.5px 0 0 var(--clay),inset 0 -1.5px 0 var(--clay)}
+
+/* tabs + chart */
+.tabs{display:flex;flex-wrap:wrap;gap:4px 18px;font-family:var(--sans);font-size:14.5px;font-weight:600;margin-bottom:14px}
+.tabs button{all:unset;cursor:pointer;color:#8f8c84}
+.tabs button[aria-selected="true"]{color:var(--ink)}
+.tabs button:focus-visible{outline:2px solid var(--clay);outline-offset:3px}
+.chartbox{border:1px solid var(--rule);padding:22px 22px 18px;background:var(--ivory)}
+.chart-head{display:flex;justify-content:space-between;gap:12px;font-family:var(--sans);font-size:14.5px;font-weight:600}
+.chart-head em{font-style:normal;font-weight:400;color:var(--muted);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px 18px;font-family:var(--sans);font-size:13px;margin:18px 0 6px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.35)}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+.chart text{font-family:var(--sans);fill:#3d3d3a}
+
+/* carousel */
+.carousel{position:relative}
+.track-wrap{overflow:hidden;margin-right:calc(50% - 50vw + var(--sb,0px))}
+.track{display:flex;gap:64px;transition:transform .5s cubic-bezier(.3,.7,.2,1)}
+.card{flex:0 0 min(652px,calc(100vw - var(--sb,0px) - 32px));min-width:0;background:var(--clay-fill);border:1px solid var(--rule);border-top:5px solid var(--ink);padding:18px 18px 22px;opacity:.28;transition:opacity .4s}
+.card.on{opacity:1}
+.card .k{font-family:var(--sans);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+.card p{font-size:18px;line-height:1.42}
+.card .who{font-family:var(--sans);font-size:14px;margin-top:22px;display:flex;justify-content:space-between;gap:12px;align-items:flex-end}
+.card .who b{display:block;font-weight:600}
+.card .who em{font-style:normal;color:#5d5b55}
+.card .mark{font-family:var(--sans);font-weight:700;font-size:15px;letter-spacing:-.01em;color:var(--ink)}
+
+/* side by side */
+.sbs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--rule)}
+.sbs > div{padding:20px 20px 24px}
+.sbs > div + div{border-left:1px solid var(--rule);background:#F3EFE6}
+.sbs .lab{font-family:var(--sans);font-size:13px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sbs .lab i{width:9px;height:9px;border-radius:50%;background:var(--slate)}
+.sbs > div + div .lab i{background:var(--clay)}
+.msg{font-family:var(--sans);font-size:14px;line-height:1.55;color:#2c2b28}
+.msg p+p{margin-top:10px}
+.msg .mono{font-family:ui-monospace,"Consolas",monospace;font-size:12.5px;background:rgba(0,0,0,.05);padding:10px;border-radius:4px;display:block;white-space:pre-wrap}
+@media (max-width:720px){.sbs{grid-template-columns:1fr}.sbs > div + div{border-left:0;border-top:1px solid var(--rule)}}
+
+/* footer */
+footer{background:var(--night);color:var(--night-muted);font-family:var(--sans);font-size:14px;padding:72px 16px 40px}
+.f-in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.3fr repeat(4,1fr);gap:40px}
+footer h3{font:500 14px var(--sans);color:var(--night-ink);margin-bottom:16px}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+footer a{text-decoration:none}
+footer a:hover{color:var(--night-ink)}
+.f-bot{max-width:1180px;margin:64px auto 0;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-size:13px;border-top:1px solid #2b2a28;padding-top:22px}
+@media (max-width:900px){.f-in{grid-template-columns:1fr 1fr}.f-in > div:first-child{grid-column:1/-1}}
+
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.track,.nav,.side a i{transition:none}}
+</style>
+</head><body>
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="logo" href="#top" aria-label="SISConforme, início">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18 L10 5 L13 11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/><path d="M12 18 L17 7 L21 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/></svg>
+      SISConforme
+    </a>
+    <ul>
+      <li><a class="dd" href="#introducao">Portal</a></li>
+      <li><a href="#seguranca">Privacidade</a></li>
+      <li><a class="dd" href="#cruzamento">Legislação</a></li>
+      <li><a class="dd" href="#comunicacao">Ajuda</a></li>
+      <li><a href="#disponibilidade">Novidades</a></li>
+    </ul>
+    <div class="split"><a href="#disponibilidade">Acessar portal</a><span aria-hidden="true"></span></div>
+  </div>
+</header>
+
+<nav class="side" id="side" aria-label="Seções">
+  <a href="#introducao"><i></i><span>Introdução</span></a>
+  <a href="#cruzamento"><i></i><span>Cruzamento e custo</span></a>
+  <a href="#seguranca"><i></i><span>Segurança</span></a>
+  <a href="#disponibilidade"><i></i><span>Disponibilidade</span></a>
+</nav>
+
+<section class="intro" id="top">
+  <div class="stage" id="stage">
+    <div class="panel l"><img src="img/hero-esquerda.webp" alt="Ilustração das Três Caixas d'Água de Porto Velho sobre papel amarelo" width="1024" height="1536" style="object-position:50% 40%"></div>
+    <div class="panel c" id="pc">
+      <img src="img/hero-centro.webp" alt="Pôr do sol sobre o Rio Madeira, em Porto Velho" width="1672" height="941" fetchpriority="high">
+      <div class="hero-copy">
+        <p class="introducing" id="introducing">Apresentando</p>
+        <div class="titleblock" id="titleblock">
+          <p class="date">23 de setembro de 2026</p>
+          <h1>SISConforme</h1>
+          <ol class="toc">
+            <li><a href="#introducao"><span class="n">(1)</span><span class="dots"></span><span class="t">Introdução</span></a></li>
+            <li><a href="#cruzamento"><span class="n">(2)</span><span class="dots"></span><span class="t">Cruzamento e custo</span></a></li>
+            <li><a href="#seguranca"><span class="n">(3)</span><span class="dots"></span><span class="t">Segurança</span></a></li>
+            <li><a href="#disponibilidade"><span class="n">(4)</span><span class="dots"></span><span class="t">Disponibilidade</span></a></li>
+          </ol>
+        </div>
+      </div>
+      <p class="hint" id="hint">Role para baixo</p>
+    </div>
+    <div class="panel r"><img src="img/hero-direita.webp" alt="Detalhe de uma locomotiva da Estrada de Ferro Madeira-Mamoré" width="1024" height="1536" style="object-position:25% 50%"></div>
+  </div>
+</section>
+
+<article class="prose">
+  <div class="col" id="introducao">
+    <p class="lead">Apresentamos o SISConforme, o portal de autorregularização do ISSQN de Porto Velho. Ele mostra a cada contribuinte as mesmas divergências que a malha fiscal encontra — antes que elas virem auto de infração.</p>
+
+    <p>O SISConforme é o primeiro serviço da Secretaria da Receita Municipal da Secretaria Municipal de Economia construído sobre cruzamento de dados massivos. O sistema cruza diversas fontes de dados, notadamente: as notas fiscais, inclusive as do repositório nacional, as declarações e pagamentos do Simples Nacional e os meios de recebimentos financeiros (cartão de débito, crédito, Pix etc.), compartilhados pela SEFIN-RO por meio de convênio.</p>
+    <p>Cada divergência é revisada por auditores fiscais da receita municipal antes de chegar ao portal. O contribuinte somente recebe alertas que passaram por conferência humana, e pode resolvê-los por conta própria, mediante autorregularização, prevista no Código Tributário Municipal.</p>
+    <p>Veja a vantagem para o contribuinte de Porto Velho:</p>
+    <p><b>Transparência.</b> A empresa acessa, competência por competência, todos os dados que o Fisco também acessa. Quando ocorrem divergências entre os dados cruzados, o portal indica qual fonte diverge e por quanto — em vez de uma intimação genérica meses depois.</p>
+    <p><b>Autorregularização.</b> No mesmo fluxo, o contribuinte pode se regularizar, inclusive antes mesmo de ser notificado. Não é preciso abrir processo, marcar atendimento ou ir ao balcão da secretaria.</p>
+    <p><b>Sigilo.</b> Cada CNPJ acessa apenas os próprios dados, autenticado por certificado digital e-CNPJ ou pelo Login Único gov.br. Contadores enxergam somente as empresas que representam, por procuração eletrônica. Os detalhes estão na seção de <a href="#seguranca">Segurança</a>.</p>
+    <p><b>Comunicação.</b> Os alertas dizem o que aconteceu, qual o valor e o que fazer, em linguagem direta. O contribuinte entende a divergência sem precisar ligar para a Prefeitura nem procurar atendimento presencial.</p>
+
+    <h2 id="cruzamento">Cruzamento e custo da conformidade</h2>
+    <p>O maior ganho do SISConforme está no momento em que a divergência aparece. No modelo tradicional, a empresa só descobre o problema quando a fiscalização já foi iniciada — e aí a multa de ofício é inevitável. No portal, o alerta chega enquanto a correção ainda é voluntária.</p>
+  </div>
+
+  <div class="wide block">
+    <div class="tscroll">
+      <table class="cmp">
+        <thead><tr><th></th><th class="hl">SISConforme</th><th>Fiscalização de ofício</th><th>Atendimento presencial</th><th>Consulta formal</th></tr></thead>
+        <tbody>
+          <tr><th>Quando a empresa descobre<small>após o fato gerador</small></th><td class="hl">Na competência seguinte<small>alerta no portal</small></td><td>Meses ou anos depois<small>na intimação</small></td><td>Quando procura a secretaria</td><td>—</td></tr>
+          <tr><th>Multa de ofício<small>CTN, art. 138</small></th><td class="hl">Não se aplica<small>denúncia espontânea</small></td><td>Aplica-se<small>lançamento de ofício</small></td><td>Depende do momento</td><td>Não se aplica</td></tr>
+          <tr><th>Canal de resolução</th><td class="hl">100% digital<small>e-CNPJ ou gov.br</small></td><td>Processo administrativo</td><td>Balcão da SEMEC</td><td>Processo administrativo</td></tr>
+          <tr><th>Visibilidade das fontes<small>cartão · NFS-e · PGDAS</small></th><td class="hl">As três, lado a lado</td><td>Só no auto de infração</td><td>Parcial</td><td>—</td></tr>
+          <tr><th>Revisão humana<small>antes do contato</small></th><td class="hl">Sempre<small>auditor valida a malha</small></td><td>Sempre</td><td>—</td><td>Sempre</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col foot">
+    <p><sup>1</sup> <b>Denúncia espontânea:</b> nos termos do art. 138 do CTN, a responsabilidade por infração é excluída quando o contribuinte a denuncia e paga o tributo com juros antes do início de qualquer procedimento fiscal. O alerta do portal não constitui início de procedimento.</p>
+    <p><sup>2</sup> <b>Autorregularização:</b> o art. 45 do Código Tributário Municipal reforça que “§ 2º Não será afastada a espontaneidade quando o sujeito passivo for notificado à autorregularização, nos termos do § 1º do Art. 105 deste Código.”</p>
+    <p><sup>3</sup> <b>Meios de pagamento:</b> os valores de recebimentos por cartão vêm do sistema Cartão Cidade da SEFIN-RO, compartilhados sob o Termo de Convênio nº 225/2026/PGE-SEFIN.</p>
+  </div>
+
+  <div class="col">
+    <h3 style="margin-top:72px">Como o cruzamento se comporta</h3>
+    <p>Nos testes internos com a base de 2026, a maior parte das divergências veio de receita por cartão sem nota correspondente. Divergências entre NFS-e e PGDAS são menos frequentes, mas têm valor médio maior — normalmente um mês inteiro declarado a menor.</p>
+  </div>
+
+  <div class="wide block chart">
+    <div class="tabs" role="tablist" id="ctabs">
+      <button role="tab" aria-selected="true" data-k="a">Divergências por competência</button>
+      <button role="tab" aria-selected="false" data-k="b">Regularização após o alerta</button>
+    </div>
+    <div class="chartbox">
+      <div class="chart-head"><span id="ctitle">Divergências por competência</span><em id="csub">Quantidade de alertas · dados ilustrativos</em></div>
+      <div class="legend" id="clegend"></div>
+      <div id="csvg"></div>
+    </div>
+    <p class="caption" id="ccap">Simulação para demonstração da interface. Os números reais serão publicados após o primeiro ciclo completo da malha.</p>
+  </div>
+
+  <div class="col">
+    <p>Cada perfil de usuário encontra no portal uma visão diferente da mesma informação:</p>
+  </div>
+
+  <div class="col block carousel">
+    <div class="tabs" role="tablist" id="qtabs">
+      <button role="tab" aria-selected="true">Contribuinte</button>
+      <button role="tab" aria-selected="false">Contador</button>
+      <button role="tab" aria-selected="false">Auditor</button>
+      <button role="tab" aria-selected="false">Procurador</button>
+    </div>
+    <div class="track-wrap">
+      <div class="track" id="track">
+        <div class="card on"><p class="k">Cenário</p><p>A clínica recebeu R$ 97,5 mil no cartão em maio, mas emitiu R$ 71,3 mil em notas. O alerta aparece no portal com a diferença calculada, e a responsável emite as notas faltantes no mesmo dia, sem multa.</p><div class="who"><div><b>Empresa do Simples Nacional</b><em>Acesso por e-CNPJ</em></div><span class="mark">PJ</span></div></div>
+        <div class="card"><p class="k">Cenário</p><p>Um escritório com 140 clientes vê num único painel quais empresas têm alerta aberto, ordenadas por valor. Em vez de descobrir o problema na intimação, ele trata as divergências no fechamento do mês.</p><div class="who"><div><b>Escritório de contabilidade</b><em>Procuração eletrônica</em></div><span class="mark">CRC</span></div></div>
+        <div class="card"><p class="k">Cenário</p><p>A auditora monta a malha no TRAMA, valida as divergências e libera os alertas. No painel interno, acompanha quem regularizou e concentra a fiscalização nos casos que continuam abertos depois do prazo.</p><div class="who"><div><b>Auditoria fiscal · SEMEC</b><em>Acesso interno</em></div><span class="mark">SEMEC</span></div></div>
+        <div class="card"><p class="k">Cenário</p><p>O procurador de uma empresa em recuperação consulta o histórico de alertas e respostas para instruir o parcelamento. Tudo que foi enviado pelo portal fica registrado, com data e responsável.</p><div class="who"><div><b>Representante legal</b><em>Login Único gov.br</em></div><span class="mark">ADV</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <h2 id="comunicacao">Comunicação</h2>
+    <p>Uma divergência fiscal não precisa ser uma carta difícil de entender. Comparamos a notificação tradicional com o alerta do SISConforme para a mesma situação: receita por cartão maior que as notas emitidas em maio de 2026.</p>
+  </div>
+
+  <div class="wide block">
+    <div class="tabs" role="tablist"><button role="tab" aria-selected="true">Receita sem nota</button></div>
+    <div class="sbs">
+      <div>
+        <p class="lab"><i></i>Notificação tradicional</p>
+        <div class="msg">
+          <p>Fica o contribuinte acima qualificado NOTIFICADO a apresentar, no prazo de 10 (dez) dias, documentação comprobatória referente às operações do período de apuração 05/2026, tendo em vista indícios de omissão de receitas apurados em procedimento de cruzamento de informações, sob pena de lançamento de ofício do crédito tributário e aplicação das penalidades cabíveis previstas na legislação tributária municipal.</p>
+        </div>
+      </div>
+      <div>
+        <p class="lab"><i></i>Alerta SISConforme</p>
+        <div class="msg">
+          <p><b>Maio de 2026: R$ 26.240,00 recebidos por cartão sem nota fiscal correspondente.</b></p>
+          <p>Cartão: R$ 97.540,00 · NFS-e emitidas: R$ 71.300,00 · PGDAS: R$ 71.300,00</p>
+          <p>Você pode resolver sem multa até o início de qualquer fiscalização:</p>
+          <span class="mono">1. Emitir as NFS-e faltantes da competência 05/2026
+2. Retificar o PGDAS de maio
+3. Ou justificar (ex.: venda de mercadoria, estorno)</span>
+        </div>
+      </div>
+    </div>
+    <p class="caption">Exemplo com CNPJ fictício. O texto final dos alertas será validado pela Procuradoria.</p>
+  </div>
+
+  <div class="col">
+    <h2 id="seguranca">Segurança</h2>
+    <p>Dado fiscal é sigiloso por lei. O art. 198 do CTN veda a divulgação da situação econômica do contribuinte, e a LGPD rege o tratamento de dados pessoais de sócios e representantes. O SISConforme foi desenhado a partir dessas duas regras.</p>
+
+    <h3>Autenticação</h3>
+    <p>A entrada é feita com certificado digital e-CNPJ ou pelo Login Único gov.br, via OpenID Connect. Não existem senhas próprias do portal para vazar ou esquecer.</p>
+
+    <h3>Autorização por objeto</h3>
+    <p>Cada consulta é filtrada pelo CNPJ do titular no backend, e não na tela. Não há rota, parâmetro ou relatório que devolva dados de outra empresa — nem para contadores, que só veem as empresas vinculadas por procuração.</p>
+
+    <h3>Origem dos dados</h3>
+    <p>NFS-e vem da base tributária do município e do repositório nacional de notas. O PGDAS vem da Receita Federal. Os recebimentos dos meios de pagamento chegam pela API do Cartão Cidade da SEFIN-RO, sob o Termo de Convênio nº 225/2026/PGE-SEFIN, e são usados exclusivamente para fins fiscais.</p>
+
+    <h3>Somente leitura</h3>
+    <p>O portal consome, por REST, apenas resultados já validados no TRAMA. As bases de origem ficam atrás de conexões somente leitura; nenhuma ação no portal altera dados de outro sistema sem passar pelos fluxos oficiais de emissão e retificação.</p>
+
+    <h2 id="disponibilidade">Disponibilidade</h2>
+    <p>O SISConforme está em implantação. A primeira fase atende empresas prestadoras de serviço com inscrição municipal em Porto Velho, incluindo optantes do Simples Nacional. O acesso para escritórios de contabilidade e o painel interno da auditoria entram na sequência.</p>
+    <p>Dúvidas sobre o portal podem ser encaminhadas à Secretaria Municipal de Economia pelos canais oficiais de atendimento da Prefeitura de Porto Velho.</p>
+  </div>
+</article>
+
+<footer>
+  <div class="f-in">
+    <div>
+      <p style="color:var(--night-ink);font:600 17px var(--sans);display:flex;gap:9px;align-items:center"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18 L10 5 L13 11" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 18 L17 7 L21 18" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>SISConforme</p>
+      <p style="margin-top:12px;max-width:30ch">Portal de autorregularização do ISSQN · Secretaria Municipal de Economia de Porto Velho</p>
+    </div>
+    <div><h3>Portal</h3><ul><li><a href="#introducao">Introdução</a></li><li><a href="#cruzamento">Cruzamento</a></li><li><a href="#comunicacao">Alertas</a></li><li><a href="#disponibilidade">Disponibilidade</a></li></ul></div>
+    <div><h3>Fontes</h3><ul><li>NFS-e municipal</li><li>PGDAS-D</li><li>Cartão Cidade · SEFIN-RO</li></ul></div>
+    <div><h3>Legislação</h3><ul><li>CTN, arts. 138 e 198</li><li>LC nº 116/2003</li><li>LC nº 123/2006</li><li>Lei nº 13.709/2018</li></ul></div>
+    <div><h3>Ajuda</h3><ul><li><a href="#seguranca">Privacidade</a></li><li><a href="#seguranca">Segurança</a></li><li><a href="#disponibilidade">Atendimento</a></li></ul></div>
+  </div>
+  <div class="f-bot"><span>© 2026 Prefeitura de Porto Velho · SEMEC</span><span>Protótipo de interface</span></div>
+</footer>
+
+<script>
+(function(){
+/* ---------- scroll choreography ---------- */
+const intro=document.querySelector('.intro'),pc=document.getElementById('pc'),introducing=document.getElementById('introducing'),
+      tb=document.getElementById('titleblock'),hint=document.getElementById('hint'),nav=document.getElementById('nav'),side=document.getElementById('side');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)), ease=t=>1-Math.pow(1-t,3), seg=(p,a,b)=>clamp((p-a)/(b-a),0,1);
+function onScroll(){
+  const rect=intro.getBoundingClientRect(),vh=innerHeight;
+  let p=clamp(-rect.top/(rect.height-vh),0,1); if(reduce)p=Math.max(p,.6);
+  const narrow=innerWidth<700;
+  const start=narrow?62:42,end=narrow?100:85;
+  const cw=start+(end-start)*ease(seg(p,0,.55));
+  pc.style.setProperty('--cw',cw+'%');
+  const a=seg(p,.08,.22);introducing.style.opacity=1-a;introducing.style.transform=`translateY(${-a*30}px)`;
+  const b=ease(seg(p,.22,.5));tb.style.opacity=b;tb.style.transform=`translateY(${(1-b)*40}px) scale(${.96+.04*b})`;
+  tb.style.visibility=b<.02?'hidden':'visible';
+  hint.style.opacity=1-seg(p,0,.1);
+  const past=rect.bottom<70;nav.classList.toggle('solid',past);side.classList.toggle('on',past);
+  // active side marker
+  const ids=['introducao','cruzamento','seguranca','disponibilidade'];let cur=0;
+  ids.forEach((id,i)=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<vh*.4)cur=i});
+  side.querySelectorAll('a').forEach((l,i)=>l.classList.toggle('active',i===cur));
+}
+function sb(){document.documentElement.style.setProperty('--sb',(innerWidth-document.documentElement.clientWidth)+'px')}sb();
+onScroll();
+addEventListener('scroll',()=>requestAnimationFrame(onScroll),{passive:true});
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{sb();onScroll()},150)});
+
+/* ---------- chart ---------- */
+const COL={clay:'#D97757',green:'#3C9A6B',gold:'#D4A12A',slate:'#6B6A66'};
+const months=['jan','fev','mar','abr','mai','jun','jul','ago'];
+const DATA={
+  a:{title:'Divergências por competência',sub:'Quantidade de alertas · dados ilustrativos',
+     series:[{n:'Cartão × NFS-e',c:COL.clay,v:[412,398,436,421,455,430,402,388]},{n:'NFS-e × PGDAS',c:COL.green,v:[138,141,129,150,162,147,133,128]},{n:'Cartão × PGDAS',c:COL.gold,v:[96,102,91,110,118,104,99,94]}],
+     max:500,step:100,type:'line',cap:'Simulação para demonstração da interface. Os números reais serão publicados após o primeiro ciclo completo da malha.'},
+  b:{title:'Regularização após o alerta',sub:'% de alertas resolvidos · dados ilustrativos',
+     series:[{n:'Até 30 dias',c:COL.clay,v:[38]},{n:'Até 60 dias',c:COL.green,v:[57]},{n:'Até 90 dias',c:COL.gold,v:[66]},{n:'Sem resposta',c:COL.slate,v:[34]}],
+     max:100,step:20,type:'bar',cap:'Meta de referência para o piloto. Alertas sem resposta em 90 dias seguem para fiscalização.'}
+};
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function render(k){
+  const d=DATA[k];document.getElementById('ctitle').textContent=d.title;document.getElementById('csub').textContent=d.sub;document.getElementById('ccap').textContent=d.cap;
+  document.getElementById('clegend').innerHTML=d.series.map(s=>`<span><i style="background:${s.c}"></i>${esc(s.n)}</span>`).join('');
+  const W=820,H=360,L=56,R=20,T=16,B=48,iw=W-L-R,ih=H-T-B,y=v=>T+ih-(v/d.max)*ih;
+  let g='';
+  for(let v=0;v<=d.max;v+=d.step){g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="${v?'#E2DFD6':'#141413'}" stroke-width="${v?1:1.2}"/><text x="${L-12}" y="${y(v)+4}" text-anchor="end" font-size="12">${d.type==='bar'?v+'%':v}</text>`}
+  g+=`<line x1="${L}" x2="${L}" y1="${T}" y2="${T+ih}" stroke="#141413" stroke-width="1.2"/>`;
+  if(d.type==='line'){
+    const x=i=>L+iw*(i+.5)/months.length;
+    months.forEach((m,i)=>g+=`<text x="${x(i)}" y="${H-B+22}" text-anchor="middle" font-size="12">${m}/26</text>`);
+    g+=`<text x="${L+iw/2}" y="${H-4}" text-anchor="middle" font-size="13">Competência</text>`;
+    d.series.forEach(s=>{
+      g+=`<polyline fill="none" stroke="${s.c}" stroke-width="2.2" points="${s.v.map((v,i)=>x(i)+','+y(v)).join(' ')}"/>`;
+      s.v.forEach((v,i)=>g+=`<circle cx="${x(i)}" cy="${y(v)}" r="5.5" fill="${s.c}" stroke="#2b2a27" stroke-width="1"><title>${esc(s.n)} · ${months[i]}/26: ${v}</title></circle>`);
+    });
+  }else{
+    const n=d.series.length,bw=Math.min(90,iw/n*.45);
+    d.series.forEach((s,i)=>{const cx=L+iw*(i+.5)/n,v=s.v[0];
+      g+=`<rect x="${cx-bw/2}" y="${y(v)}" width="${bw}" height="${y(0)-y(v)}" fill="${s.c}" stroke="#2b2a27" stroke-width="1"/><text x="${cx}" y="${y(v)-8}" text-anchor="middle" font-size="13" font-weight="600">${v}%</text><text x="${cx}" y="${H-B+22}" text-anchor="middle" font-size="12">${esc(s.n)}</text>`});
+  }
+  document.getElementById('csvg').innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(d.title)}">${g}</svg>`;
+}
+document.querySelectorAll('#ctabs button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#ctabs button').forEach(x=>x.setAttribute('aria-selected',x===b));render(b.dataset.k)}));
+render('a');
+
+/* ---------- carousel ---------- */
+const qt=[...document.querySelectorAll('#qtabs button')],track=document.getElementById('track'),cards=[...track.children];
+function go(i){qt.forEach((b,j)=>b.setAttribute('aria-selected',i===j));cards.forEach((c,j)=>c.classList.toggle('on',i===j));
+  const step=cards[0].getBoundingClientRect().width+64;track.style.transform=`translateX(${-step*i}px)`}
+qt.forEach((b,i)=>b.addEventListener('click',()=>go(i)));
+cards.forEach((c,i)=>c.addEventListener('click',()=>go(i)));
+addEventListener('resize',()=>go(qt.findIndex(b=>b.getAttribute('aria-selected')==='true')));
+})();
+</script>
+</body></html>

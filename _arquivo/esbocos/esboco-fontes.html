@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Esboço · Fontes de dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ivory:#FAF9F5;--ink:#141413;--muted:#6F6D66;--hair:#DEDBD2;--clay:#D97757;--clay-deep:#C15F3C;--green:#3C9A6B;--gold:#D4A12A;--stone:#C9C5BA;
+  --serif:"Source Serif 4",Georgia,serif;--sans:"Inter",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--sans)}
+header{max-width:1180px;margin:0 auto;padding:48px 16px 8px}
+.tag{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-deep);font-weight:600}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(28px,4.5vw,44px);margin:.3em 0 .2em}
+header p{color:var(--muted);max-width:680px;line-height:1.55}
+.toggle{display:inline-flex;border:1px solid var(--hair);border-radius:999px;background:#fff;padding:4px;margin-top:12px}
+.toggle button{border:0;background:none;font:600 14px var(--sans);padding:9px 18px;border-radius:999px;cursor:pointer;color:var(--muted)}
+.toggle button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.grid{max-width:1180px;margin:24px auto 64px;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+.card{background:#fff;border:1px solid var(--hair);border-radius:14px;padding:18px}
+.card svg{width:100%;height:auto;display:block}
+.card b{display:block;font-family:var(--serif);font-size:21px;margin-top:10px}
+.card span{display:block;font-size:14px;color:var(--muted);line-height:1.5;margin-top:4px}
+</style>
+</head>
+<body>
+<header>
+  <div class="tag">Esboço · descartável</div>
+  <h1>Como mostrar o cruzamento?</h1>
+  <p>Três formas de representar as fontes (cartão, nota fiscal e PGDAS) sem as caixas d'água. Todas mostram a mesma situação da Dona Ana: R$ 97,5 mil recebidos no cartão contra R$ 71,3 mil em notas.</p>
+  <div class="toggle" role="group" aria-label="Estado">
+    <button id="bAntes" aria-pressed="true">Antes: divergência</button>
+    <button id="bDepois" aria-pressed="false">Depois: regularizado</button>
+  </div>
+</header>
+
+<section class="grid">
+  <div class="card"><svg viewBox="0 0 600 420" id="optA"></svg><b>A · Os próprios objetos</b><span>Um cartão, uma nota fiscal e a declaração do Simples, desenhados como objetos reais. Embaixo de cada um, uma pilha de moedas mostra o valor. Qualquer pessoa reconhece os três de cara.</span></div>
+  <div class="card"><svg viewBox="0 0 600 420" id="optB"></svg><b>B · A balança</b><span>O que entrou no cartão fica de um lado e o que foi declarado (notas + PGDAS) fica do outro. Se a balança pende, tem divergência; quando ela equilibra, está tudo certo. A ideia de "conformidade" fica bem literal.</span></div>
+  <div class="card"><svg viewBox="0 0 600 420" id="optC"></svg><b>C · Conferência lado a lado</b><span>Cada venda no cartão procura a sua nota. As que ficam sem par se destacam em vermelho. É a mais fiel ao que o sistema faz de verdade, mas tem mais informação na tela.</span></div>
+</section>
+
+<script>
+const C={ink:'#141413',muted:'#6F6D66',hair:'#DEDBD2',stone:'#C9C5BA',clay:'#D97757',deep:'#C15F3C',green:'#3C9A6B',gold:'#D4A12A',ivory:'#FAF9F5'};
+const T=(x,y,s,o={})=>`<text x="${x}" y="${y}" text-anchor="${o.a||'middle'}" font-family="${o.f||'Inter'}" font-weight="${o.w||600}" font-size="${s}" fill="${o.c||C.ink}">${o.t}</text>`;
+
+/* ---- objetos ---- */
+function cartao(x,y,s=1){return `<g transform="translate(${x} ${y}) scale(${s})">
+  <rect width="150" height="96" rx="12" fill="${C.gold}"/>
+  <rect width="150" height="96" rx="12" fill="url(#shine)"/>
+  <rect x="16" y="30" width="26" height="20" rx="4" fill="#F2D98A" stroke="#B8881C" stroke-width="1.5"/>
+  <path d="M29 30v20M16 40h26" stroke="#B8881C" stroke-width="1.2"/>
+  <g fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".9"><path d="M122 32q6 8 0 16"/><path d="M129 28q9 12 0 24"/></g>
+  <g fill="#fff" opacity=".9">${[0,1,2,3].map(i=>`<circle cx="${18+i*8}" cy="70" r="2.4"/><circle cx="${58+i*8}" cy="70" r="2.4"/>`).join('')}</g>
+  <text x="16" y="86" font-family="Inter" font-size="9" font-weight="600" fill="#fff" letter-spacing="1">CARTÃO · PIX</text></g>`}
+function nota(x,y,s=1){return `<g transform="translate(${x} ${y}) scale(${s})">
+  <rect width="96" height="124" rx="4" fill="#fff" stroke="${C.stone}" stroke-width="2"/>
+  <rect width="96" height="24" rx="4" fill="${C.clay}"/><rect y="16" width="96" height="8" fill="${C.clay}"/>
+  <text x="48" y="17" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#fff">NFS-e</text>
+  <g stroke="${C.stone}" stroke-width="2" stroke-linecap="round"><path d="M10 38h76M10 47h60M10 56h76M10 65h50"/></g>
+  <path d="M10 82h76" stroke="${C.ink}" stroke-width="1"/>
+  <text x="86" y="98" text-anchor="end" font-family="Inter" font-size="10" font-weight="700" fill="${C.ink}">TOTAL</text>
+  <g fill="${C.ink}"><rect x="10" y="90" width="18" height="18" fill="none" stroke="${C.ink}" stroke-width="2"/><rect x="14" y="94" width="4" height="4"/><rect x="20" y="100" width="4" height="4"/><rect x="14" y="102" width="4" height="3"/></g></g>`}
+function pgdas(x,y,s=1){return `<g transform="translate(${x} ${y}) scale(${s})">
+  <rect width="96" height="124" rx="4" fill="#fff" stroke="${C.stone}" stroke-width="2"/>
+  <rect width="96" height="24" rx="4" fill="${C.green}"/><rect y="16" width="96" height="8" fill="${C.green}"/>
+  <text x="48" y="17" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#fff">PGDAS-D</text>
+  ${[0,1,2,3].map(i=>`<rect x="10" y="${36+i*18}" width="10" height="10" rx="2" fill="none" stroke="${C.green}" stroke-width="2"/><path d="M12 ${41+i*18}l3 3l5-6" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round"/><path d="M28 ${41+i*18}h${i%2?44:58}" stroke="${C.stone}" stroke-width="2" stroke-linecap="round"/>`).join('')}
+  <text x="48" y="116" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="${C.muted}">SIMPLES NACIONAL</text></g>`}
+const DEFS=`<defs><linearGradient id="shine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>`;
+function badge(x,y,txt,col){const w=txt.length*9.4+28;return `<rect x="${x-w/2}" y="${y-17}" width="${w}" height="34" rx="17" fill="${col}"/>`+T(x,y+6,17,{t:txt,c:'#fff'})}
+
+/* ---- A: objetos + moedas ---- */
+function coins(cx,base,n,col){let s='';for(let i=0;i<n;i++){const y=base-i*11;
+  s+=`<ellipse cx="${cx}" cy="${y+5}" rx="36" ry="9" fill="${col}" opacity=".55"/><ellipse cx="${cx}" cy="${y}" rx="36" ry="9" fill="${col}" stroke="#fff" stroke-width="1.5"/>`}return s}
+function optA(ok){
+  const v=[97.5,ok?97.5:71.3,ok?97.5:71.3], n=v.map(x=>Math.round(x/6.5)), xs=[110,300,490], cols=[C.gold,C.clay,C.green];
+  let s=DEFS;
+  s+=cartao(35,20,1)+nota(252,6,.95)+pgdas(442,6,.95);
+  xs.forEach((x,i)=>{s+=coins(x,352,n[i],cols[i])+T(x,398,19,{t:'R$ '+v[i].toFixed(1).replace('.',',')+' mil',f:'Source Serif 4'})});
+  if(!ok){s+=`<path d="M150 ${352-14*11} H520" stroke="${C.deep}" stroke-width="2.5" stroke-dasharray="7 6"/>`+badge(395,352-12.5*11,'− R$ 26.240',C.deep)}
+  else s+=badge(300,160,'✓ Tudo confere',C.green);
+  return s}
+
+/* ---- B: balança ---- */
+function optB(ok){
+  const th=ok?0:-9, r=th*Math.PI/180, cx=300, cy=120, L=190;
+  const le={x:cx-L*Math.cos(r),y:cy-L*Math.sin(r)}, ri={x:cx+L*Math.cos(r),y:cy+L*Math.sin(r)};
+  const pan=(p,inner,label,val,col)=>{const py=p.y+120;return `
+    <path d="M${p.x} ${p.y} L${p.x-70} ${py} M${p.x} ${p.y} L${p.x+70} ${py}" stroke="${C.muted}" stroke-width="2"/>
+    ${inner(p.x,py)}
+    <path d="M${p.x-82} ${py} Q${p.x} ${py+34} ${p.x+82} ${py} Z" fill="${col}"/>
+    ${T(p.x,py+62,15,{t:label,c:C.muted,w:500})}${T(p.x,py+86,21,{t:val,f:'Source Serif 4'})}`};
+  let s=DEFS+`
+    <path d="M${cx} ${cy} L${cx} 380 M${cx-70} 386 H${cx+70}" stroke="${C.ink}" stroke-width="8" stroke-linecap="round"/>
+    <path d="M${cx-18} 386 L${cx} 350 L${cx+18} 386Z" fill="${C.ink}"/>
+    <line x1="${le.x}" y1="${le.y}" x2="${ri.x}" y2="${ri.y}" stroke="${C.ink}" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="12" fill="${ok?C.green:C.deep}"/>`;
+  s+=pan(le,(x,y)=>cartao(x-60,y-64,.8),'Recebido no cartão','R$ 97,5 mil',C.gold);
+  s+=pan(ri,(x,y)=>nota(x-66,y-96,.72)+pgdas(x+2,y-96,.72),'Notas + PGDAS',ok?'R$ 97,5 mil':'R$ 71,3 mil',C.clay);
+  s+=ok?badge(cx,60,'✓ Em equilíbrio',C.green):badge(cx,60,'Diferença: R$ 26.240',C.deep);
+  return s}
+
+/* ---- C: conferência ---- */
+function optC(ok){
+  const rec=[21.3,18.0,14.24,16.0,12.0,16.0], miss=[2,4];
+  let s=DEFS+T(120,30,15,{t:'Vendas no cartão',c:C.muted,w:500})+T(470,30,15,{t:'Notas emitidas',c:C.muted,w:500});
+  rec.forEach((v,i)=>{const y=52+i*52, m=miss.includes(i)&&!ok, val='R$ '+v.toFixed(2).replace('.',',')+' mil';
+    s+=`<rect x="30" y="${y}" width="180" height="40" rx="8" fill="${m?'#FBEAE3':'#fff'}" stroke="${m?C.deep:C.hair}" stroke-width="2"/>
+      <rect x="42" y="${y+11}" width="28" height="18" rx="3" fill="${C.gold}"/>`+T(84,y+26,15,{t:val,a:'start',w:500});
+    if(m){
+      s+=`<path d="M214 ${y+20} H376" stroke="${C.deep}" stroke-width="2.5" stroke-dasharray="6 6"/>
+        <rect x="380" y="${y}" width="180" height="40" rx="8" fill="none" stroke="${C.deep}" stroke-width="2" stroke-dasharray="6 5"/>`+T(470,y+26,14,{t:'sem nota',c:C.deep});
+    }else{
+      const fresh=miss.includes(i);
+      s+=`<path d="M214 ${y+20} H376" stroke="${C.green}" stroke-width="2.5"/><circle cx="295" cy="${y+20}" r="11" fill="${C.green}"/><path d="M289 ${y+20}l4 4l7-8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+        <rect x="380" y="${y}" width="180" height="40" rx="8" fill="#fff" stroke="${fresh?C.green:C.hair}" stroke-width="2"/>
+        <rect x="392" y="${y+8}" width="18" height="24" rx="2" fill="#fff" stroke="${C.clay}" stroke-width="2"/><rect x="392" y="${y+8}" width="18" height="6" fill="${C.clay}"/>`+T(424,y+26,15,{t:'NFS-e '+val.replace(' mil','k').replace('R$ ',''),a:'start',w:500});
+    }});
+  s+=ok?badge(300,395,'✓ Toda venda tem nota · PGDAS confere',C.green):badge(300,395,'2 vendas sem nota · R$ 26.240',C.deep);
+  return s}
+
+let ok=false;
+function draw(){document.getElementById('optA').innerHTML=optA(ok);document.getElementById('optB').innerHTML=optB(ok);document.getElementById('optC').innerHTML=optC(ok);
+  bAntes.setAttribute('aria-pressed',!ok);bDepois.setAttribute('aria-pressed',ok)}
+bAntes.onclick=()=>{ok=false;draw()};bDepois.onclick=()=>{ok=true;draw()};
+draw();
+</script>
+</body>
+</html>
