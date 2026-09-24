@@ -1,0 +1,11 @@
+.tscroll{overflow-x:auto}
+.cmp{border-collapse:collapse;width:100%;min-width:760px;font-family:var(--sans);font-size:14.5px;font-variant-numeric:tabular-nums;border:1px solid var(--rule)}
+.cmp th,.cmp td{border:1px solid var(--rule);padding:14px 13px;vertical-align:top;text-align:left;width:19%}
+.cmp th:first-child,.cmp td:first-child{width:24%}
+.cmp thead th{font-weight:600;font-size:14px;padding-block:18px}
+.cmp tbody th{font-weight:600}
+.cmp tbody th small{display:block;font-weight:400;color:var(--muted);margin-top:4px;font-size:13.5px}
+.cmp td small{display:block;color:var(--muted);font-size:12.5px;margin-top:3px}
+.cmp .hl{background:var(--clay-fill);font-weight:600;box-shadow:inset 1.5px 0 0 var(--clay),inset -1.5px 0 0 var(--clay)}
+.cmp thead .hl{background:transparent;box-shadow:inset 1.5px 0 0 var(--clay),inset -1.5px 0 0 var(--clay),inset 0 1.5px 0 var(--clay)}
+.cmp tbody tr:last-child .hl{box-shadow:inset 1.5px 0 0 var(--clay),inset -1.5px 0 0 var(--clay),inset 0 -1.5px 0 var(--clay)}

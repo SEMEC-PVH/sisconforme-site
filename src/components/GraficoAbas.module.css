@@ -1,0 +1,8 @@
+.chartbox{border:1px solid var(--rule);padding:22px 22px 18px;background:var(--ivory)}
+.chartHead{display:flex;justify-content:space-between;gap:12px;font-family:var(--sans);font-size:14.5px;font-weight:600}
+.chartHead em{font-style:normal;font-weight:400;color:var(--muted);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px 18px;font-family:var(--sans);font-size:13px;margin:18px 0 6px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.35)}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+.chart text{font-family:var(--sans);fill:#3d3d3a}
