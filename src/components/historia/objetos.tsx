@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode, type Ref } from "react";
+import { Fragment, memo, type ReactNode, type Ref } from "react";
 import styles from "./HistoriaDonaAna.module.css";
 
 const INK = "#141413";
@@ -144,7 +144,7 @@ function Badge({ x, y, txt, col }: { x: number; y: number; txt: string; col: str
   );
 }
 
-export default function CenaObjetos({ ref }: { ref?: Ref<SVGSVGElement> }) {
+function CenaObjetos({ ref }: { ref?: Ref<SVGSVGElement> }) {
   return (
     <svg ref={ref} viewBox="0 0 600 420" className={styles.objs}>
       <defs>
@@ -225,3 +225,8 @@ export default function CenaObjetos({ ref }: { ref?: Ref<SVGSVGElement> }) {
     </svg>
   );
 }
+
+// M7: a cena SVG (~60 nós desenhados imperativamente via render()) não depende de
+// props que mudam (expressao/popAtivo ficam em HistoriaDonaAna); memo evita que ela
+// seja reconciliada a cada troca de expressão da Dona Ana.
+export default memo(CenaObjetos);
