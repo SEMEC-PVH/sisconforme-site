@@ -45,7 +45,7 @@ export default function Hero() {
   return (
     <section className={styles.intro} id="top" ref={introRef}>
       <div className={styles.stage}>
-        <div className={`${styles.panel} ${styles.l}`}>
+        <div className={styles.panel}>
           <Image
             src="/img/hero/hero-esquerda.webp"
             alt="Ilustração das Três Caixas d'Água de Porto Velho sobre papel amarelo"
@@ -107,7 +107,7 @@ export default function Hero() {
             Role para baixo
           </p>
         </div>
-        <div className={`${styles.panel} ${styles.r}`}>
+        <div className={styles.panel}>
           <Image
             src="/img/hero/hero-direita.webp"
             alt="Detalhe de uma locomotiva da Estrada de Ferro Madeira-Mamoré"

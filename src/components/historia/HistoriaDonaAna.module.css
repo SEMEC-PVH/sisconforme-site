@@ -444,4 +444,26 @@
   .hs * {
     animation: none !important;
   }
+  /* pré-hidratação: mesmo estado que a classe .static (JS) aplica, para a seção já nascer sem altura de 720vh */
+  .hs {
+    height: auto;
+  }
+  .hs .pin {
+    position: relative;
+  }
+  .hs ol.sr {
+    position: static;
+    width: auto;
+    height: auto;
+    clip: auto;
+    white-space: normal;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 16px 72px;
+    color: var(--night-ink);
+    font-family: var(--sans);
+    line-height: 1.6;
+    display: grid;
+    gap: 8px;
+  }
 }
