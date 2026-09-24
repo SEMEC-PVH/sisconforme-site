@@ -8,8 +8,8 @@ import { PNG } from "pngjs";
 const ORIGINAL = pathToFileURL(path.resolve(__dirname, "../../site/index.html")).href;
 const NOVO = "http://localhost:4173/";
 const SAIDA = path.resolve(__dirname, "../../test-results/paridade");
-/** Fração máxima de pixels diferentes aceita por captura. */
-const LIMITE = 0.015;
+/** Fração máxima de pixels diferentes aceita por captura (pior caso medido: 0.08%). */
+const LIMITE = 0.003;
 
 const VIEWPORTS = {
   desktop: { width: 1280, height: 800 },
@@ -129,6 +129,35 @@ for (const [nomeVp, vp] of Object.entries(VIEWPORTS)) {
   }
 }
 
+/**
+ * Captura a primeira pintura: original com JS normal (como as demais capturas), novo com
+ * JS desabilitado (sem hidratação) — para garantir que os defaults de CSS já batem com o
+ * que o JS escreveria em p=0 (ou p=0.6 sob prefers-reduced-motion).
+ */
+async function capturarPrimeiraPintura(browser: Browser, url: string, vp: { width: number; height: number }, comJs: boolean) {
+  const ctx = await browser.newContext({ viewport: vp, javaScriptEnabled: comJs });
+  const page = await ctx.newPage();
+  await page.goto(url, { waitUntil: "load" });
+  if (comJs) {
+    await page.evaluate(() => document.fonts.ready);
+  } else {
+    await page.waitForLoadState("load");
+    await page.waitForTimeout(700);
+  }
+  const png = await page.screenshot({ animations: "disabled", caret: "hide" });
+  await ctx.close();
+  return png;
+}
+
+for (const [nomeVp, vp] of Object.entries(VIEWPORTS)) {
+  test(`primeira-pintura · ${nomeVp} · hero`, async ({ browser }) => {
+    const original = await capturarPrimeiraPintura(browser, ORIGINAL, vp, true);
+    const novo = await capturarPrimeiraPintura(browser, NOVO, vp, false);
+    const razao = comparar(original, novo, path.join(SAIDA, `${nomeVp}-primeira-pintura-hero`));
+    expect(razao, `pixels diferentes: ${(razao * 100).toFixed(2)}%`).toBeLessThan(LIMITE);
+  });
+}
+
 test("console · sem erros ao percorrer a página", async ({ browser }) => {
   const ctx = await browser.newContext({ viewport: VIEWPORTS.desktop });
   const page = await ctx.newPage();
@@ -151,17 +180,51 @@ test("console · sem erros ao percorrer a página", async ({ browser }) => {
   expect(erros).toEqual([]);
 });
 
+async function esperarNoTopo(page: Page, id: string) {
+  await page.waitForTimeout(1200);
+  const topo = await page.evaluate((i) => document.getElementById(i)!.getBoundingClientRect().top, id);
+  expect(Math.abs(topo), `#${id} deveria estar no topo, está a ${topo}px`).toBeLessThan(120);
+}
+
 test("ancoras · links internos levam às seções", async ({ browser }) => {
   const ctx = await browser.newContext({ viewport: VIEWPORTS.desktop });
   const page = await ctx.newPage();
   await page.goto(NOVO, { waitUntil: "load" });
+
+  // rodapé
   for (const id of ["introducao", "cruzamento", "comunicacao", "seguranca", "disponibilidade"]) {
     const link = page.locator(`footer a[href="#${id}"]`).first();
     if ((await link.count()) === 0) continue;
     await link.click();
-    await page.waitForTimeout(1200);
-    const topo = await page.evaluate((i) => document.getElementById(i)!.getBoundingClientRect().top, id);
-    expect(Math.abs(topo), `#${id} deveria estar no topo, está a ${topo}px`).toBeLessThan(120);
+    await esperarNoTopo(page, id);
   }
+
+  // menu fixo (cabeçalho)
+  const linksMenu = page.locator('header a[href^="#"]');
+  const totalMenu = await linksMenu.count();
+  for (let i = 0; i < totalMenu; i++) {
+    const link = linksMenu.nth(i);
+    const href = await link.getAttribute("href");
+    const id = href?.slice(1) ?? "";
+    if (!id || id === "top") continue;
+    if ((await page.locator(`#${id}`).count()) === 0) continue;
+    await link.click();
+    await esperarNoTopo(page, id);
+  }
+
+  // sumário do hero (só visível/clicável com o titleblock exibido, ~p>=0.5; o original mostra a partir de p≈0.3)
+  await rolar(page, "top", 0.7);
+  const linksToc = page.locator("#top ol a");
+  const totalToc = await linksToc.count();
+  for (let i = 0; i < totalToc; i++) {
+    const link = linksToc.nth(i);
+    const href = await link.getAttribute("href");
+    const id = href?.slice(1) ?? "";
+    if (!id) continue;
+    await link.click();
+    await esperarNoTopo(page, id);
+    await rolar(page, "top", 0.7);
+  }
+
   await ctx.close();
 });
