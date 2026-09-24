@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Esboço · Fundo do "os dois."</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ivory:#FAF9F5;--ink:#141413;--muted:#6F6D66}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:Inter,system-ui,sans-serif}
+header{max-width:1100px;margin:0 auto;padding:40px 16px 8px}
+.tag{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#C15F3C;font-weight:600}
+h1{font-size:clamp(26px,4vw,40px);margin:.3em 0 .2em;letter-spacing:-.02em}
+header p{color:var(--muted);max-width:720px;line-height:1.55}
+.lista{max-width:1100px;margin:16px auto 80px;padding:0 16px;display:grid;gap:36px}
+.opcao b{display:block;font-size:20px;margin-top:12px}
+.opcao span{display:block;color:var(--muted);line-height:1.5;margin-top:4px;max-width:760px}
+.tela{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:10px;background:var(--ink)}
+.tela canvas,.tela svg.fundo{position:absolute;inset:0;width:100%;height:100%;display:block}
+.texto{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}
+.texto .grande{font-weight:600;font-size:clamp(44px,9.5vw,130px);letter-spacing:-.04em;line-height:1;color:transparent;-webkit-text-stroke:1.5px var(--ivory)}
+.texto .legenda{margin-top:28px;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ivory)}
+</style>
+</head>
+<body>
+<header>
+  <div class="tag">Esboço · fundo em vídeo</div>
+  <h1>O que fica atrás do "os dois."?</h1>
+  <p>Três estilos para o vídeo de fundo, todos nas cores do SISConforme e sem texto próprio. Aqui eles rodam ao vivo no navegador para você comparar; o escolhido vira um vídeo MP4 em loop.</p>
+</header>
+<section class="lista">
+  <div class="opcao">
+    <div class="tela"><canvas id="tintas"></canvas><div class="texto"><div class="grande">os dois.</div><div class="legenda">Fisco e contribuinte diante dos mesmos dados</div></div></div>
+    <b>A · Três tintas se misturando</b>
+    <span>Argila, verde e ouro (cartão, NFS-e e PGDAS) escorrem devagar e se fundem, como tinta na água, com grão de filme.</span>
+  </div>
+  <div class="opcao">
+    <div class="tela"><svg class="fundo" id="simbolo" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"></svg><div class="texto"><div class="grande">os dois.</div><div class="legenda">Fisco e contribuinte diante dos mesmos dados</div></div></div>
+    <b>B · O símbolo em movimento</b>
+    <span>As três casas do símbolo, grandes e desfocadas, acendem em argila, verde e ouro, com brilho, uma depois da outra, sobre fundo escuro.</span>
+  </div>
+  <div class="opcao">
+    <div class="tela"><canvas id="tecido"></canvas><div class="texto"><div class="grande">os dois.</div><div class="legenda">Fisco e contribuinte diante dos mesmos dados</div></div></div>
+    <b>C · Tecido nas cores da marca</b>
+    <span>A mesma sensação do fundo atual (tecido ondulando, fronteira viva), trocando laranja e azul por argila e verde, com um fio de ouro na fronteira.</span>
+  </div>
+</section>
+
+<script>
+const VERT = "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}";
+const COMUM = [
+  "precision mediump float;uniform vec2 r;uniform float t;",
+  "float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}",
+  "float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}",
+  "float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p*=2.02;a*=.5;}return v;}",
+  "const vec3 ARGILA=vec3(.851,.467,.341),ARGILA_F=vec3(.757,.373,.235),VERDE=vec3(.235,.604,.42),VERDE_F=vec3(.14,.42,.29),OURO=vec3(.831,.631,.165),TINTA=vec3(.078,.078,.075),MARFIM=vec3(.98,.976,.96);"
+].join("\n");
+const TINTAS = COMUM + [
+  "void main(){",
+  " vec2 uv=gl_FragCoord.xy/r;vec2 q=vec2(uv.x*r.x/r.y,uv.y)*1.4;",
+  " vec2 w=vec2(fbm(q+vec2(0.,t*.05)),fbm(q+vec2(5.2,1.3)-t*.04));",
+  " vec2 w2=vec2(fbm(q+3.*w+vec2(1.7,9.2)+t*.03),fbm(q+3.*w+vec2(8.3,2.8)-t*.035));",
+  " float a=fbm(q+2.5*w2);",
+  " vec3 c=mix(TINTA*1.4,ARGILA,smoothstep(.25,.6,a));",
+  " c=mix(c,VERDE,smoothstep(.35,.75,w2.x)*.85);",
+  " c=mix(c,OURO,smoothstep(.55,.85,w2.y)*.7);",
+  " c=mix(c,MARFIM,pow(smoothstep(.62,.95,a),3.)*.35);",
+  " c*=.8+.25*a;",
+  " c+=(h(gl_FragCoord.xy+fract(t*7.)*97.)-.5)*.1;",
+  " gl_FragColor=vec4(c,1.);}"
+].join("\n");
+const TECIDO = COMUM + [
+  "void main(){",
+  " vec2 uv=gl_FragCoord.xy/r;vec2 q=vec2(uv.x*r.x/r.y,uv.y);",
+  " float f=fbm(q*1.6+vec2(t*.04,-t*.03));float g=fbm(q*2.4-vec2(t*.02,t*.05)+f);",
+  " float borda=.5+.16*sin(uv.y*3.1+t*.35)+(g-.5)*.5;",
+  " float k=smoothstep(borda-.18,borda+.18,uv.x);",
+  " vec3 a=mix(ARGILA,ARGILA_F,clamp((1.-uv.y)*.7+(f-.5),0.,1.));",
+  " vec3 b=mix(VERDE_F,VERDE,clamp(g*1.3-.25+uv.y*.2,0.,1.));",
+  " vec3 c=mix(a,b,k);",
+  " c+=OURO*.35*(1.-abs(k-.5)*2.);",
+  " float trama=.5+.5*sin(gl_FragCoord.x*1.3+sin(gl_FragCoord.y*.08+t)*2.)*sin(gl_FragCoord.y*1.3);",
+  " c*=.93+.07*trama;",
+  " c+=(h(gl_FragCoord.xy+fract(t*7.)*97.)-.5)*.12;",
+  " gl_FragColor=vec4(c,1.);}"
+].join("\n");
+
+function shader(canvas, frag) {
+  const gl = canvas.getContext("webgl");
+  if (!gl) return;
+  const sh = (tipo, src) => {
+    const s = gl.createShader(tipo); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s));
+    return s;
+  };
+  const pr = gl.createProgram();
+  gl.attachShader(pr, sh(gl.VERTEX_SHADER, VERT)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, frag));
+  gl.linkProgram(pr); gl.useProgram(pr);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const lp = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
+  const ur = gl.getUniformLocation(pr, "r"), ut = gl.getUniformLocation(pr, "t");
+  function quadro(ms) {
+    const w = canvas.clientWidth, hh = canvas.clientHeight;
+    if (canvas.width !== w || canvas.height !== hh) { canvas.width = w; canvas.height = hh; gl.viewport(0, 0, w, hh); }
+    gl.uniform2f(ur, w, hh); gl.uniform1f(ut, ms / 1000); gl.drawArrays(gl.TRIANGLES, 0, 3);
+    requestAnimationFrame(quadro);
+  }
+  requestAnimationFrame(quadro);
+}
+shader(document.getElementById("tintas"), TINTAS);
+shader(document.getElementById("tecido"), TECIDO);
+
+/* B · símbolo: as três casas acendem na sua cor, com brilho, uma depois da outra */
+const PATHS = '<path d="M960.7 671.8C979.9 670.8 990.7 683.3 990.9 701.9L990.8 848.5L990.8 903.4C990.8 926.2 991.9 944.6 986.5 967.1C978.9 998.2 962.9 1026.7 940.3 1049.4C903.5 1086.4 853.5 1107.2 801.4 1107.3C750.9 1107.7 702.4 1087.9 666.6 1052.4C633.6 1019.6 613.1 975.7 612.9 928.9C612.9 923.1 612.8 917.4 612.8 911.7L612.4 872.7L611.7 771.9L611.6 735.6C611.6 729.5 611.3 720.3 612.2 714.6C612.7 710.9 613.9 707.4 615.8 704.2C619.4 697.9 625.4 693.4 632.4 691.8C639.9 689.8 647.9 691.1 654.4 695.2C659.9 698.6 666.1 706.2 666.8 712.4C668.4 727.1 667.6 745.8 667.6 760.7L667.3 879.0C667.3 901.3 665.3 935.1 669.9 955.9C685.7 1027.3 761.8 1070.9 832.0 1053.2C878.3 1041.5 917.4 1009.5 932.5 963.1C939.1 942.9 937.5 920.4 937.4 899.4L937.3 852.6L936.8 736.7C936.7 711.6 929.4 678.6 960.7 671.8Z"/><path d="M807.9 452.7C812.6 452.9 816.7 453.6 821.0 455.6C830.8 460.0 856.7 485.2 866.4 493.8L929.3 549.9L989.7 603.4C1001.6 613.8 1013.6 624.3 1025.3 634.8C1028.1 637.7 1032.3 641.3 1033.8 645.0C1034.6 647.2 1035.4 650.6 1035.6 652.8C1036.4 659.8 1034.3 666.8 1029.8 672.2C1025.3 677.8 1018.7 681.2 1011.5 681.7C996.7 682.9 984.4 668.7 974.1 659.6L939.5 629.1L806.4 511.6C789.9 524.1 773.5 537.2 757.2 550.0C724.9 576.0 690.6 601.9 658.0 627.7L688.1 627.6C705.0 627.6 723.5 627.2 728.5 648.1C730.1 655.0 728.8 662.3 724.9 668.3C715.6 682.7 697.1 680.2 682.2 680.2L640.7 680.2L603.4 680.3C592.1 680.3 579.6 682.0 570.5 674.9C555.1 663.1 557 642.5 571.9 631.3C579.8 625.3 587.8 618.7 595.4 612.6L660.1 561.4L749.4 490.3L775.6 469.6C787.6 460.1 791.9 454.1 807.9 452.7Z"/><path d="M589.0 306.2C593.7 305.8 597.0 305.6 601.7 306.8C605.6 307.8 609.2 309.6 612.4 312.0C619.9 317.7 631.9 328.8 639.3 335.3L691.5 381.3L735.6 420.2C744.3 427.7 760.5 440.2 765.8 449.5C758.7 467.9 748.1 472.5 732.1 483.6C713.7 466.9 693.0 449.8 674.0 433.4L594.8 364.4C559.4 392.0 524.0 420.5 488.9 448.6C475.3 459.3 461.8 470.2 448.3 481.1C461.5 481.4 493.1 479.2 503.4 483.1C509.8 485.5 515.7 490.6 518.3 497.1C521.0 503.7 520.9 511.7 517.9 518.2C515.1 524.5 509.7 529.8 503.1 532.1C499.8 533.2 496.1 533.7 492.5 533.9C471.1 535.0 449.2 533.9 427.7 533.9C411.0 534.0 392.7 535.2 376.2 534.0C372.1 533.7 368.2 532.7 364.5 530.8C358.0 527.5 353.7 522.1 351.7 515.2C349.7 508.4 350.3 500.5 353.8 494.3C355.9 490.8 358.8 487.8 361.9 485.1C374.2 474.4 387.4 464.4 400.2 454.0L489.0 382.0L547.3 334.8C557.0 327.0 566.9 319.0 576.6 311.3C579.8 308.8 585.0 307.3 589.0 306.2Z"/><path d="M387.7 162.3C390.3 162.1 393.0 162.2 395.6 162.5C407.1 164.1 414.7 172.5 423.1 179.7C431.1 186.8 439.0 193.9 447.0 201.0L516.3 262.3C527.8 272.6 542.2 284.6 553.4 295.5C554.9 297.1 555.1 302.0 554.7 304.3C552.1 317.8 533.8 327.7 523.1 334.7C508.0 322.1 492.5 308.3 477.6 295.3L390.3 219.3C355.3 247.4 320.4 275.6 285.6 304.1C273.8 313.4 261.4 324.0 249.7 333.7C263.9 334.1 294.6 331.2 305.9 337.3C311.9 340.6 316.2 346.2 318.1 352.8C320.1 359.6 319.2 366.9 315.8 373.0C306.3 390.1 285.3 386.5 268.5 386.6L226.8 386.7C210.9 386.8 194.1 387.1 178.2 386.4C174.6 386.2 170.8 384.7 167.7 382.8C161.5 379.0 157.2 372.9 155.5 365.8C154.0 359.1 155.2 351.3 159.0 345.5C165.6 335.6 201.0 308.6 211.7 299.8L316.3 214.1L352.6 184.5C363.9 175.2 373.0 165.1 387.7 162.3Z"/><path d="M228.3 398.7C230.1 398.5 232.2 398.4 234.0 398.4C245.4 399.0 255.3 406.4 258.9 417.1C262.0 426.1 260.4 455.5 260.3 466.6L259.6 601.7C259.6 622.8 258.1 664.9 262.1 684.1C267.1 707.2 278.3 728.6 294.6 745.8C320.7 773.3 350.4 785.8 387.9 786.7C388.1 808.0 389.1 818.2 394.1 839.1C387.1 839.6 380.0 839.5 373.0 839.0C347.4 837.0 322.6 829.2 300.3 816.4C256.9 791.7 223.0 749.0 210.0 700.6C206.9 689.5 205.1 678.0 204.6 666.5C203.8 652.3 204.4 633.3 204.4 618.7L204.5 531.7L204.9 463.7C204.9 450.5 204.7 437.2 205.3 424.0C206.0 409.6 215.4 402.2 228.3 398.7Z"/><path d="M426.1 545.7C427.2 545.6 428.4 545.5 429.5 545.5C437.1 545.4 444.5 548.3 450.0 553.8C460.5 564.3 458.2 579.8 458.1 593.5C458.0 606.4 457.9 619.2 458.0 632.1L457.6 786.0C458.1 866.6 517.5 922.5 597.5 921.4C597.3 943.4 598.5 952.2 603.0 973.5C596.2 974.3 588.6 974.4 581.8 974.3C551.2 973.8 519.1 962.8 493.4 946.7C449.7 919.5 418.6 876.2 406.8 826.1C401.5 802.5 402.7 779.5 402.4 755.4L402.1 650.1L402.1 598.7C402.0 575.8 397.3 552.2 426.1 545.7Z"/>';
+const PARTES = [...PATHS.matchAll(/d="([^"]*)"/g)].map((m) => m[1]);
+// ordem dos traços no símbolo: parede e telhado de cada casa
+const CASA_DO_TRACO = [2, 2, 1, 0, 0, 1];
+const CORES = ["#D97757", "#3C9A6B", "#D4A12A"];
+const POS = "translate(255 -150) scale(1.08)";
+const svg = document.getElementById("simbolo");
+const tracos = (extra) => PARTES.map((d, i) => '<path data-casa="' + CASA_DO_TRACO[i] + '" d="' + d + '" ' + extra + '/>').join("");
+svg.innerHTML =
+  '<defs>' +
+  '<radialGradient id="bg" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#2a2622"/><stop offset="1" stop-color="#141413"/></radialGradient>' +
+  '<filter id="brilho" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="28"/></filter>' +
+  '<filter id="suave"><feGaussianBlur stdDeviation="3"/></filter>' +
+  '<filter id="grao"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .09 0"/></filter>' +
+  '</defs>' +
+  '<rect width="1600" height="900" fill="url(#bg)"/>' +
+  '<g transform="' + POS + '" filter="url(#brilho)" class="halo">' + tracos('stroke-width="60"') + '</g>' +
+  '<g transform="' + POS + '" filter="url(#suave)" class="traco">' + tracos('') + '</g>' +
+  '<rect width="1600" height="900" filter="url(#grao)"/>';
+const halo = [...svg.querySelectorAll(".halo path")], traco = [...svg.querySelectorAll(".traco path")];
+(function anima(ms) {
+  const t = ms / 1000;
+  const acesa = [0, 1, 2].map((c) => Math.pow(0.5 + 0.5 * Math.sin(t * 0.9 - c * 2.094), 2));
+  halo.forEach((el) => { const c = +el.dataset.casa; el.setAttribute("fill", CORES[c]); el.setAttribute("stroke", CORES[c]); el.setAttribute("opacity", (0.15 + 0.6 * acesa[c]).toFixed(3)); });
+  traco.forEach((el) => { const c = +el.dataset.casa; el.setAttribute("fill", CORES[c]); el.setAttribute("opacity", (0.35 + 0.55 * acesa[c]).toFixed(3)); });
+  requestAnimationFrame(anima);
+})(0);
+</script>
+</body>
+</html>
