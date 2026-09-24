@@ -10,7 +10,6 @@ src/app/                Layout, página raiz, globals.css, icon.svg (App Router,
 src/components/         Nav, SideNav, Hero, Footer, BrandMark, Introducao, Cruzamento,
                          GraficoAbas, CarrosselPerfis, Comunicacao, SegurancaEDisponibilidade,
                          RevelarAoRolar (animações de entrada do conteúdo, GSAP)
-  sede/                  SedeEm3D + visualizador (prédio da sede em 3D, three.js, carregado sob demanda)
   historia/              HistoriaDonaAna, Ana, objetos, roteiro (seção "como funciona")
 src/lib/scroll.ts       Utilitários de scroll (hero, história, âncoras)
 src/lib/gsap.ts         GSAP + ScrollTrigger registrados; animações só sem "reduzir movimento"
@@ -23,14 +22,11 @@ public/                 Tudo o que o site serve; usado pelo Next.js sem mudança
   brand/animado/        Versões animadas (SVG) do logo e do símbolo
   illustrations/        Ilustrações avulsas (moedas caindo)
   video/                Vídeos da marca (.mp4)
-  models/sede.glb       Prédio da sede em 3D, otimizado (meshopt) a partir de design/modelos-3d/
-  img/sede/predio.png   Imagem do prédio mostrada até o 3D carregar (ou sem suporte a 3D)
 design/                 Material de criação. Não vai para o site.
   marca/                SVG original do símbolo (Recraft), prompts de logo, logo antigo
   ilustracoes-originais/  Artes em PNG que deram origem às imagens do hero
   mascote/              Estudos do mascote/avatar
   video/                Prompts e fonte HTML dos vídeos
-  modelos-3d/           Modelo 3D original do prédio (Blender → .glb, 3,6 MB)
 _arquivo/               Histórico: backups da landing e esboços. Pode ser apagado quando não fizer falta.
 scripts/publicar.ps1    Builda o site (Next.js) e monta a pasta publicada na rede
 ```
@@ -80,15 +76,3 @@ Para publicar em uma subpasta, configure `basePath` em `next.config.ts`.
 
 O backend (Django) não faz parte deste projeto. O repositório dele fica em
 `https://git.portovelho.ro.gov.br/semec/sisconforme-backend`.
-
-## Modelo 3D da sede
-
-O arquivo publicado (`public/models/sede.glb`, ~360 KB) é gerado a partir do original em
-`design/modelos-3d/` com:
-
-```powershell
-npx @gltf-transform/cli@4 optimize design/modelos-3d/SEMFAZ_predio_com_materiais.glb public/models/sede.glb --compress meshopt --simplify false --texture-compress false
-```
-
-Se o modelo mudar, gere de novo a imagem de reserva `public/img/sede/predio.png`
-(captura do visualizador na vista inicial, fundo transparente).
