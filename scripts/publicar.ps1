@@ -1,33 +1,22 @@
-# Monta a pasta publicada na rede apenas com o que a landing usa:
-# site/index.html + os arquivos de public/ referenciados nela.
+# Gera o site estatico (Next.js) e copia para a pasta publicada na rede.
 # Uso:  .\scripts\publicar.ps1            (destino padrao: D:\dev\sisconforme-publicar)
 #       .\scripts\publicar.ps1 -Destino "E:\outra-pasta"
 param([string]$Destino = "D:\dev\sisconforme-publicar")
 
 $ErrorActionPreference = "Stop"
 $raiz = Split-Path $PSScriptRoot -Parent
-$html = Get-Content (Join-Path $raiz "site\index.html") -Raw -Encoding UTF8
 
-# Tudo que a pagina referencia como ../public/...
-$refs = [regex]::Matches($html, '\.\./public/([^"''\)\s]+)') |
-  ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
+Push-Location $raiz
+try { npm run build; if ($LASTEXITCODE -ne 0) { throw "npm run build falhou" } }
+finally { Pop-Location }
 
-foreach ($r in $refs) {
-  if (-not (Test-Path (Join-Path $raiz "public\$r"))) { throw "Arquivo nao encontrado: public/$r" }
-}
+$out = Join-Path $raiz "out"
+if (-not (Test-Path (Join-Path $out "index.html"))) { throw "Build sem out/index.html" }
 
-# A pasta de destino e gerada: limpa e monta de novo
+# A pasta de destino e gerada: limpa e copia o build inteiro
 if (Test-Path $Destino) { Get-ChildItem $Destino -Force | Remove-Item -Recurse -Force }
 else { New-Item -ItemType Directory $Destino | Out-Null }
+Copy-Item -Path (Join-Path $out "*") -Destination $Destino -Recurse
 
-foreach ($r in $refs) {
-  $alvo = Join-Path $Destino $r
-  New-Item -ItemType Directory -Force (Split-Path $alvo -Parent) | Out-Null
-  Copy-Item (Join-Path $raiz "public\$r") $alvo
-}
-
-# No servidor, public/ e a raiz do site (igual ao Next.js)
-[IO.File]::WriteAllText((Join-Path $Destino "index.html"), $html.Replace('../public/', ''), [Text.UTF8Encoding]::new($false))
-
-Write-Host "Publicado em $Destino : index.html + $($refs.Count) arquivos"
-$refs | ForEach-Object { Write-Host "  $_" }
+$n = (Get-ChildItem $Destino -Recurse -File | Measure-Object).Count
+Write-Host "Publicado em $Destino : $n arquivos"

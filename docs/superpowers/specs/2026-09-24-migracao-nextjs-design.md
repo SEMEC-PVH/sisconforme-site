@@ -1,6 +1,6 @@
 # Migração da landing SISConforme para Next.js
 
-**Data:** 2026-09-24 · **Status:** aguardando revisão
+**Data:** 2026-09-24 · **Status:** implementado
 
 ## Objetivo
 
