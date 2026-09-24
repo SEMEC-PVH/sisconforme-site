@@ -46,7 +46,6 @@ interface Elementos {
 export default function HistoriaDonaAna() {
   const [expressao, setExpressao] = useState<Expressao>("neutra");
   const [popAtivo, setPopAtivo] = useState(false);
-  const trocas = useRef(0);
   const exprAnterior = useRef<Expressao | null>(null);
   const estatico = useRef(false);
   const elsRef = useRef<Elementos | null>(null);
@@ -86,7 +85,6 @@ export default function HistoriaDonaAna() {
     const nova = expressaoEm(p);
     if (nova !== exprAnterior.current) {
       if (exprAnterior.current !== null) {
-        trocas.current += 1;
         setPopAtivo(true);
       }
       exprAnterior.current = nova;
