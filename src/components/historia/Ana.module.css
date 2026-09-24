@@ -1,0 +1,101 @@
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  transform-origin: 50% 100%;
+  animation: hs-breathe 3.6s ease-in-out infinite;
+}
+.eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hs-blink 4.8s infinite;
+}
+.scratch {
+  transform-box: view-box;
+  transform-origin: 146px 238px;
+  animation: hs-scratch 0.3s ease-in-out infinite alternate;
+}
+.think {
+  animation: hs-think 1.8s ease-out infinite;
+}
+.drop {
+  animation: hs-drop 1.5s ease-in infinite;
+}
+.spark {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hs-spark 1.4s ease-in-out infinite;
+}
+
+@keyframes hs-breathe {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.012) translateY(-1px);
+  }
+}
+@keyframes hs-blink {
+  0%,
+  93%,
+  100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes hs-scratch {
+  from {
+    transform: rotate(-3deg);
+  }
+  to {
+    transform: rotate(3deg);
+  }
+}
+@keyframes hs-think {
+  0% {
+    transform: translateY(4px);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+}
+@keyframes hs-drop {
+  0% {
+    transform: translateY(-4px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+}
+@keyframes hs-spark {
+  0%,
+  100% {
+    transform: scale(0.6) rotate(0);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.15) rotate(25deg);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svg,
+  .svg * {
+    animation: none !important;
+  }
+}
