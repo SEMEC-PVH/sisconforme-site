@@ -6,6 +6,7 @@ import GraficoAbas from "@/components/GraficoAbas";
 import Hero from "@/components/Hero";
 import Introducao from "@/components/Introducao";
 import Nav from "@/components/Nav";
+import RevelarAoRolar from "@/components/RevelarAoRolar";
 import SegurancaEDisponibilidade from "@/components/SegurancaEDisponibilidade";
 import SideNav from "@/components/SideNav";
 import HistoriaDonaAna from "@/components/historia/HistoriaDonaAna";
@@ -17,14 +18,14 @@ export default function Home() {
       <SideNav />
       <Hero />
       <HistoriaDonaAna />
-      <article className="prose">
+      <RevelarAoRolar>
         <Introducao />
         <Cruzamento />
         <GraficoAbas />
         <CarrosselPerfis />
         <Comunicacao />
         <SegurancaEDisponibilidade />
-      </article>
+      </RevelarAoRolar>
       <Footer />
     </>
   );

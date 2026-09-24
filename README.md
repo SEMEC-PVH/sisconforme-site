@@ -8,9 +8,11 @@ Construída em Next.js 16 (App Router, TypeScript, export estático).
 ```
 src/app/                Layout, página raiz, globals.css, icon.svg (App Router, output: export)
 src/components/         Nav, SideNav, Hero, Footer, BrandMark, Introducao, Cruzamento,
-                         GraficoAbas, CarrosselPerfis, Comunicacao, SegurancaEDisponibilidade
+                         GraficoAbas, CarrosselPerfis, Comunicacao, SegurancaEDisponibilidade,
+                         RevelarAoRolar (animações de entrada do conteúdo, GSAP)
   historia/              HistoriaDonaAna, Ana, objetos, roteiro (seção "como funciona")
 src/lib/scroll.ts       Utilitários de scroll (hero, história, âncoras)
+src/lib/gsap.ts         GSAP + ScrollTrigger registrados; animações só sem "reduzir movimento"
 tests/unit/             Testes unitários (Vitest)
 tests/e2e/              Regressão visual (Playwright) + fotos de referência em regressao.spec.ts-snapshots/
 public/                 Tudo o que o site serve; usado pelo Next.js sem mudanças.

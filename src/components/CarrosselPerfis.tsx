@@ -89,7 +89,7 @@ export default function CarrosselPerfis() {
             </button>
           ))}
         </div>
-        <div className={styles.trackWrap}>
+        <div className={styles.trackWrap} data-revelar>
           <div className={styles.track} ref={trackRef}>
             {PERFIS.map((perfil, i) => (
               <div

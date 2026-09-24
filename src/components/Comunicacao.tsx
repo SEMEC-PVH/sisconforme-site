@@ -18,7 +18,7 @@ export default function Comunicacao() {
             Receita sem nota
           </button>
         </div>
-        <div className={styles.sbs}>
+        <div className={styles.sbs} data-revelar>
           <div>
             <p className={styles.lab}>
               <i></i>Notificação tradicional

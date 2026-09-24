@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useRef, useState } from "react";
+import { COM_MOVIMENTO, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import styles from "./GraficoAbas.module.css";
 
 interface Serie {
@@ -66,6 +67,44 @@ export const escalaY = (v: number, max: number): number => T + IH - (v / max) * 
 export default function GraficoAbas() {
   const [aba, setAba] = useState<"a" | "b">("a");
   const d = DADOS_GRAFICO[aba];
+  const svgRef = useRef<SVGSVGElement>(null);
+  /** O gráfico já apareceu na tela: ao trocar de aba, desenha na hora. */
+  const jaVisto = useRef(false);
+
+  useGSAP(
+    () => {
+      const svg = svgRef.current;
+      if (!svg) return;
+      const mm = gsap.matchMedia();
+      mm.add(COM_MOVIMENTO, () => {
+        const linhas = svg.querySelectorAll("polyline");
+        linhas.forEach((l) => {
+          const n = l.getTotalLength();
+          gsap.set(l, { strokeDasharray: n, strokeDashoffset: n });
+        });
+        const desenho = gsap
+          .timeline({ paused: true })
+          .to(linhas, { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut", stagger: 0.15 })
+          .from(svg.querySelectorAll("circle"), { scale: 0, transformOrigin: "center", duration: 0.3, stagger: 0.02 }, "-=0.6")
+          .from(svg.querySelectorAll("rect"), { scaleY: 0, transformOrigin: "50% 100%", duration: 0.8, ease: "power2.out", stagger: 0.12 }, 0);
+        if (jaVisto.current) {
+          desenho.play();
+        } else {
+          ScrollTrigger.create({
+            trigger: svg,
+            start: "top 75%",
+            once: true,
+            onEnter: () => {
+              jaVisto.current = true;
+              desenho.play();
+            },
+          });
+        }
+      });
+      return () => mm.revert();
+    },
+    { dependencies: [aba], scope: svgRef, revertOnUpdate: true },
+  );
 
   const niveis: number[] = [];
   for (let v = 0; v <= d.max; v += d.step) niveis.push(v);
@@ -82,7 +121,7 @@ export default function GraficoAbas() {
           Regularização após o alerta
         </button>
       </div>
-      <div className={styles.chartbox}>
+      <div className={styles.chartbox} data-revelar>
         <div className={styles.chartHead}>
           <span>{d.title}</span>
           <em>{d.sub}</em>
@@ -95,7 +134,7 @@ export default function GraficoAbas() {
             </span>
           ))}
         </div>
-        <svg viewBox="0 0 820 360" role="img" aria-label={d.title}>
+        <svg ref={svgRef} viewBox="0 0 820 360" role="img" aria-label={d.title}>
           {niveis.map((v) => (
             <Fragment key={v}>
               <line

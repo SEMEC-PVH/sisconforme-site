@@ -1,4 +1,3 @@
-import path from "node:path";
 import { expect, test, type Browser, type Locator, type Page } from "@playwright/test";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
@@ -179,6 +178,87 @@ test("console · sem erros ao percorrer a página", async ({ browser }) => {
   }
   await ctx.close();
   expect(erros).toEqual([]);
+});
+
+/** Tudo que tem animação de entrada nas seções de conteúdo. */
+const ANIMADOS =
+  "article .col > p, article .col > h2, article .col > h3, article .caption, article .tabs, article [data-revelar], article tbody tr";
+
+/** Elementos animados que não estão no estado final (visível, opaco, sem deslocamento). */
+function pendentes(page: Page) {
+  return page.evaluate((sel) => {
+    return [...document.querySelectorAll<HTMLElement>(sel)]
+      .filter((el) => {
+        const s = getComputedStyle(el);
+        return s.visibility === "hidden" || parseFloat(s.opacity) < 0.99 || (s.transform !== "none" && s.transform !== "matrix(1, 0, 0, 1, 0, 0)");
+      })
+      .map((el) => `${el.tagName.toLowerCase()}: ${(el.textContent ?? "").trim().slice(0, 40)}`);
+  }, ANIMADOS);
+}
+
+async function percorrer(page: Page) {
+  const altura = await page.evaluate(() => document.documentElement.scrollHeight);
+  for (let y = 0; y < altura; y += 300) {
+    await page.evaluate((v) => window.scrollTo(0, v), y);
+    await page.waitForTimeout(60);
+  }
+  await page.waitForTimeout(3000);
+}
+
+test("animacoes · conteúdo começa escondido e termina visível", async ({ browser }) => {
+  const ctx = await browser.newContext({ viewport: VIEWPORTS.desktop });
+  const page = await ctx.newPage();
+  await page.goto(SITE, { waitUntil: "load" });
+  await page.waitForTimeout(500);
+
+  const escondidosNoInicio = (await pendentes(page)).length;
+  expect(escondidosNoInicio, "o conteúdo abaixo da dobra deveria começar escondido").toBeGreaterThan(20);
+
+  await percorrer(page);
+  expect(await pendentes(page)).toEqual([]);
+
+  // gráfico de linhas desenhado por inteiro
+  const traco = await page.evaluate(() =>
+    [...document.querySelectorAll("article polyline")].map((l) => parseFloat(getComputedStyle(l).strokeDashoffset) || 0),
+  );
+  expect(traco.length).toBe(3);
+  expect(traco.every((v) => Math.abs(v) < 0.5), `stroke-dashoffset: ${traco}`).toBe(true);
+
+  // trocar de aba redesenha: as barras terminam na escala final
+  await page.getByRole("tab", { name: "Regularização após o alerta" }).click();
+  await page.waitForTimeout(2000);
+  // escala vertical de cada barra (componente d da matriz; 1 = tamanho final)
+  const escalas = await page.evaluate(() =>
+    [...document.querySelectorAll<SVGRectElement>("article svg rect")].map((r) => r.transform.baseVal.consolidate()?.matrix.d ?? 1),
+  );
+  expect(escalas.length).toBe(4);
+  expect(escalas.every((d) => Math.abs(d - 1) < 0.01), `escalas das barras: ${escalas}`).toBe(true);
+  await ctx.close();
+});
+
+test("animacoes · movimento reduzido não esconde nada", async ({ browser }) => {
+  const ctx = await browser.newContext({ viewport: VIEWPORTS.desktop, reducedMotion: "reduce" });
+  const page = await ctx.newPage();
+  await page.goto(SITE, { waitUntil: "load" });
+  await page.waitForTimeout(500);
+  expect(await pendentes(page)).toEqual([]);
+  await ctx.close();
+});
+
+test("animacoes · entrar por âncora não deixa conteúdo escondido acima", async ({ browser }) => {
+  const ctx = await browser.newContext({ viewport: VIEWPORTS.desktop });
+  const page = await ctx.newPage();
+  await page.goto(`${SITE}#seguranca`, { waitUntil: "load" });
+  await page.waitForTimeout(2500);
+  // do topo da seção de segurança para cima, nada pode ficar invisível
+  const escondidosAcima = await page.evaluate((sel) => {
+    const limite = document.getElementById("seguranca")!.getBoundingClientRect().top;
+    return [...document.querySelectorAll<HTMLElement>(sel)]
+      .filter((el) => el.getBoundingClientRect().bottom <= limite)
+      .filter((el) => getComputedStyle(el).visibility === "hidden" || parseFloat(getComputedStyle(el).opacity) < 0.99).length;
+  }, ANIMADOS);
+  expect(escondidosAcima).toBe(0);
+  await ctx.close();
 });
 
 async function esperarNoTopo(page: Page, id: string) {
