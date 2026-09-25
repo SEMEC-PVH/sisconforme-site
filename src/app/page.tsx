@@ -10,6 +10,7 @@ import RevelarAoRolar from "@/components/RevelarAoRolar";
 import SegurancaEDisponibilidade from "@/components/SegurancaEDisponibilidade";
 import SideNav from "@/components/SideNav";
 import HistoriaDonaAna from "@/components/historia/HistoriaDonaAna";
+import Trajetoria from "@/components/trajetoria/Trajetoria";
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
       <SideNav />
       <Hero />
       <HistoriaDonaAna />
+      <Trajetoria />
       <RevelarAoRolar>
         <Introducao />
         <Cruzamento />

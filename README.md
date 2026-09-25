@@ -11,6 +11,8 @@ src/components/         Nav, SideNav, Hero, Footer, BrandMark, Introducao, Cruza
                          GraficoAbas, CarrosselPerfis, Comunicacao, SegurancaEDisponibilidade,
                          RevelarAoRolar (animações de entrada do conteúdo, GSAP)
   historia/              HistoriaDonaAna, Ana, objetos, roteiro (seção "como funciona")
+  trajetoria/            Trajetoria, roteiro, gradiente (seção "Uma nova relação": frases com scroll fixo, aperto de mãos
+                         auditor × empresa em quadros de vídeo guiados pela rolagem + gradiente WebGL)
 src/lib/scroll.ts       Utilitários de scroll (hero, história, âncoras)
 src/lib/gsap.ts         GSAP + ScrollTrigger registrados; animações só sem "reduzir movimento"
 tests/unit/             Testes unitários (Vitest)
@@ -18,6 +20,9 @@ tests/e2e/              Regressão visual (Playwright) + fotos de referência em
 public/                 Tudo o que o site serve; usado pelo Next.js sem mudanças.
   img/hero/             As três imagens do hero (.webp)
   img/og-image.jpg      Imagem de compartilhamento (Open Graph)
+  img/aperto/           120 quadros (.webp, fundo transparente) do aperto de mãos da seção "Uma nova relação",
+                         em 2560/ (telas grandes e de alta densidade) e 1280/ (celular). Origem: design/video/
+                         aperto-de-maos-4k.mp4, extraídos com design/video/extrair-quadros-aperto.py
   brand/                Kit oficial da marca: logos horizontal e vertical, símbolo, ícone de app
   brand/animado/        Versões animadas (SVG) do logo e do símbolo
   illustrations/        Ilustrações avulsas (moedas caindo)
