@@ -16,6 +16,7 @@ import {
   presencaMaos,
   progressoAperto,
   QUADROS_APERTO,
+  alturaAperto,
   larguraAperto,
   quadroAperto,
   visibilidade,
@@ -73,7 +74,12 @@ describe("roteiro da trajetória", () => {
 
   it("os quadros do aperto seguem a numeração dos arquivos", () => {
     expect(quadroAperto(0, 1280)).toBe("/img/aperto/1280/f001.webp");
-    expect(quadroAperto(QUADROS_APERTO - 1, 2560)).toBe("/img/aperto/2560/f120.webp");
+    expect(quadroAperto(QUADROS_APERTO - 1, 2560)).toBe("/img/aperto/2560/f071.webp");
+  });
+
+  it("a altura dos quadros segue a proporção do vídeo (2944 × 1172)", () => {
+    expect(alturaAperto(2560)).toBe(1019);
+    expect(alturaAperto(1280)).toBe(510);
   });
 
   it("telas grandes ou de alta densidade recebem os quadros em 2560 px", () => {

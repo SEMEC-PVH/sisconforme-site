@@ -1,44 +1,71 @@
-"""Extrai os quadros do aperto de mãos (fundo verde -> transparente) do vídeo 4K.
+"""Extrai os quadros do aperto de mãos (fundo verde -> transparente) de um vídeo em chroma key.
 
-Uso: python design/video/extrair-quadros-aperto.py design/video/aperto-de-maos-4k.mp4 public/img/aperto
-Gera <saida>/2560/f001.webp … f120.webp e <saida>/1280/…. Requer ffmpeg no PATH, numpy e Pillow.
-Recorte: faixa de 3840 × 1161 a partir de y = 420 (mesmo enquadramento dos quadros antigos).
+Uso (vídeo atual, trecho 48 → 118, faixa de 2944 × 1172 a partir do topo):
+  python design/video/extrair-quadros-aperto.py design/video/aperto-de-maos.mp4 public/img/aperto \
+      --inicio 48 --fim 118 --y 0 --altura 1172
+
+Gera <saida>/2560/f001.webp … e <saida>/1280/…, numerados a partir de 1. A faixa usa a largura
+inteira do vídeo; --y e --altura escolhem a parte vertical. Requer ffmpeg no PATH, numpy e Pillow.
 """
+import argparse
 import os
-import sys, subprocess, numpy as np
+import subprocess
+
+import numpy as np
 from PIL import Image, ImageFilter
-SRC, OUT = sys.argv[1], sys.argv[2]
-only = set(int(x) for x in sys.argv[3].split(",")) if len(sys.argv) > 3 else None
-W, H, Y = 3840, 1161, 420
-K = np.array([23, 240, 48], np.float32)
-p = subprocess.Popen(["ffmpeg","-v","error","-i",SRC,"-vf",f"format=rgb24,crop={W}:{H}:0:{Y}","-fps_mode","passthrough","-f","rawvideo","-pix_fmt","rgb24","-"], stdout=subprocess.PIPE)
+
+arg = argparse.ArgumentParser()
+arg.add_argument("video")
+arg.add_argument("saida")
+arg.add_argument("--inicio", type=int, default=0, help="primeiro quadro do vídeo (a partir de 0)")
+arg.add_argument("--fim", type=int, help="último quadro do vídeo, incluído")
+arg.add_argument("--y", type=int, default=0, help="topo da faixa recortada")
+arg.add_argument("--altura", type=int, help="altura da faixa recortada")
+arg.add_argument("--so", help="quadros de saída a gerar, ex.: 1,30 (para testar)")
+a = arg.parse_args()
+
+W, H0 = map(int, subprocess.check_output(
+    ["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries", "stream=width,height", "-of", "csv=p=0", a.video],
+    text=True).strip().split(","))
+H = a.altura or H0 - a.y
+so = {int(x) for x in a.so.split(",")} if a.so else None
+
+# format=rgb24 antes do crop: em yuv420 um recorte de altura ímpar seria arredondado
+p = subprocess.Popen(["ffmpeg", "-v", "error", "-i", a.video, "-vf", f"format=rgb24,crop={W}:{H}:0:{a.y}",
+                      "-fps_mode", "passthrough", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 for d in ("2560", "1280"):
-    os.makedirs(f"{OUT}/{d}", exist_ok=True)
-n = 0
+    os.makedirs(f"{a.saida}/{d}", exist_ok=True)
+
+n = -1
+saida = 0
 while True:
-    buf = p.stdout.read(W*H*3)
-    if len(buf) < W*H*3: break
+    buf = p.stdout.read(W * H * 3)
+    if len(buf) < W * H * 3:
+        break
     n += 1
-    if only and n not in only: continue
+    if n < a.inicio or (a.fim is not None and n > a.fim):
+        continue
+    saida += 1
+    if so and saida not in so:
+        continue
     c = np.frombuffer(buf, np.uint8).reshape(H, W, 3).astype(np.float32)
-    r, g, b = c[...,0], c[...,1], c[...,2]
+    r, g, b = c[..., 0], c[..., 1], c[..., 2]
     ex = g - np.maximum(r, b)                      # excesso de verde
-    a = 1 - np.clip((ex - 20) / (110 - 20), 0, 1)  # 0 = fundo, 1 = mão
-    # recua a máscara ~1,5 px (no 4K) e suaviza: some o pixel misturado com o verde da borda
-    m = Image.fromarray((a * 255).astype(np.uint8)).filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(0.8))
-    a = np.minimum(a, np.asarray(m, np.float32) / 255)
+    alfa = 1 - np.clip((ex - 20) / (110 - 20), 0, 1)  # 0 = fundo, 1 = mão
+    # recua a máscara ~2 px e suaviza: some o pixel misturado com o verde da borda
+    m = Image.fromarray((alfa * 255).astype(np.uint8)).filter(ImageFilter.MinFilter(5)).filter(ImageFilter.GaussianBlur(1))
+    alfa = np.minimum(alfa, np.asarray(m, np.float32) / 255)
     fg = c.copy()
     # despill: o verde nunca passa do maior entre vermelho e azul
-    lim = np.maximum(r, b)
-    fg[...,1] = np.minimum(g, lim)
+    fg[..., 1] = np.minimum(g, np.maximum(r, b))
     # na borda, puxa também um pouco para o tom médio (tira o amarelado)
-    borda = (a < 0.98)[..., None]
+    borda = alfa < 0.98
     lum = (fg @ np.array([0.3, 0.59, 0.11], np.float32))[..., None]
-    fg = np.where(borda, fg * 0.7 + lum * 0.3, fg)
-    fg[...,1] = np.where(a < 0.98, np.minimum(fg[...,1], (fg[...,0] + fg[...,2]) / 2 + 20), fg[...,1])
-    fg = np.clip(fg, 0, 255)
-    rgba = np.dstack([fg, a * 255]).round().astype(np.uint8)
+    fg = np.where(borda[..., None], fg * 0.7 + lum * 0.3, fg)
+    fg[..., 1] = np.where(borda, np.minimum(fg[..., 1], (fg[..., 0] + fg[..., 2]) / 2 + 20), fg[..., 1])
+    rgba = np.dstack([np.clip(fg, 0, 255), alfa * 255]).round().astype(np.uint8)
     im = Image.fromarray(rgba, "RGBA")
-    for w, q, d in [(2560, 88, "2560"), (1280, 85, "1280")]:
-        im.resize((w, round(H * w / W)), Image.LANCZOS).save(f"{OUT}/{d}/f{n:03d}.webp", quality=q, alpha_quality=90, method=6)
-print("quadros:", n)
+    for w, q in [(2560, 88), (1280, 85)]:
+        im.resize((w, round(H * w / W)), Image.LANCZOS).save(
+            f"{a.saida}/{w}/f{saida:03d}.webp", quality=q, alpha_quality=90, method=6)
+print(f"quadros: {saida} ({W} × {H} a partir de y = {a.y})")

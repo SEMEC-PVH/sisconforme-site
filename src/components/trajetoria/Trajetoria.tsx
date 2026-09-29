@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useRef } from "react";
 import { progressoDoScroll } from "@/lib/scroll";
 import {
+  alturaAperto,
   claridade,
   contorno,
   curva,
@@ -104,7 +105,7 @@ export default function Trajetoria() {
       // a resolução é decidida uma vez, pelo tamanho da tela na hora de carregar
       const largura = larguraAperto(maos.clientWidth, window.devicePixelRatio || 1);
       maosCanvas.width = largura;
-      maosCanvas.height = Math.round((largura * 387) / 1280);
+      maosCanvas.height = alturaAperto(largura);
       for (let i = 0; i < QUADROS_APERTO; i++) {
         const img = new Image();
         img.decoding = "async";
@@ -225,7 +226,7 @@ export default function Trajetoria() {
         <div className={styles.palco} ref={palcoRef}>
           <div className={styles.inundacao} ref={inundacaoRef} />
           <div className={styles.maos} ref={maosRef}>
-            <canvas className={styles.maosCanvas} ref={maosCanvasRef} width={1280} height={387} />
+            <canvas className={styles.maosCanvas} ref={maosCanvasRef} width={1280} height={alturaAperto(1280)} />
             {/* com "reduzir movimento" aparece só o aperto já fechado */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -235,7 +236,7 @@ export default function Trajetoria() {
               sizes="max(104vw, 560px)"
               alt=""
               width={1280}
-              height={387}
+              height={alturaAperto(1280)}
               loading="lazy"
             />
             <span className={`${styles.rotulo} ${styles.rotuloFisco}`}>Auditor fiscal</span>

@@ -62,11 +62,18 @@ export const visibilidade = (x: number): number => clamp(1.25 - Math.abs(x) * 1.
 /** 0 = fundo escuro, 1 = fundo claro. Vira na chegada de "Hoje". */
 export const claridade = (p: number): number => suave(clamp(0.9 - deslocamento(I_HOJE, p) * 1.4));
 
-/** Quadros do vídeo do aperto de mãos, em public/img/aperto/{1280,2560} (f001.webp … f120.webp). */
-export const QUADROS_APERTO = 120;
+/** Quadros do vídeo do aperto de mãos, em public/img/aperto/{1280,2560} (f001.webp … f071.webp). */
+export const QUADROS_APERTO = 71;
 
-/** Larguras em que os quadros existem; a altura segue a proporção 1280 × 387. */
+/** Recorte do vídeo de onde saem os quadros (largura × altura, em px). */
+export const RECORTE_APERTO = { largura: 2944, altura: 1172 } as const;
+
+/** Larguras em que os quadros existem; a altura segue a proporção do recorte. */
 export type LarguraAperto = 1280 | 2560;
+
+/** Altura de um quadro na largura dada (a mesma do arquivo .webp). */
+export const alturaAperto = (largura: LarguraAperto): number =>
+  Math.round((largura * RECORTE_APERTO.altura) / RECORTE_APERTO.largura);
 
 /** Escolhe a resolução pelos pixels reais que as mãos ocupam (largura CSS × densidade da tela). */
 export const larguraAperto = (larguraCss: number, densidade: number): LarguraAperto =>

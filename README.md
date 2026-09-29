@@ -20,9 +20,10 @@ tests/e2e/              Regressão visual (Playwright) + fotos de referência em
 public/                 Tudo o que o site serve; usado pelo Next.js sem mudanças.
   img/hero/             As três imagens do hero (.webp)
   img/og-image.jpg      Imagem de compartilhamento (Open Graph)
-  img/aperto/           120 quadros (.webp, fundo transparente) do aperto de mãos da seção "Uma nova relação",
-                         em 2560/ (telas grandes e de alta densidade) e 1280/ (celular). Origem: design/video/
-                         aperto-de-maos-4k.mp4, extraídos com design/video/extrair-quadros-aperto.py
+  img/aperto/           71 quadros (.webp, fundo transparente) do aperto de mãos da seção "Uma nova relação",
+                         em 2560/ (telas grandes e de alta densidade) e 1280/ (celular). Origem: quadros 48 a 118
+                         de design/video/aperto-de-maos.mp4, extraídos com design/video/extrair-quadros-aperto.py
+                         (o comando exato está no topo do script)
   brand/                Kit oficial da marca: logos horizontal e vertical, símbolo, ícone de app
   brand/animado/        Versões animadas (SVG) do logo e do símbolo
   illustrations/        Ilustrações avulsas (moedas caindo)
