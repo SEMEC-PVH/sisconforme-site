@@ -6,6 +6,6 @@
 .cmp tbody th{font-weight:600}
 .cmp tbody th small{display:block;font-weight:400;color:var(--muted);margin-top:4px;font-size:13.5px}
 .cmp td small{display:block;color:var(--muted);font-size:12.5px;margin-top:3px}
-.cmp .hl{background:var(--clay-fill);font-weight:600;box-shadow:inset 1.5px 0 0 var(--clay),inset -1.5px 0 0 var(--clay)}
-.cmp thead .hl{background:transparent;box-shadow:inset 1.5px 0 0 var(--clay),inset -1.5px 0 0 var(--clay),inset 0 1.5px 0 var(--clay)}
-.cmp tbody tr:last-child .hl{box-shadow:inset 1.5px 0 0 var(--clay),inset -1.5px 0 0 var(--clay),inset 0 -1.5px 0 var(--clay)}
+.cmp .hl{background:var(--azul-claro);font-weight:600;box-shadow:inset 1.5px 0 0 var(--azul),inset -1.5px 0 0 var(--azul)}
+.cmp thead .hl{background:transparent;box-shadow:inset 1.5px 0 0 var(--azul),inset -1.5px 0 0 var(--azul),inset 0 1.5px 0 var(--azul)}
+.cmp tbody tr:last-child .hl{box-shadow:inset 1.5px 0 0 var(--azul),inset -1.5px 0 0 var(--azul),inset 0 -1.5px 0 var(--azul)}

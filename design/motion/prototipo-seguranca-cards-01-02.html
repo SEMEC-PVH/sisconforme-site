@@ -1,0 +1,854 @@
+<title>SISConforme Acesso Seguro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Réplica da seção "Segurança" do site (paleta de Seguranca.module.css); o card 01 recebe o motion 1440x1440 escalado.
+   Visual único e claro, igual ao site. */
+:root{
+  color-scheme:light;
+  --azul:#1677E8; --azul-fundo:#10233F; --petroleo:#174A5B; --branco:#FFFFFF;
+  --laranja:#D87535; --grafite:#20252B; --cinza:#68717C;
+  --borda:#E4E0D6; --borda-forte:#CFC9BC; --ivory:#FAF9F5; --canvas:#FFFFFF; --ink:#141413;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --ui:"Geist","Inter",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--ivory);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;margin:0;padding:0 16px}
+p{margin:0}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.01em;text-wrap:balance}
+.wide{max-width:900px;margin:0 auto}
+.proto{max-width:900px;margin:0 auto;padding-top:28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--cinza)}
+.proto b{color:var(--grafite);font-weight:600}
+
+.topo{display:flex;gap:26px;align-items:flex-start;margin-top:64px}
+.escudo{flex:none;width:76px;height:76px;border-radius:22px;background:var(--azul-fundo);color:var(--branco);display:grid;place-items:center}
+.sobre{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--azul);margin-bottom:10px}
+.topo h2{font-size:clamp(30px,3.2vw,38px);letter-spacing:-.022em;line-height:1.1;margin:0 0 18px;color:var(--azul-fundo)}
+.intro{max-width:62ch;font-size:17.5px;line-height:1.6;color:var(--grafite)}
+
+.grade{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:48px}
+.card{position:relative;overflow:hidden;background:var(--branco);border:1px solid var(--borda);border-radius:16px;padding:28px 28px 30px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.linha{position:absolute;left:0;right:0;top:0;height:3px;background:var(--azul)}
+.cab{display:flex;flex-direction:column}
+.num{font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--laranja);font-variant-numeric:tabular-nums;margin-bottom:10px}
+.cab h3{font-size:22px;letter-spacing:-.015em;color:var(--azul-fundo)}
+.pergunta{font-size:15px;line-height:1.3;color:var(--cinza);margin-top:4px}
+.texto{font-size:16px;line-height:1.55;color:var(--grafite)}
+.sem{font-size:13.5px;line-height:1.4;color:var(--cinza)}
+.card small{font-size:12.5px;color:var(--cinza)}
+
+.empresas{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.empresas li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-radius:10px;background:#F4F1EA;border:1px solid var(--borda);font-size:15px;font-weight:600;color:var(--azul-fundo)}
+.empresas li>span:first-child{display:flex;flex-direction:column;line-height:1.3}
+.empresas small{font-weight:400}
+.status{flex:none;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px}
+.liberado{background:#E1ECEF;color:var(--petroleo)}
+.negado{background:#FBE8DB;color:#B85A1F}
+.bloq>span:first-child{color:var(--cinza)}
+.fontes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.fonte{background:#F4F1EA;border:1px solid var(--borda);border-radius:10px;padding:14px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.fonte b{font-size:15px;color:var(--azul-fundo)}
+.nota{font-size:14px;line-height:1.5;color:var(--cinza);margin-top:auto}
+.nao{font-size:44px;line-height:1;font-weight:600;letter-spacing:-.03em;color:var(--azul-fundo);margin-top:6px}
+.aviso{margin-top:auto;padding:4px 0 4px 14px;border-left:2px solid var(--azul);font-size:14px;line-height:1.45;color:var(--grafite)}
+.base{display:flex;gap:22px;align-items:center;margin-top:28px;padding:22px 4px 64px;border-top:1px solid var(--borda)}
+.baseTit{flex:none;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--petroleo);padding-right:22px;border-right:1px solid var(--borda)}
+.base p{font-size:14px;line-height:1.5;color:var(--cinza)}
+
+/* ---------- palco do motion ---------- */
+.palco{display:flex;flex-direction:column;gap:10px}
+.stage{position:relative;width:100%;aspect-ratio:1/1;max-width:100%;border-radius:12px;overflow:hidden;background:var(--canvas);border:1px solid var(--borda)}
+.world{position:absolute;left:0;top:0;width:1440px;height:1440px;transform-origin:0 0;font-family:var(--ui);color:var(--ink)}
+.cam{position:absolute;left:0;top:0;width:1440px;height:1440px;transform-origin:0 0}
+.shape{position:absolute;left:0;top:0}
+.c{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:22px;white-space:nowrap;pointer-events:none}
+.lbl{position:absolute;display:flex;align-items:center;gap:16px;font-size:46px;font-weight:600;letter-spacing:-.01em;transform:translate(-50%,-50%);white-space:nowrap}
+.tab{font-variant-numeric:tabular-nums}
+#cursor{position:absolute;left:0;top:0;width:46px;height:46px;transform-origin:4px 3px}
+
+.ctrl{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--cinza)}
+.ctrl button{all:unset;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--grafite);padding:5px 10px;border-radius:8px;border:1px solid var(--borda);background:var(--branco)}
+.ctrl button:focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+.ctrl input{flex:1;min-width:0;accent-color:var(--azul)}
+#tempo{font-variant-numeric:tabular-nums;min-width:74px;text-align:right}
+
+.overlay{position:fixed;inset:0;z-index:10;background:rgba(20,20,19,.88);display:grid;place-items:center;padding:16px}
+.overlay .palco{width:min(92vw,calc(92vh - 50px))}
+.overlay .ctrl{color:#D6D2C8}
+
+/* card 03 */
+.f3{background:#F4F1EA;border-radius:22px;padding:26px 26px;display:flex;flex-direction:column;gap:8px}
+.f3 b{font-size:36px;font-weight:600}
+.f3 small{font-size:24px;color:#6F6D66}
+.lg3{display:flex;align-items:center;gap:10px}
+.lg3 i{width:26px;height:26px;border-radius:6px;display:inline-block}
+.v3{display:flex;justify-content:space-between;align-items:baseline;font-size:32px;color:#3D3D3A}
+.v3 b{font-size:36px;font-weight:600;color:#141413}
+/* card 02 */
+.b2{display:inline-flex;align-items:center;gap:10px;font-size:28px;font-weight:600;padding:0 26px;height:56px;border-radius:28px;white-space:nowrap}
+.b2ok{background:#1677E8;color:#fff}
+.b2no{background:#E4E0D6;color:#3D3D3A}
+.r2{position:absolute;left:280px;width:880px;transform:translateY(-50%);display:flex;align-items:center;justify-content:space-between;gap:24px;white-space:nowrap}
+.r2>span:first-child{display:flex;flex-direction:column;gap:6px}
+.r2 b{font-size:38px;font-weight:600;letter-spacing:-.01em;color:#141413}
+.r2 small{font-size:26px;color:#6F6D66}
+.r2off b{color:#6F6D66}
+.ripple2{position:absolute;left:-60px;top:-60px;width:120px;height:120px;border-radius:50%;border:3px solid #141413;visibility:hidden}
+.cur2{position:absolute;left:0;top:0;width:46px;height:46px;transform-origin:4px 3px}
+.tempo2{font-variant-numeric:tabular-nums;min-width:74px;text-align:right}
+
+@media (max-width:760px){
+  .topo{flex-direction:column;gap:18px}
+  .grade{grid-template-columns:1fr}
+  .card{padding:24px 20px 26px}
+  .base{flex-direction:column;align-items:flex-start;gap:10px}
+  .baseTit{border-right:0;padding-right:0}
+}
+@media (max-width:420px){ .fontes{grid-template-columns:1fr} }
+</style>
+
+<div class="proto"><span><b>Protótipo</b> · seção Segurança com motion nos cards 01, 02 e 03</span><span>120 BPM · loops de 12, 16 e 14 s · sem áudio</span></div>
+
+<section class="wide">
+  <div class="topo">
+    <div class="escudo"><svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 4 40 10v12c0 10.5-6.8 18.6-16 22-9.2-3.4-16-11.5-16-22V10z"/><path d="M19 22v-3a5 5 0 0 1 10 0v3"/><path d="M17.5 22h13v9.5h-13z"/></svg></div>
+    <div>
+      <p class="sobre">Segurança</p>
+      <h2>Seus dados fiscais são protegidos.</h2>
+      <p class="intro">Dado fiscal é sigiloso por lei. O art. 198 do CTN veda a divulgação da situação econômica do contribuinte, e a LGPD rege o tratamento de dados pessoais de sócios e representantes. O SISConforme foi desenhado a partir dessas duas regras.</p>
+    </div>
+  </div>
+
+  <div class="grade">
+    <section class="card">
+      <span class="linha"></span>
+      <div class="cab"><span class="num">01</span><h3>Acesso seguro</h3><p class="pergunta">Quem pode entrar?</p></div>
+      <p class="texto">O acesso é feito somente pela conta gov.br (Login Único).</p>
+      <div id="casa">
+        <div class="palco" id="palco">
+          <div class="stage" id="stage" role="img" aria-label="Animação: a empresa entra no SISConforme somente pela conta gov.br">
+            <div class="world" id="world">
+              <div class="cam" id="cam">
+
+                <div class="shape" id="B">
+                  <div class="c" id="bBtn" style="color:#fff;font-size:46px;font-weight:600;gap:18px"><span data-ic="id"></span><span>Entrar com gov.br</span><span style="font-weight:400;opacity:.72">· Login Único</span></div>
+                  <div class="c" data-spin id="bSpin"></div>
+                  <div class="c" id="bCheck" style="font-size:48px;font-weight:600"></div>
+                  <div class="c" id="bConta">
+                    <div style="width:860px;height:320px;display:flex;flex-direction:column;justify-content:space-between;white-space:nowrap">
+                      <div style="display:flex;flex-direction:column;gap:12px">
+                        <div style="display:flex;align-items:center;gap:14px;font-size:28px;color:#6F6D66;font-weight:500"><span data-ic="id" style="color:#141413"></span>Conta gov.br · Login Único</div>
+                        <div style="font-size:46px;font-weight:600;letter-spacing:-.015em">Maria Exemplo</div>
+                        <div class="tab" style="font-size:30px;color:#3D3D3A">CPF •••.000.000-•• · Empresa Exemplo Ltda</div>
+                      </div>
+                      <div style="display:flex;justify-content:space-between;align-items:center">
+                        <span class="tab" style="font-size:28px;color:#6F6D66">CNPJ 00.000.000/0001-00</span>
+                        <span style="background:#141413;color:#fff;font-size:32px;font-weight:600;padding:0 40px;height:80px;border-radius:40px;display:flex;align-items:center">Continuar</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="c" id="bFinal" style="color:#fff;font-size:46px;font-weight:600;gap:20px"></div>
+                </div>
+              </div>
+              <span id="ripple" style="position:absolute;left:-60px;top:-60px;width:120px;height:120px;border-radius:50%;border:3px solid #141413;visibility:hidden"></span>
+              <svg id="cursor" viewBox="0 0 46 46" aria-hidden="true"><path d="M5 3 L5 36 L14 28 L20 42 L26 39.5 L20 26 L32 26 Z" fill="#141413" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div class="ctrl">
+            <button id="play" type="button">Pausar</button>
+            <input id="scrub" type="range" min="0" max="12" step="0.01" value="0" aria-label="Posição no tempo">
+            <span id="tempo">1.1</span>
+            <button id="big" type="button">Ampliar</button>
+          </div>
+        </div>
+      </div>
+      <p class="sem">Não existem senhas próprias do portal para vazar ou esquecer.</p>
+    </section>
+
+    <section class="card">
+      <span class="linha"></span>
+      <div class="cab"><span class="num">02</span><h3>Acesso por empresa</h3><p class="pergunta">Quem pode ver os dados?</p></div>
+      <p class="texto">Cada empresa acessa somente os próprios dados. O contador acessa apenas as empresas que representa por procuração eletrônica.</p>
+      <div id="e2casa">
+        <div class="palco" id="e2palco">
+          <div class="stage" id="e2stage" role="img" aria-label="Animação: cada empresa vê só os próprios dados; o contador vê as empresas que representa por procuração eletrônica; outras empresas ficam sem acesso">
+            <div class="world" id="e2world">
+              <div class="cam" id="e2cam">
+                <div class="shape" id="e2A"></div>
+                <div class="shape" id="e2B">
+                  <div class="c" id="e2Pill" style="gap:20px">
+                    <span data-ic2="predio"></span>
+                    <span style="font-size:42px;font-weight:600;letter-spacing:-.01em">Empresa Exemplo Ltda</span>
+                    <span class="b2 b2ok">Liberado</span>
+                  </div>
+                  <div class="c" id="e2Det">
+                    <div style="width:800px;height:420px;display:flex;flex-direction:column;justify-content:space-between;white-space:nowrap">
+                      <div style="display:flex;flex-direction:column;gap:10px">
+                        <span style="font-size:26px;color:#6F6D66;font-weight:500">Empresa representada</span>
+                        <span style="font-size:46px;font-weight:600;letter-spacing:-.015em">Empresa Representada Ltda</span>
+                        <span class="tab" style="font-size:30px;color:#3D3D3A">CNPJ 00.000.000/0002-00</span>
+                      </div>
+                      <div style="height:3px;background:#DEDBD2"></div>
+                      <div style="display:flex;align-items:center;justify-content:space-between">
+                        <span style="display:flex;align-items:center;gap:16px;font-size:30px"><span data-ic2="doc"></span><span class="tab">Procuração eletrônica nº 0000/2026</span></span>
+                        <span class="b2 b2ok">Vigente</span>
+                      </div>
+                      <div id="e2DetOk" style="display:flex;align-items:center;gap:18px;font-size:30px;font-weight:600"></div>
+                    </div>
+                  </div>
+                  <div class="c" id="e2Lock1">
+                    <div style="width:800px;height:400px;display:flex;flex-direction:column;justify-content:space-between;white-space:nowrap">
+                      <div style="display:flex;flex-direction:column;gap:10px">
+                        <span style="color:#6F6D66"><span data-ic2="cadeado" data-size="64"></span></span>
+                        <span style="font-size:46px;font-weight:600;letter-spacing:-.015em;color:#3D3D3A">Outra Empresa Ltda</span>
+                        <span style="font-size:30px;color:#6F6D66">Sem procuração eletrônica</span>
+                      </div>
+                      <div style="display:flex;align-items:center;justify-content:space-between">
+                        <span class="b2 b2no">Sem acesso</span>
+                        <span style="background:#DEDBD2;color:#8A877F;font-size:32px;font-weight:600;padding:0 40px;height:80px;border-radius:40px;display:flex;align-items:center">Ver dados</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="c" id="e2Lock2" style="flex-direction:column;gap:22px">
+                    <span style="color:#3D3D3A"><span data-ic2="cadeado" data-size="80"></span></span>
+                    <span style="font-size:48px;font-weight:600;letter-spacing:-.015em">Sem acesso</span>
+                    <span style="font-size:32px;color:#6F6D66">Nem para contador sem procuração.</span>
+                  </div>
+                </div>
+                <div id="e2Rows">
+                  <div class="r2" style="top:530px"><span><b>Empresa Exemplo Ltda</b><small>Sua empresa · seus próprios dados</small></span><span class="b2 b2ok">Liberado</span></div>
+                  <div class="r2" style="top:720px"><span><b>Empresa Representada Ltda</b><small>Contador, com procuração eletrônica</small></span><span class="b2 b2ok">Liberado</span></div>
+                  <div class="r2 r2off" style="top:910px"><span><b>Outra Empresa Ltda</b><small>Sem procuração eletrônica</small></span><span class="b2 b2no"><span data-ic2="cadeado" data-size="30"></span>Sem acesso</span></div>
+                </div>
+              </div>
+              <span class="ripple2" id="e2ripple"></span>
+              <svg class="cur2" id="e2cursor" viewBox="0 0 46 46" aria-hidden="true"><path d="M5 3 L5 36 L14 28 L20 42 L26 39.5 L20 26 L32 26 Z" fill="#141413" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div class="ctrl">
+            <button id="e2play" type="button">Pausar</button>
+            <input id="e2scrub" type="range" min="0" max="16" step="0.01" value="0" aria-label="Posição no tempo do card 02">
+            <span id="e2tempo" class="tempo2">1.1</span>
+            <button id="e2big" type="button">Ampliar</button>
+          </div>
+        </div>
+      </div>
+      <p class="sem">O vínculo do contador vem da procuração eletrônica.</p>
+    </section>
+
+    <section class="card">
+      <span class="linha"></span>
+      <div class="cab"><span class="num">03</span><h3>Dados utilizados</h3><p class="pergunta">O que é comparado?</p></div>
+      <p class="texto">O SISConforme compara dados de:</p>
+            <div id="e3casa">
+        <div class="palco" id="e3palco">
+          <div class="stage" id="e3stage" role="img" aria-label="Animação: o SISConforme compara NFS-e, PGDAS e pagamentos por cartão e Pix de cada competência e destaca a diferença">
+            <div class="world" id="e3world">
+              <div class="cam" id="e3cam">
+                <div class="shape" id="e3B">
+                  <div class="c" id="e3Base">
+                    <div style="width:900px;height:400px;display:flex;flex-direction:column;justify-content:space-between;white-space:nowrap">
+                      <span style="font-size:26px;color:#6F6D66;font-weight:500">Fontes comparadas</span>
+                      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+                        <div class="f3"><b>NFS-e</b><small>Notas fiscais de serviço</small></div>
+                        <div class="f3"><b>PGDAS</b><small>Simples Nacional</small></div>
+                        <div class="f3"><b>Cartão e Pix</b><small>Via SEFIN-RO</small></div>
+                      </div>
+                      <div style="height:90px;border-radius:45px;background:#141413;color:#fff;display:flex;align-items:center;justify-content:center;gap:14px;font-size:34px;font-weight:600">Comparar competências <span class="tab" style="font-weight:400;opacity:.72">01 a 06/2026</span></div>
+                    </div>
+                  </div>
+                  <div class="c" id="e3Graf">
+                    <div style="width:900px;height:540px;display:flex;flex-direction:column;gap:20px;white-space:nowrap">
+                      <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:34px;font-weight:600">Empresa Exemplo Ltda</span><span class="tab" style="font-size:26px;color:#6F6D66">competências 01 a 06/2026</span></div>
+                      <svg id="e3svg" viewBox="0 0 900 380" width="900" height="380" style="overflow:visible"></svg>
+                      <div style="display:flex;gap:36px;font-size:24px;color:#3D3D3A">
+                        <span class="lg3"><i style="background:#141413"></i>NFS-e emitida</span>
+                        <span class="lg3"><i style="background:#B9B4A8"></i>PGDAS declarado</span>
+                        <span class="lg3"><i style="background:#fff;box-shadow:inset 0 0 0 3px #141413"></i>Cartão e Pix</span>
+                        <span class="lg3"><i style="background:#1677E8"></i>Diferença</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="c" id="e3Det">
+                    <div style="width:900px;height:460px;display:flex;flex-direction:column;justify-content:space-between;white-space:nowrap">
+                      <div style="display:flex;flex-direction:column;gap:8px">
+                        <span style="font-size:26px;color:#6F6D66;font-weight:500">Competência</span>
+                        <span class="tab" style="font-size:46px;font-weight:600">04/2026</span>
+                      </div>
+                      <div class="v3"><span>NFS-e emitida</span><b class="tab">R$ 20.000,00</b></div>
+                      <div class="v3"><span>PGDAS declarado</span><b class="tab">R$ 20.000,00</b></div>
+                      <div class="v3"><span>Cartão e Pix recebido</span><b class="tab">R$ 32.000,00</b></div>
+                      <div class="v3" style="border-top:3px solid #DEDBD2;padding-top:18px;align-items:center"><span style="color:#1677E8;font-weight:600">Diferença</span><span style="display:flex;align-items:center;gap:28px"><b class="tab" style="color:#1677E8">R$ 12.000,00</b><span style="font-size:28px;font-weight:600;border:3px solid #DEDBD2;border-radius:30px;padding:0 26px;height:60px;display:flex;align-items:center">Origem dos dados</span></span></div>
+                    </div>
+                  </div>
+                  <div class="c" id="e3Org">
+                    <div style="width:900px;display:flex;flex-direction:column;gap:22px;white-space:nowrap">
+                      <span style="display:flex;align-items:center;gap:16px;font-size:40px;font-weight:600"><span data-ic3="cartao"></span>Cartão e Pix</span>
+                      <span style="font-size:30px;color:#3D3D3A">Dados compartilhados pela SEFIN-RO, conforme convênio.</span>
+                      <span id="e3OrgOk" style="display:flex;align-items:center;gap:18px;font-size:34px;font-weight:600"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <span class="ripple2" id="e3ripple"></span>
+              <svg class="cur2" id="e3cursor" viewBox="0 0 46 46" aria-hidden="true"><path d="M5 3 L5 36 L14 28 L20 42 L26 39.5 L20 26 L32 26 Z" fill="#141413" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div class="ctrl">
+            <button id="e3play" type="button">Pausar</button>
+            <input id="e3scrub" type="range" min="0" max="14" step="0.01" value="0" aria-label="Posição no tempo do card 03">
+            <span id="e3tempo" class="tempo2">1.1</span>
+            <button id="e3big" type="button">Ampliar</button>
+          </div>
+        </div>
+      </div>
+      <p class="nota">Os dados de pagamentos são compartilhados pela SEFIN-RO, conforme convênio, e usados exclusivamente para fins fiscais.</p>
+    </section>
+
+    <section class="card">
+      <span class="linha"></span>
+      <div class="cab"><span class="num">04</span><h3>Somente consulta</h3><p class="pergunta">O sistema pode alterar os dados?</p></div>
+      <p class="nao">Não.</p>
+      <p class="texto">O SISConforme consulta informações já validadas. Qualquer emissão ou alteração segue os procedimentos oficiais de cada sistema.</p>
+      <p class="aviso">Somente leitura: o portal não altera as bases consultadas.</p>
+    </section>
+  </div>
+
+  <div class="base">
+    <span class="baseTit">Base legal</span>
+    <p>O tratamento das informações observa as regras de sigilo fiscal do art. 198 do Código Tributário Nacional (CTN) e as normas de proteção de dados da LGPD.</p>
+  </div>
+</section>
+
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+
+/* ---------- ícones: mesmo viewBox 48, mesmo traço 3.5 ---------- */
+const IC = {
+  id: '<circle cx="24" cy="17" r="7.5"/><path d="M9 41c2.2-8.5 8-12.5 15-12.5s12.8 4 15 12.5"/>'
+};
+const icon = (k, size = 52) => `<svg viewBox="0 0 48 48" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
+document.querySelectorAll("[data-ic]").forEach(el => { el.innerHTML = icon(el.dataset.ic, el.closest("#bConta") ? 44 : 52); el.style.display = "flex"; });
+const checkSVG = (size, cls) => `<svg viewBox="0 0 48 48" width="${size}" height="${size}" style="flex:none"><circle cx="24" cy="24" r="22" fill="#1677E8"/><path class="${cls}" d="M14 24.5l6.5 6.5L34 17.5" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1 1"/></svg>`;
+$("bCheck").innerHTML = checkSVG(64, "ck") + "<span>Identidade confirmada</span>";
+$("bFinal").innerHTML = checkSVG(60, "ck") + "<span>Acesso por identidade verificada</span>";
+document.querySelectorAll("[data-spin]").forEach(el => el.innerHTML =
+  '<svg viewBox="0 0 100 100" width="96" height="96"><circle cx="50" cy="50" r="38" fill="none" stroke="#DEDBD2" stroke-width="8"/><circle class="arc" cx="50" cy="50" r="38" fill="none" stroke="#141413" stroke-width="8" stroke-linecap="round" pathLength="1" stroke-dasharray="0.28 0.72"/></svg>');
+
+/* ---------- springs: resposta ao degrau em forma fechada ---------- */
+const P = {
+  shape: { w: 10, z: 0.9 }, fast: { w: 16, z: 0.82 }, slow: { w: 8, z: 0.95 },
+  cursor: { w: 8, z: 1 }, drag: { w: 5, z: 1 }, cam: { w: 5, z: 1 }, ui: { w: 18, z: 1 }, press: { w: 45, z: 1 },
+  draw: { w: 4, z: 1 }, drain: { w: 5, z: 1 }, undraw: { w: 6, z: 1 }, water: { w: 3, z: 1 }, ck: { w: 12, z: 1 },
+  strike: { w: 5, z: 1 }, ripple: { w: 7, z: 1 }
+};
+function sp(dt, p) {
+  if (dt <= 0) return 0;
+  const { w, z } = p;
+  if (z >= 1) return 1 - Math.exp(-w * dt) * (1 + w * dt);
+  const wd = w * Math.sqrt(1 - z * z);
+  return 1 - Math.exp(-z * w * dt) * (Math.cos(wd * dt) + (z * w / wd) * Math.sin(wd * dt));
+}
+const S = (t, t0, p = "ui") => p === "jump" ? (t >= t0 ? 1 : 0) : sp(t - t0, P[p]);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+
+/* soma de um spring por mudança de alvo: continua função pura de t */
+function build(keys, def = "shape") {
+  const f = {};
+  keys.forEach(k => { for (const n in k.set) (f[n] ||= []).push({ t: k.t, v: k.set[n], p: (k.pf && k.pf[n]) || k.p || def }); });
+  return f;
+}
+function val(list, t) {
+  const arr = Array.isArray(list[0].v);
+  let v = arr ? list[0].v.slice() : list[0].v;
+  for (let i = 1; i < list.length; i++) {
+    const s = S(t, list[i].t, list[i].p), a = list[i].v, b = list[i - 1].v;
+    if (arr) for (let j = 0; j < v.length; j++) v[j] += (a[j] - b[j]) * s; else v += (a - b) * s;
+  }
+  return v;
+}
+const ev = (tr, t) => { const o = {}; for (const n in tr) o[n] = val(tr[n], t); return o; };
+const rgba = c => `rgba(${clamp(c[0], 0, 255) | 0},${clamp(c[1], 0, 255) | 0},${clamp(c[2], 0, 255) | 0},${clamp(c[3]).toFixed(3)})`;
+
+const INK = [20, 20, 19, 1], WHITE = [255, 255, 255, 1];
+const HAIR = [222, 219, 210, 1];
+const T = 12; // 6 compassos x 4 tempos x 0,5 s (120 BPM)
+
+/* Regra de sincronia: o cursor para no alvo pelo menos 1 s antes do clique,
+   e a mudança da forma começa exatamente no instante do aperto (tc). */
+const CLK = {
+  botao: 2.0,      // clica em "Entrar com gov.br" -> loader
+  continuar: 6.0   // clica em Continuar            -> pílula final
+};
+const BOTAO = { l: 220, r: 1220, top: 630, bot: 810, rad: 90, bg: INK, bc: INK, bw: 0 };
+
+/* ---------- a forma única: botão gov.br → loader → check → conta → pílula → botão (loop) ---------- */
+const TB = build([
+  { t: 0, set: BOTAO },
+  { t: CLK.botao, set: { l: 630, r: 810, top: 630, bot: 810, rad: 90, bg: WHITE, bc: INK, bw: 3 } },
+  { t: 3.0, set: { l: 220, r: 1220, top: 650, bot: 790, rad: 70 } },
+  { t: 4.0, set: { l: 220, r: 1220, top: 520, bot: 920, rad: 40, bc: HAIR } },
+  { t: CLK.continuar, set: { l: 220, r: 1220, top: 640, bot: 800, rad: 80, bg: INK, bc: INK, bw: 0 } },
+  { t: 8.0, set: BOTAO }
+]);
+/* ---------- cursor ---------- */
+const TC = build([
+  { t: 0, set: { x: 1130, y: 1150 } },
+  { t: 0.4, set: { x: 860, y: 760 } },    // alvo: botão      (clique 2.0)
+  { t: 2.4, set: { x: 1080, y: 990 } },
+  { t: 4.6, set: { x: 1025, y: 835 } },   // alvo: Continuar  (clique 6.0)
+  { t: 6.4, set: { x: 1130, y: 1150 } }   // volta ao ponto do quadro 1
+], "cursor");
+const TK = build([
+  { t: 0, set: { z: 1.1 } }   // enquadramento fixo: a mesma largura em todos os estados e nos dois vídeos
+], "cam");
+
+const CLICKS = Object.values(CLK);
+const press = (t, tc) => S(t, tc, "press") - S(t, tc + 0.16, "press");
+const win = (t, a, b) => clamp(S(t, a) - S(t, b));
+
+const els = { B: $("B"), cam: $("cam"), cur: $("cursor"), ripple: $("ripple") };
+const CONTENT = [
+  ["bBtn", -1, CLK.botao, 8.3], ["bSpin", CLK.botao + 0.3, 3.0], ["bCheck", 3.25, 4.0],
+  ["bConta", 4.3, CLK.continuar], ["bFinal", CLK.continuar + 0.3, 8.0]
+].map(([id, a, b, a2]) => ({ el: $(id), a, b, a2, ck: $(id).querySelector(".ck"), arc: $(id).querySelector(".arc") }));
+
+function fade(el, o) {
+  el.style.opacity = o.toFixed(3);
+  el.style.filter = o > 0.995 ? "none" : `blur(${((1 - o) * 16).toFixed(2)}px)`;
+  el.style.visibility = o < 0.002 ? "hidden" : "visible";
+}
+function paint(el, g, scale, op) {
+  el.style.transform = `translate(${g.l.toFixed(2)}px,${g.top.toFixed(2)}px) scale(${scale.toFixed(4)})`;
+  el.style.transformOrigin = `${((g.r - g.l) / 2).toFixed(1)}px ${((g.bot - g.top) / 2).toFixed(1)}px`;
+  el.style.width = Math.max(0, g.r - g.l).toFixed(2) + "px";
+  el.style.height = Math.max(0, g.bot - g.top).toFixed(2) + "px";
+  el.style.borderRadius = Math.max(0, g.rad).toFixed(2) + "px";
+  el.style.background = rgba(g.bg);
+  el.style.boxShadow = `inset 0 0 0 ${Math.max(0, g.bw).toFixed(2)}px ${rgba(g.bc)}`;
+  el.style.opacity = clamp(op).toFixed(3);
+}
+
+/* ---------- seek(t): todo estilo sai de t, nada guardado entre quadros ---------- */
+function seek(t) {
+  t = ((t % T) + T) % T;
+  const cam = ev(TK, t), cur = ev(TC, t);
+
+  // a forma: afunda no aperto e já começa a mudar no mesmo quadro
+  const b = ev(TB, t);
+  paint(els.B, b, 1 - 0.04 * CLICKS.reduce((s, c) => s + press(t, c), 0), 1);
+
+  // conteúdos: cada troca tem entrada e saída próprias, com blur curto
+  CONTENT.forEach(c => {
+    fade(c.el, clamp(win(t, c.a, c.b) + (c.a2 ? S(t, c.a2) : 0)));
+    if (c.ck) c.ck.setAttribute("stroke-dashoffset", (1 - clamp(S(t, c.a + 0.1, "ck"))).toFixed(4));
+    if (c.arc) { c.arc.style.transformOrigin = "50px 50px"; c.arc.style.transform = `rotate(${(t * 420) % 360}deg)`; }
+  });
+
+  // câmera e cursor (cursor fora da câmera: tamanho constante)
+  els.cam.style.transform = `translate(720px,720px) scale(${cam.z.toFixed(4)}) translate(-720px,-720px)`;
+  const sx = 720 + (cur.x - 720) * cam.z, sy = 720 + (cur.y - 720) * cam.z;
+  const pr = CLICKS.reduce((s, c) => s + press(t, c), 0);
+  els.cur.style.transform = `translate(${sx.toFixed(2)}px,${sy.toFixed(2)}px) scale(${(1 - 0.2 * clamp(pr)).toFixed(3)})`;
+
+  // anel discreto no ponto do aperto, nascendo no mesmo quadro do clique
+  const tc = CLICKS.filter(c => t >= c && t < c + 0.9).pop();
+  if (tc !== undefined) {
+    const k = S(t, tc, "ripple");
+    els.ripple.style.visibility = "visible";
+    els.ripple.style.opacity = (0.45 * (1 - k)).toFixed(3);
+    els.ripple.style.transform = `translate(${(sx + 4).toFixed(1)}px,${(sy + 3).toFixed(1)}px) scale(${(0.2 + 0.8 * k).toFixed(3)})`;
+  } else els.ripple.style.visibility = "hidden";
+
+  const beat = Math.floor(t / 0.5 + 1e-6);
+  $("tempo").textContent = `${Math.floor(beat / 4) + 1}.${(beat % 4) + 1} · ${t.toFixed(1)}s`;
+}
+window.seek = seek;
+
+/* ---------- reprodução: rAF só calcula t; seek continua puro ---------- */
+const stage = $("stage"), world = $("world");
+new ResizeObserver(() => { world.style.transform = `scale(${stage.clientWidth / 1440})`; }).observe(stage);
+const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let playing = !reduz, base = performance.now(), paused = reduz ? 0 : 0;
+const btn = $("play"), scrub = $("scrub");
+btn.textContent = playing ? "Pausar" : "Reproduzir";
+function frame(now) {
+  const t = playing ? ((now - base) / 1000) % T : paused;
+  seek(t); if (playing) scrub.value = t.toFixed(2);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+btn.addEventListener("click", () => {
+  if (playing) { paused = ((performance.now() - base) / 1000) % T; playing = false; }
+  else { base = performance.now() - paused * 1000; playing = true; }
+  btn.textContent = playing ? "Pausar" : "Reproduzir";
+});
+scrub.addEventListener("input", () => { playing = false; paused = +scrub.value; btn.textContent = "Reproduzir"; });
+
+const palco = $("palco"), casa = $("casa"), big = $("big");
+let ov = null;
+function fechar() { if (!ov) return; casa.appendChild(palco); ov.remove(); ov = null; big.textContent = "Ampliar"; }
+big.addEventListener("click", () => {
+  if (ov) return fechar();
+  ov = document.createElement("div"); ov.className = "overlay";
+  ov.addEventListener("click", e => { if (e.target === ov) fechar(); });
+  ov.appendChild(palco); document.body.appendChild(ov); big.textContent = "Fechar";
+});
+addEventListener("keydown", e => { if (e.key === "Escape") fechar(); if (e.key === " " && e.target === document.body) { e.preventDefault(); btn.click(); } });
+})();
+</script>
+<script>
+/* ================= card 02: acesso por empresa ================= */
+(() => {
+const $ = id => document.getElementById(id);
+const IC = {
+  predio: '<path d="M9 42V9.5A2.5 2.5 0 0 1 11.5 7h17A2.5 2.5 0 0 1 31 9.5V42M31 20h6a2 2 0 0 1 2 2v20M5 42h38M16 15h8M16 23h8M16 31h8"/>',
+  doc: '<path d="M12 5h17l9 9v27a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M29 5v9h9M17 24h14M17 31h10"/>',
+  cadeado: '<rect x="10" y="21" width="28" height="21" rx="4"/><path d="M16 21v-6a8 8 0 0 1 16 0v6"/>'
+};
+document.querySelectorAll("[data-ic2]").forEach(el => {
+  const s = +(el.dataset.size || 44);
+  el.innerHTML = `<svg viewBox="0 0 48 48" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">${IC[el.dataset.ic2]}</svg>`;
+  el.style.display = "flex";
+});
+$("e2DetOk").innerHTML = `<svg viewBox="0 0 48 48" width="52" height="52" style="flex:none"><circle cx="24" cy="24" r="22" fill="#1677E8"/><path class="ck" d="M14 24.5l6.5 6.5L34 17.5" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1 1"/></svg><span>O contador pode consultar esta empresa</span>`;
+
+/* springs em forma fechada (mesmos do card 01) */
+const P = { shape: { w: 10, z: 0.9 }, cursor: { w: 8, z: 1 }, cam: { w: 5, z: 1 }, ui: { w: 18, z: 1 }, press: { w: 45, z: 1 }, ck: { w: 12, z: 1 }, ripple: { w: 7, z: 1 } };
+function sp(dt, p) {
+  if (dt <= 0) return 0;
+  const { w, z } = p;
+  if (z >= 1) return 1 - Math.exp(-w * dt) * (1 + w * dt);
+  const wd = w * Math.sqrt(1 - z * z);
+  return 1 - Math.exp(-z * w * dt) * (Math.cos(wd * dt) + (z * w / wd) * Math.sin(wd * dt));
+}
+const S = (t, t0, p = "ui") => p === "jump" ? (t >= t0 ? 1 : 0) : sp(t - t0, P[p]);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+function build(keys, def = "shape") {
+  const f = {};
+  keys.forEach(k => { for (const n in k.set) (f[n] ||= []).push({ t: k.t, v: k.set[n], p: k.p || def }); });
+  return f;
+}
+function val(list, t) {
+  const arr = Array.isArray(list[0].v);
+  let v = arr ? list[0].v.slice() : list[0].v;
+  for (let i = 1; i < list.length; i++) {
+    const s = S(t, list[i].t, list[i].p), a = list[i].v, b = list[i - 1].v;
+    if (arr) for (let j = 0; j < v.length; j++) v[j] += (a[j] - b[j]) * s; else v += (a - b) * s;
+  }
+  return v;
+}
+const ev = (tr, t) => { const o = {}; for (const n in tr) o[n] = val(tr[n], t); return o; };
+const rgba = c => `rgba(${clamp(c[0], 0, 255) | 0},${clamp(c[1], 0, 255) | 0},${clamp(c[2], 0, 255) | 0},${clamp(c[3]).toFixed(3)})`;
+
+const WHITE = [255, 255, 255, 1], HAIR = [222, 219, 210, 1], AREIA = [244, 241, 234, 1], CINZA = [236, 234, 228, 1];
+const T = 16; // 8 compassos x 4 tempos x 0,5 s (120 BPM)
+
+/* cada clique: cursor parado no alvo >= 1 s antes; a forma muda no instante do aperto */
+const CLK = {
+  pilula: 2.0,      // clica na empresa atual     -> abre a lista de empresas
+  representada: 4.0,// clica na empresa representada -> seleciona
+  outra: 8.5,       // clica em outra empresa     -> seleciona
+  verDados: 10.8    // tenta "Ver dados"           -> aviso sem acesso
+};
+const PILULA = { l: 220, r: 1220, top: 650, bot: 790, rad: 70, bg: WHITE, bc: HAIR, bw: 3 };
+const LINHA = y => ({ l: 244, r: 1196, top: y - 81, bot: y + 81, rad: 28, bg: AREIA, bw: 0 });
+const CARTAO = { l: 220, r: 1220, top: 420, bot: 1020, rad: 44, bw: 3, bc: HAIR };
+
+/* A = painel da lista; B = a forma que se move (pílula → linha → cartão → linha → pílula) */
+const TA = build([
+  { t: 0, set: PILULA },
+  { t: CLK.pilula, set: { l: 220, r: 1220, top: 420, bot: 1020, rad: 44 } },
+  { t: 13.2, set: PILULA }
+]);
+const TB = build([
+  { t: 0, set: PILULA },
+  { t: CLK.pilula, set: LINHA(530) },          // a pílula vira a linha "Sua empresa"
+  { t: CLK.representada, set: LINHA(720) },    // o realce corre até a linha clicada
+  { t: 5.0, set: { ...CARTAO, bg: WHITE } },   // e abre o detalhe da procuração
+  { t: 7.0, set: LINHA(720) },
+  { t: CLK.outra, set: LINHA(910) },
+  { t: 9.3, set: { ...CARTAO, bg: CINZA } },   // outra empresa: cartão neutro, sem acesso
+  { t: 12.0, set: LINHA(530) },
+  { t: 13.2, set: PILULA }
+]);
+const TC = build([
+  { t: 0, set: { x: 1130, y: 1150 } },
+  { t: 0.4, set: { x: 930, y: 740 } },     // alvo: pílula               (clique 2.0)
+  { t: 2.5, set: { x: 600, y: 730 } },     // alvo: empresa representada (clique 4.0)
+  { t: 4.4, set: { x: 1150, y: 1060 } },
+  { t: 7.3, set: { x: 600, y: 915 } },     // alvo: outra empresa        (clique 8.5)
+  { t: 9.4, set: { x: 975, y: 880 } },     // alvo: "Ver dados"          (clique 10.8)
+  { t: 11.2, set: { x: 1130, y: 1150 } }   // volta ao ponto do quadro 1
+], "cursor");
+const TK = build([
+  { t: 0, set: { z: 1.1 } }   // enquadramento fixo, igual ao card 01
+], "cam");
+
+const CLICKS = Object.values(CLK);
+const press = (t, tc) => S(t, tc, "press") - S(t, tc + 0.16, "press");
+const win = (t, a, b) => clamp(S(t, a) - S(t, b));
+const els = { A: $("e2A"), B: $("e2B"), cam: $("e2cam"), cur: $("e2cursor"), ripple: $("e2ripple"), rows: $("e2Rows"), pill: $("e2Pill") };
+const CONTENT = [["e2Det", 5.3, 7.0], ["e2Lock1", 9.6, CLK.verDados], ["e2Lock2", CLK.verDados + 0.25, 12.0]]
+  .map(([id, a, b]) => ({ el: $(id), a, b, ck: $(id).querySelector(".ck") }));
+
+function fade(el, o) {
+  el.style.opacity = o.toFixed(3);
+  el.style.filter = o > 0.995 ? "none" : `blur(${((1 - o) * 16).toFixed(2)}px)`;
+  el.style.visibility = o < 0.002 ? "hidden" : "visible";
+}
+function paint(el, g, scale, op) {
+  el.style.transform = `translate(${g.l.toFixed(2)}px,${g.top.toFixed(2)}px) scale(${scale.toFixed(4)})`;
+  el.style.transformOrigin = `${((g.r - g.l) / 2).toFixed(1)}px ${((g.bot - g.top) / 2).toFixed(1)}px`;
+  el.style.width = Math.max(0, g.r - g.l).toFixed(2) + "px";
+  el.style.height = Math.max(0, g.bot - g.top).toFixed(2) + "px";
+  el.style.borderRadius = Math.max(0, g.rad).toFixed(2) + "px";
+  el.style.background = rgba(g.bg);
+  el.style.boxShadow = `inset 0 0 0 ${Math.max(0, g.bw).toFixed(2)}px ${rgba(g.bc)}`;
+  el.style.opacity = clamp(op).toFixed(3);
+}
+
+function seek(t) {
+  t = ((t % T) + T) % T;
+  const cam = ev(TK, t), cur = ev(TC, t);
+  const sink = cs => 1 - 0.04 * cs.reduce((s, c) => s + press(t, c), 0);
+
+  // painel só existe entre abrir e fechar a lista (no quadro 1 e no último é igual à pílula e fica oculto)
+  paint(els.A, ev(TA, t), 1, S(t, CLK.pilula - 0.02, "jump") - S(t, 13.6, "jump"));
+  // o clique na pílula e na "Ver dados" afunda a forma B; nas linhas, o realce já é a resposta
+  paint(els.B, ev(TB, t), sink([CLK.pilula, CLK.verDados]), 1);
+
+  fade(els.pill, clamp(1 - S(t, CLK.pilula) + S(t, 13.5)));
+  fade(els.rows, clamp(win(t, CLK.pilula + 0.3, 5.0) + win(t, 7.3, 9.3) + win(t, 12.1, 13.2)));
+  CONTENT.forEach(c => {
+    fade(c.el, win(t, c.a, c.b));
+    if (c.ck) c.ck.setAttribute("stroke-dashoffset", (1 - clamp(S(t, c.a + 0.6, "ck"))).toFixed(4));
+  });
+
+  els.cam.style.transform = `translate(720px,720px) scale(${cam.z.toFixed(4)}) translate(-720px,-720px)`;
+  const sx = 720 + (cur.x - 720) * cam.z, sy = 720 + (cur.y - 720) * cam.z;
+  const pr = CLICKS.reduce((s, c) => s + press(t, c), 0);
+  els.cur.style.transform = `translate(${sx.toFixed(2)}px,${sy.toFixed(2)}px) scale(${(1 - 0.2 * clamp(pr)).toFixed(3)})`;
+  const tc = CLICKS.filter(c => t >= c && t < c + 0.9).pop();
+  if (tc !== undefined) {
+    const k = S(t, tc, "ripple");
+    els.ripple.style.visibility = "visible";
+    els.ripple.style.opacity = (0.45 * (1 - k)).toFixed(3);
+    els.ripple.style.transform = `translate(${(sx + 4).toFixed(1)}px,${(sy + 3).toFixed(1)}px) scale(${(0.2 + 0.8 * k).toFixed(3)})`;
+  } else els.ripple.style.visibility = "hidden";
+
+  const beat = Math.floor(t / 0.5 + 1e-6);
+  $("e2tempo").textContent = `${Math.floor(beat / 4) + 1}.${(beat % 4) + 1} · ${t.toFixed(1)}s`;
+}
+window.seek2 = seek;
+
+const stage = $("e2stage"), world = $("e2world");
+new ResizeObserver(() => { world.style.transform = `scale(${stage.clientWidth / 1440})`; }).observe(stage);
+const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let playing = !reduz, base = performance.now(), paused = reduz ? 6.2 : 0;
+const btn = $("e2play"), scrub = $("e2scrub");
+btn.textContent = playing ? "Pausar" : "Reproduzir";
+function frame(now) {
+  const t = playing ? ((now - base) / 1000) % T : paused;
+  seek(t); if (playing) scrub.value = t.toFixed(2);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+btn.addEventListener("click", () => {
+  if (playing) { paused = ((performance.now() - base) / 1000) % T; playing = false; }
+  else { base = performance.now() - paused * 1000; playing = true; }
+  btn.textContent = playing ? "Pausar" : "Reproduzir";
+});
+scrub.addEventListener("input", () => { playing = false; paused = +scrub.value; btn.textContent = "Reproduzir"; });
+const palco = $("e2palco"), casa = $("e2casa"), big = $("e2big");
+let ov = null;
+function fechar() { if (!ov) return; casa.appendChild(palco); ov.remove(); ov = null; big.textContent = "Ampliar"; }
+big.addEventListener("click", () => {
+  if (ov) return fechar();
+  ov = document.createElement("div"); ov.className = "overlay";
+  ov.addEventListener("click", e => { if (e.target === ov) fechar(); });
+  ov.appendChild(palco); document.body.appendChild(ov); big.textContent = "Fechar";
+});
+addEventListener("keydown", e => { if (e.key === "Escape") fechar(); });
+})();
+</script>
+<script>
+/* ================= card 03: dados utilizados ================= */
+(() => {
+const $ = id => document.getElementById(id);
+const NS = "http://www.w3.org/2000/svg";
+document.querySelectorAll("[data-ic3]").forEach(el => {
+  el.innerHTML = '<svg viewBox="0 0 48 48" width="52" height="52" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="38" height="27" rx="4"/><path d="M5 19h38M12 30h8"/></svg>';
+  el.style.display = "flex";
+});
+$("e3OrgOk").innerHTML = `<svg viewBox="0 0 48 48" width="56" height="56" style="flex:none"><circle cx="24" cy="24" r="22" fill="#1677E8"/><path class="ck" d="M14 24.5l6.5 6.5L34 17.5" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1 1"/></svg><span>Uso exclusivo para fins fiscais</span>`;
+
+/* ---------- gráfico: barras agrupadas por competência (valores fictícios, em mil R$) ---------- */
+const NFS = [18, 20, 19, 20, 21, 20], PGDAS = [18, 20, 19, 20, 21, 20], CARTAO = [17, 19, 18, 32, 20, 19];
+const Y0 = 340, K = 300 / 40;                 // 0 a 40 mil em 300 px
+const cx = i => 110 + i * 150;
+const svg = $("e3svg");
+const mk = (tag, at) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); svg.appendChild(e); return e; };
+const faixa = mk("rect", { x: cx(3) - 72, y: 24, width: 144, height: 330, rx: 16, fill: "#F4F1EA" });
+[0, 20, 40].forEach(v => {
+  mk("line", { x1: 40, x2: 900, y1: Y0 - v * K, y2: Y0 - v * K, stroke: "#E4E0D6", "stroke-width": 2 });
+  const tx = mk("text", { x: 30, y: Y0 - v * K + 8, "text-anchor": "end", "font-size": 22, fill: "#6F6D66" }); tx.textContent = v ? `${v} mil` : "0";
+});
+const barras = [];
+NFS.forEach((_, i) => {
+  const x0 = cx(i) - 51;
+  barras.push({ i, v: NFS[i], el: mk("rect", { x: x0, width: 30, rx: 4, fill: "#141413" }) });
+  barras.push({ i, v: PGDAS[i], el: mk("rect", { x: x0 + 36, width: 30, rx: 4, fill: "#B9B4A8" }) });
+  barras.push({ i, v: CARTAO[i], el: mk("rect", { x: x0 + 73.5, width: 27, rx: 4, fill: "#fff", stroke: "#141413", "stroke-width": 3 }) });
+  const tx = mk("text", { x: cx(i), y: Y0 + 34, "text-anchor": "middle", "font-size": 22, fill: "#6F6D66", "font-variant-numeric": "tabular-nums" });
+  tx.textContent = `0${i + 1}`;
+});
+const dif = mk("rect", { x: cx(3) - 51 + 73.5, width: 27, rx: 4, fill: "#1677E8" }); // parte do cartão acima da NFS-e em 04
+
+/* ---------- springs em forma fechada (mesmos dos outros cards) ---------- */
+const P = { shape: { w: 10, z: 0.9 }, cursor: { w: 8, z: 1 }, ui: { w: 18, z: 1 }, press: { w: 45, z: 1 }, ck: { w: 12, z: 1 }, ripple: { w: 7, z: 1 }, draw: { w: 5, z: 1 } };
+function sp(dt, p) {
+  if (dt <= 0) return 0;
+  const { w, z } = p;
+  if (z >= 1) return 1 - Math.exp(-w * dt) * (1 + w * dt);
+  const wd = w * Math.sqrt(1 - z * z);
+  return 1 - Math.exp(-z * w * dt) * (Math.cos(wd * dt) + (z * w / wd) * Math.sin(wd * dt));
+}
+const S = (t, t0, p = "ui") => sp(t - t0, P[p]);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+function build(keys, def = "shape") {
+  const f = {};
+  keys.forEach(k => { for (const n in k.set) (f[n] ||= []).push({ t: k.t, v: k.set[n], p: k.p || def }); });
+  return f;
+}
+function val(list, t) {
+  const arr = Array.isArray(list[0].v);
+  let v = arr ? list[0].v.slice() : list[0].v;
+  for (let i = 1; i < list.length; i++) {
+    const s = S(t, list[i].t, list[i].p), a = list[i].v, b = list[i - 1].v;
+    if (arr) for (let j = 0; j < v.length; j++) v[j] += (a[j] - b[j]) * s; else v += (a - b) * s;
+  }
+  return v;
+}
+const ev = (tr, t) => { const o = {}; for (const n in tr) o[n] = val(tr[n], t); return o; };
+const rgba = c => `rgba(${clamp(c[0], 0, 255) | 0},${clamp(c[1], 0, 255) | 0},${clamp(c[2], 0, 255) | 0},${clamp(c[3]).toFixed(3)})`;
+
+const WHITE = [255, 255, 255, 1], HAIR = [222, 219, 210, 1];
+const T = 14; // 7 compassos x 4 tempos x 0,5 s (120 BPM)
+
+/* cada clique: cursor parado no alvo >= 1 s antes; a forma muda no instante do aperto */
+const CLK = {
+  comparar: 2.0,  // clica em "Comparar competências" -> gráfico
+  mes: 5.5,       // clica na competência 04          -> detalhe com a diferença
+  origem: 8.5     // clica em "Origem dos dados"      -> SEFIN-RO, fins fiscais
+};
+const BASE = { l: 220, r: 1220, top: 470, bot: 970, rad: 44, bg: WHITE, bc: HAIR, bw: 3 };
+const TB = build([
+  { t: 0, set: BASE },
+  { t: CLK.comparar, set: { top: 400, bot: 1040 } },
+  { t: CLK.mes, set: { top: 450, bot: 990 } },
+  { t: CLK.origem, set: { top: 530, bot: 910, rad: 40 } },
+  { t: 11.0, set: BASE }
+]);
+const TC = build([
+  { t: 0, set: { x: 1130, y: 1150 } },
+  { t: 0.4, set: { x: 820, y: 880 } },     // alvo: Comparar             (clique 2.0)
+  { t: 2.4, set: { x: 1130, y: 1080 } },
+  { t: 3.9, set: { x: 835, y: 760 } },     // alvo: barras de 04/2026    (clique 5.5)
+  { t: 6.3, set: { x: 1020, y: 905 } },    // alvo: Origem dos dados     (clique 8.5)
+  { t: 8.9, set: { x: 1130, y: 1150 } }    // volta ao ponto do quadro 1
+], "cursor");
+const Z = 1.1; // mesmo enquadramento fixo dos cards 01 e 02
+
+const CLICKS = Object.values(CLK);
+const press = (t, tc) => S(t, tc, "press") - S(t, tc + 0.16, "press");
+const win = (t, a, b) => clamp(S(t, a) - S(t, b));
+const els = { B: $("e3B"), cam: $("e3cam"), cur: $("e3cursor"), ripple: $("e3ripple"), base: $("e3Base") };
+const CONTENT = [["e3Graf", CLK.comparar + 0.3, CLK.mes], ["e3Det", CLK.mes + 0.3, CLK.origem], ["e3Org", CLK.origem + 0.3, 11.0]]
+  .map(([id, a, b]) => ({ el: $(id), a, b, ck: $(id).querySelector(".ck") }));
+
+function fade(el, o) {
+  el.style.opacity = o.toFixed(3);
+  el.style.filter = o > 0.995 ? "none" : `blur(${((1 - o) * 16).toFixed(2)}px)`;
+  el.style.visibility = o < 0.002 ? "hidden" : "visible";
+}
+function paint(el, g, scale) {
+  el.style.transform = `translate(${g.l.toFixed(2)}px,${g.top.toFixed(2)}px) scale(${scale.toFixed(4)})`;
+  el.style.transformOrigin = `${((g.r - g.l) / 2).toFixed(1)}px ${((g.bot - g.top) / 2).toFixed(1)}px`;
+  el.style.width = Math.max(0, g.r - g.l).toFixed(2) + "px";
+  el.style.height = Math.max(0, g.bot - g.top).toFixed(2) + "px";
+  el.style.borderRadius = Math.max(0, g.rad).toFixed(2) + "px";
+  el.style.background = rgba(g.bg);
+  el.style.boxShadow = `inset 0 0 0 ${Math.max(0, g.bw).toFixed(2)}px ${rgba(g.bc)}`;
+}
+
+function seek(t) {
+  t = ((t % T) + T) % T;
+  const cur = ev(TC, t);
+  paint(els.B, ev(TB, t), 1 - 0.035 * CLICKS.reduce((s, c) => s + press(t, c), 0));
+
+  fade(els.base, clamp(1 - S(t, CLK.comparar) + S(t, 11.3)));
+  CONTENT.forEach(c => {
+    fade(c.el, win(t, c.a, c.b));
+    if (c.ck) c.ck.setAttribute("stroke-dashoffset", (1 - clamp(S(t, c.a + 0.5, "ck"))).toFixed(4));
+  });
+
+  // barras sobem competência por competência depois do clique em Comparar
+  barras.forEach(b => {
+    const h = b.v * K * clamp(S(t, CLK.comparar + 0.5 + b.i * 0.15, "draw"));
+    b.el.setAttribute("y", (Y0 - h).toFixed(2)); b.el.setAttribute("height", Math.max(0, h).toFixed(2));
+  });
+  // hover: a faixa de 04 aparece quando o cursor chega; a diferença acende em azul
+  faixa.setAttribute("opacity", clamp(S(t, 4.8)).toFixed(3));
+  const d = (CARTAO[3] - NFS[3]) * K * clamp(S(t, 4.9, "draw"));
+  dif.setAttribute("y", (Y0 - CARTAO[3] * K).toFixed(2)); dif.setAttribute("height", Math.max(0, d).toFixed(2));
+
+  els.cam.style.transform = `translate(720px,720px) scale(${Z}) translate(-720px,-720px)`;
+  const sx = 720 + (cur.x - 720) * Z, sy = 720 + (cur.y - 720) * Z;
+  const pr = CLICKS.reduce((s, c) => s + press(t, c), 0);
+  els.cur.style.transform = `translate(${sx.toFixed(2)}px,${sy.toFixed(2)}px) scale(${(1 - 0.2 * clamp(pr)).toFixed(3)})`;
+  const tc = CLICKS.filter(c => t >= c && t < c + 0.9).pop();
+  if (tc !== undefined) {
+    const k = S(t, tc, "ripple");
+    els.ripple.style.visibility = "visible";
+    els.ripple.style.opacity = (0.45 * (1 - k)).toFixed(3);
+    els.ripple.style.transform = `translate(${(sx + 4).toFixed(1)}px,${(sy + 3).toFixed(1)}px) scale(${(0.2 + 0.8 * k).toFixed(3)})`;
+  } else els.ripple.style.visibility = "hidden";
+
+  const beat = Math.floor(t / 0.5 + 1e-6);
+  $("e3tempo").textContent = `${Math.floor(beat / 4) + 1}.${(beat % 4) + 1} · ${t.toFixed(1)}s`;
+}
+window.seek3 = seek;
+
+const stage = $("e3stage"), world = $("e3world");
+new ResizeObserver(() => { world.style.transform = `scale(${stage.clientWidth / 1440})`; }).observe(stage);
+const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let playing = !reduz, base = performance.now(), paused = reduz ? 7.0 : 0;
+const btn = $("e3play"), scrub = $("e3scrub");
+btn.textContent = playing ? "Pausar" : "Reproduzir";
+function frame(now) {
+  const t = playing ? ((now - base) / 1000) % T : paused;
+  seek(t); if (playing) scrub.value = t.toFixed(2);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+btn.addEventListener("click", () => {
+  if (playing) { paused = ((performance.now() - base) / 1000) % T; playing = false; }
+  else { base = performance.now() - paused * 1000; playing = true; }
+  btn.textContent = playing ? "Pausar" : "Reproduzir";
+});
+scrub.addEventListener("input", () => { playing = false; paused = +scrub.value; btn.textContent = "Reproduzir"; });
+const palco = $("e3palco"), casa = $("e3casa"), big = $("e3big");
+let ov = null;
+function fechar() { if (!ov) return; casa.appendChild(palco); ov.remove(); ov = null; big.textContent = "Ampliar"; }
+big.addEventListener("click", () => {
+  if (ov) return fechar();
+  ov = document.createElement("div"); ov.className = "overlay";
+  ov.addEventListener("click", e => { if (e.target === ov) fechar(); });
+  ov.appendChild(palco); document.body.appendChild(ov); big.textContent = "Fechar";
+});
+addEventListener("keydown", e => { if (e.key === "Escape") fechar(); });
+})();
+</script>

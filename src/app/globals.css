@@ -1,9 +1,15 @@
 :root{
   color-scheme:light;
-  --ivory:#FAF9F5; --ink:#141413; --ink-2:#3D3D3A; --muted:#6F6D66; --rule:#1F1E1D; --hair:#DEDBD2;
-  --clay:#D97757; --clay-fill:#EBCBB9; --clay-deep:#C15F3C;
-  --green:#3C9A6B; --gold:#D4A12A; --slate:#6B6A66; --stone:#C9C5BA;
-  --night:#141413; --night-ink:#F2EDE4; --night-muted:#9D988D;
+  /* paleta da marca SISConforme */
+  --azul:#1677E8; --azul-fundo:#10233F; --petroleo:#174A5B; --areia:#F4F1EA; --branco:#FFFFFF;
+  --laranja:#D87535; --grafite:#20252B; --cinza:#68717C;
+  --azul-claro:#DCE9FB;
+
+  /* nomes usados pelos componentes, apontando para a paleta */
+  --ivory:var(--areia); --ink:var(--grafite); --ink-2:#2E353D; --muted:var(--cinza); --rule:var(--grafite); --hair:#E4E0D6;
+  --clay:var(--laranja); --clay-fill:#F6DCCB; --clay-deep:#B85A1F; /* laranja: ilustrações e pequenos destaques */
+  --green:#3C9A6B; --gold:#D4A12A; --slate:var(--cinza); --stone:#CFC9BC;
+  --night:var(--azul-fundo); --night-ink:#F4F1EA; --night-muted:#9AA7B8;
   --sans:var(--font-inter),system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 *{box-sizing:border-box}
@@ -11,7 +17,7 @@ html,body{overflow-x:clip;max-width:100%}
 html{scroll-behavior:smooth}
 body{background:var(--ivory);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;margin:0}
 a{color:inherit}
-:focus-visible{outline:2px solid var(--clay);outline-offset:3px}
+:focus-visible{outline:2px solid var(--azul);outline-offset:3px}
 p{margin:0}
 h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.01em;text-wrap:balance}
 
@@ -23,21 +29,22 @@ article{padding:120px 16px 80px}
 .prose p,.prose li{font-size:17.5px;line-height:1.6;color:var(--ink-2)}
 .prose p+p,.prose p+ul,.prose ul+p{margin-top:17px}
 .prose b{font-weight:600}
-.prose a{text-underline-offset:3px;text-decoration-thickness:1px}
+.prose a{color:var(--azul);text-underline-offset:3px;text-decoration-thickness:1px}
+.prose h2,.prose h3{color:var(--azul-fundo)}
 .prose h2{font-size:clamp(30px,3.2vw,38px);letter-spacing:-.022em;margin:110px 0 36px;line-height:1.1}
 .prose h3{font-size:24px;margin:56px 0 18px}
 .prose ul{padding-left:22px;margin:0}
 .prose li+li{margin-top:8px}
 .block{margin:56px auto}
-.foot{font-family:var(--sans);font-size:14.5px;line-height:1.45;color:#5d5b55}
+.foot{font-family:var(--sans);font-size:14.5px;line-height:1.45;color:var(--cinza)}
 .foot p+p{margin-top:10px}
 .foot sup{font-size:10px}
-.caption{font-family:var(--sans);font-size:14px;color:#5d5b55;text-align:center;margin-top:18px;line-height:1.45}
+.caption{font-family:var(--sans);font-size:14px;color:var(--cinza);text-align:center;margin-top:18px;line-height:1.45}
 
 /* ---------- abas (gráfico, carrossel, comunicação) ---------- */
 .tabs{display:flex;flex-wrap:wrap;gap:4px 18px;font-family:var(--sans);font-size:14.5px;font-weight:600;margin-bottom:14px}
-.tabs button{all:unset;cursor:pointer;color:#8f8c84}
-.tabs button[aria-selected="true"]{color:var(--ink)}
-.tabs button:focus-visible{outline:2px solid var(--clay);outline-offset:3px}
+.tabs button{all:unset;cursor:pointer;color:var(--cinza)}
+.tabs button[aria-selected="true"]{color:var(--azul)}
+.tabs button:focus-visible{outline:2px solid var(--azul);outline-offset:3px}
 
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

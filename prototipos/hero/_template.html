@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Hero SISConforme — protótipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ====== TOKENS ====== */
+  :root{
+    --fundo:#0e0d0c;          /* fundo atrás dos painéis */
+    --texto:#F4EFE6;          /* cor do texto sobre a imagem */
+    --areia:#F4F1EA;
+    --grafite:#20252B;
+    --cinza:#68717C;
+    --azul:#1677E8;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;overflow-x:clip}
+  html{scroll-behavior:smooth}
+  body{background:var(--areia);color:var(--grafite);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  p{margin:0}
+  h1{margin:0;font-weight:600}
+  a{color:inherit}
+
+  /* ====== HERO ====== */
+  /* altura total = quanto o usuário rola até a animação terminar (320vh = ~2,2 telas de scroll) */
+  .intro{height:320vh;position:relative;background:var(--fundo)}
+  /* palco fixo: fica grudado no topo enquanto a seção .intro passa */
+  .stage{position:sticky;top:0;height:100vh;overflow:hidden;display:flex}
+
+  .panel{position:relative;height:100%;overflow:hidden;flex:1 1 0;min-width:0}
+  .panel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+
+  /* painel central: a largura vem de --cw, escrita pelo JS conforme o scroll */
+  .panel.c{flex:0 0 var(--cw,42%);box-shadow:0 0 0 1px rgba(0,0,0,.6)}
+  .panel.c::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,0) 30%,rgba(0,0,0,0) 70%,rgba(0,0,0,.35))}
+
+  .heroCopy{position:absolute;inset:0;z-index:2;display:grid;grid-template-columns:minmax(0,1fr);
+    place-items:center;text-align:center;color:var(--texto);pointer-events:none}
+
+  /* véu escuro atrás do texto — ganha força quando o bloco principal entra, para a frase ficar legível */
+  .veu{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;
+    background:radial-gradient(ellipse 60% 55% at 50% 50%,rgba(8,10,14,.55),rgba(8,10,14,0) 75%)}
+
+  .titleblock{display:flex;flex-direction:column;align-items:center;pointer-events:auto;width:min(92%,760px)}
+
+  /* linha logo + nome. --fs = tamanho do nome; o espaço da logo acompanha */
+  /* logo + nome formam um bloco único, centralizado sobre a frase */
+  .lockup{--fs:clamp(36px,min(8vw,12vh),104px);display:flex;align-items:center;justify-content:center;gap:calc(var(--fs)*.28)}
+  .logoSlot{flex:none;height:calc(var(--fs)*1.45);aspect-ratio:712/776}  /* lugar final da logo (vazio) */
+  .titleblock h1{font-size:var(--fs);line-height:1;letter-spacing:-.035em;margin:0;
+    text-shadow:0 2px 40px rgba(0,0,0,.3);opacity:0}
+
+  /* logo única: começa grande no centro e voa até o .logoSlot conforme o scroll */
+  .logo{position:absolute;left:0;top:0;z-index:3;overflow:visible;pointer-events:none;will-change:transform,width;
+    filter:drop-shadow(0 2px 22px rgba(0,0,0,.35))}
+  .logo .traco{fill:none;stroke:var(--texto);stroke-width:30;stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:1;stroke-dashoffset:1}
+  .logo .ponto{fill:var(--texto);transform-box:fill-box;transform-origin:center;transform:scale(0)}
+  /* desenho da logo ao abrir a página */
+  .logo.desenha .traco{animation:tracar .8s cubic-bezier(.65,0,.35,1) var(--d) forwards}
+  .logo.desenha .ponto{animation:pontinho .45s cubic-bezier(.22,1,.36,1) var(--d) forwards}
+  @keyframes tracar{to{stroke-dashoffset:0}}
+  @keyframes pontinho{to{transform:scale(1)}}
+
+  .frase{margin-top:clamp(18px,3vh,28px);font-size:clamp(16px,min(1.6vw,2.6vh),20px);line-height:1.5;font-weight:500;max-width:34em;text-wrap:balance;
+    text-shadow:0 1px 18px rgba(0,0,0,.55);opacity:0}
+
+  .cta{margin-top:clamp(22px,4vh,36px);display:inline-flex;align-items:center;gap:10px;padding:12px 20px 12px 22px;
+    border-radius:999px;border:1px solid rgba(244,239,230,.55);background:rgba(14,13,12,.28);
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    color:var(--texto);text-decoration:none;font-size:15px;font-weight:600;opacity:0;
+    transition:background .25s,border-color .25s}
+  .cta:hover{background:rgba(244,239,230,.14);border-color:var(--texto)}
+  .cta:focus-visible{outline:2px solid var(--azul);outline-offset:3px}
+  .cta svg{width:16px;height:16px}
+  .cta.pulsa svg{animation:seta 1.6s ease-in-out infinite}
+  @keyframes seta{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+  .hint{position:absolute;bottom:28px;left:0;right:0;z-index:1;text-align:center;font-size:13px;color:rgba(244,239,230,.6)}
+
+  @media (max-width:699px){ .panel.c{flex:0 0 var(--cw,62%)} }
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .panel.c{flex:0 0 85%}
+    .hint{opacity:0}
+    .veu{opacity:1}
+    .logo .traco{stroke-dashoffset:0;animation:none!important}
+    .logo .ponto{transform:none;animation:none!important}
+    .titleblock h1,.frase,.cta{opacity:1}
+    .cta.pulsa svg{animation:none}
+  }
+  @media (prefers-reduced-motion:reduce) and (max-width:699px){ .panel.c{flex:0 0 100%} }
+
+  /* ====== conteúdo depois do hero (só para ter onde rolar) ====== */
+  .depois{padding:120px 16px;max-width:652px;margin:0 auto}
+  .depois h2{font-size:clamp(30px,3.2vw,38px);letter-spacing:-.022em;margin:0 0 24px;color:#10233F}
+  .depois p{font-size:17.5px;line-height:1.6;color:#2E353D}
+  .depois p + p{margin-top:17px}
+
+  /* ====== painel de debug (tecla D) ====== */
+  .debug{position:fixed;right:12px;top:12px;z-index:10;font:12px/1.4 ui-monospace,monospace;
+    background:rgba(0,0,0,.7);color:#fff;padding:8px 10px;border-radius:6px;display:none}
+  .debug.on{display:block}
+</style>
+</head>
+<body>
+
+<section class="intro" id="top">
+  <div class="stage">
+    <div class="panel">
+      <img src="{{ESQUERDA}}" alt="Ilustração das Três Caixas d'Água de Porto Velho sobre papel amarelo" style="object-position:50% 40%">
+    </div>
+
+    <div class="panel c" id="pc">
+      <img src="{{CENTRO}}" alt="Pôr do sol sobre o Rio Madeira, em Porto Velho">
+      <div class="veu" id="veu"></div>
+      <div class="heroCopy" id="heroCopy">
+        <div class="titleblock" id="titleblock">
+          <div class="lockup">
+            <span class="logoSlot" id="logoSlot" aria-hidden="true"></span>
+            <h1 id="nome">SISConforme</h1>
+          </div>
+          <p class="frase" id="frase">O novo portal da Prefeitura de Porto Velho que cruza informações fiscais e ajuda você a manter a sua empresa em dia, de forma simples e segura.</p>
+          <a class="cta" id="cta" href="#introducao">Saiba como funciona
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5v11M3.5 9 8 13.5 12.5 9"/></svg>
+          </a>
+        </div>
+
+        <!-- símbolo oficial (public/brand/sisconforme-simbolo-marfim.svg), separado por casa para animar -->
+        <svg class="logo desenha" id="logo" viewBox="156 123 712 776" aria-hidden="true">
+          <g>
+            <path class="traco" pathLength="1" style="--d:.15s" d="M265 284 L175 284 L346 142 L470.5 246"/>
+            <path class="traco" pathLength="1" style="--d:.45s" d="M218 326 L218 524 A128 128 0 0 0 346 652 L354 652"/>
+            <circle class="ponto" style="--d:.95s" cx="218" cy="326" r="15"/>
+          </g>
+          <g>
+            <path class="traco" pathLength="1" style="--d:.45s" d="M431 398 L341 398 L512 256 L636.5 360"/>
+            <path class="traco" pathLength="1" style="--d:.75s" d="M384 440 L384 638 A128 128 0 0 0 512 766 L520 766"/>
+            <circle class="ponto" style="--d:1.25s" cx="384" cy="440" r="15"/>
+          </g>
+          <g>
+            <path class="traco" pathLength="1" style="--d:.75s" d="M597 512 L507 512 L678 370 L848 512"/>
+            <path class="traco" pathLength="1" style="--d:1.05s" d="M550 554 L550 752 A128 128 0 0 0 806 752 L806 550"/>
+          </g>
+        </svg>
+      </div>
+      <p class="hint" id="hint">Role para baixo</p>
+    </div>
+
+    <div class="panel">
+      <img src="{{DIREITA}}" alt="Detalhe de uma locomotiva da Estrada de Ferro Madeira-Mamoré" style="object-position:25% 50%">
+    </div>
+  </div>
+</section>
+
+<article class="depois">
+  <h2 id="introducao">(1) Introdução</h2>
+  <p>Conteúdo de exemplo, só para dar espaço de rolagem depois do hero.</p>
+  <h2 id="cruzamento" style="margin-top:80px">(2) Cruzamento e custo</h2>
+  <p>Conteúdo de exemplo.</p>
+  <h2 id="seguranca" style="margin-top:80px">(3) Segurança</h2>
+  <p>Conteúdo de exemplo.</p>
+  <h2 id="disponibilidade" style="margin-top:80px">(4) Disponibilidade</h2>
+  <p>Conteúdo de exemplo.</p>
+</article>
+
+<div class="debug" id="debug"></div>
+
+<script>
+/* ====== CONFIGURAÇÃO — mexa aqui para ajustar a animação ====== */
+const CONFIG = {
+  larguraInicial: { desktop: 42, celular: 62 },   // % da tela que o painel central ocupa no topo
+  larguraFinal:   { desktop: 85, celular: 100 },  // % no fim da abertura
+  breakpointCelular: 700,                          // px
+  logoInicial: { alturaTela: 0.34, larguraPainel: 0.62, max: 300 }, // tamanho da logo no topo (o menor dos três)
+  // intervalos do progresso do scroll (0 = topo da seção, 1 = fim)
+  abertura:  [0, 0.5],     // painel central alarga
+  saiDica:   [0, 0.08],    // "Role para baixo" some
+  logoVoa:   [0.06, 0.40], // logo encolhe e vai para o lado do nome
+  veu:       [0.15, 0.45], // escurecimento atrás do texto
+  nome:      [0.30, 0.46], // "SISConforme" surge ao lado da logo
+  frase:     [0.44, 0.58], // frase de efeito
+  cta:       [0.54, 0.66], // botão "Saiba como funciona"
+};
+
+/* ====== utilitários ====== */
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const seg = (p, [a, b]) => clamp((p - a) / (b - a));      // mapeia p para 0..1 dentro de [a,b]
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+const easeInOut = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+/* ====== elementos ====== */
+const $ = id => document.getElementById(id);
+const intro = $("top"), pc = $("pc"), hint = $("hint"), veu = $("veu"), copy = $("heroCopy");
+const logo = $("logo"), slot = $("logoSlot");
+const nome = $("nome"), frase = $("frase"), cta = $("cta"), debug = $("debug");
+const reduzir = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const PROP = 776 / 712; // altura / largura do símbolo
+
+function surgir(el, t, dx, dy) {
+  el.style.opacity = t;
+  el.style.transform = `translate(${(1 - t) * dx}px, ${(1 - t) * dy}px)`;
+  el.style.filter = t < 1 ? `blur(${(1 - t) * 6}px)` : "none";
+}
+
+function frame() {
+  const r = intro.getBoundingClientRect();
+  const alcance = r.height - innerHeight;
+  let p = alcance <= 0 ? 0 : clamp(-r.top / alcance);
+  if (reduzir) p = 1;
+
+  // painel central
+  const cel = innerWidth < CONFIG.breakpointCelular;
+  const w0 = cel ? CONFIG.larguraInicial.celular : CONFIG.larguraInicial.desktop;
+  const w1 = cel ? CONFIG.larguraFinal.celular : CONFIG.larguraFinal.desktop;
+  pc.style.setProperty("--cw", w0 + (w1 - w0) * easeOutCubic(seg(p, CONFIG.abertura)) + "%");
+
+  hint.style.opacity = 1 - seg(p, CONFIG.saiDica);
+  veu.style.opacity = seg(p, CONFIG.veu);
+
+  // logo: do centro (grande) até o lugar reservado ao lado do nome
+  const box = copy.getBoundingClientRect();
+  const s = slot.getBoundingClientRect();
+  const L = CONFIG.logoInicial;
+  const larguraPainelIni = innerWidth * w0 / 100; // usa a largura do painel no topo, para a logo não crescer antes de encolher
+  const hIni = Math.min(innerHeight * L.alturaTela, larguraPainelIni * L.larguraPainel * PROP, L.max);
+  const wIni = hIni / PROP;
+  const xIni = (box.width - wIni) / 2, yIni = (box.height - hIni) / 2;
+  const xFim = s.left - box.left, yFim = s.top - box.top;
+  const t = easeInOut(seg(p, CONFIG.logoVoa));
+  const h = lerp(hIni, s.height, t);
+  logo.style.height = h + "px";
+  logo.style.width = h / PROP + "px";
+  logo.style.transform = `translate(${lerp(xIni, xFim, t)}px, ${lerp(yIni, yFim, t)}px)`;
+
+  surgir(nome, easeOutCubic(seg(p, CONFIG.nome)), -24, 0);
+  surgir(frase, easeOutCubic(seg(p, CONFIG.frase)), 0, 20);
+  const tc = easeOutCubic(seg(p, CONFIG.cta));
+  surgir(cta, tc, 0, 16);
+  cta.style.visibility = tc < 0.02 ? "hidden" : "visible";
+  cta.classList.toggle("pulsa", tc >= 1);
+
+  debug.textContent = `p = ${p.toFixed(3)}  |  largura central = ${pc.style.getPropertyValue("--cw")}`;
+}
+
+let pendente = false;
+const agendar = () => { if (!pendente) { pendente = true; requestAnimationFrame(() => { pendente = false; frame(); }); } };
+addEventListener("scroll", agendar, { passive: true });
+addEventListener("resize", agendar);
+addEventListener("keydown", e => { if (e.key.toLowerCase() === "d") debug.classList.toggle("on"); });
+frame();
+</script>
+</body>
+</html>

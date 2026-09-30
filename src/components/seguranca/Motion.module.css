@@ -1,0 +1,47 @@
+/* Palco dos vídeos da seção Segurança: quadro 1440x1440 escalado para a largura do card.
+   As classes internas são globais, mas só valem dentro de .palco. */
+
+.palco{
+  position:relative;width:100%;aspect-ratio:1/1;max-width:100%;
+  border-radius:12px;overflow:hidden;background:#fff;border:1px solid #E4E0D6;
+  font-family:var(--font-geist),var(--font-inter),system-ui,sans-serif;color:#141413;
+}
+/* até o primeiro seek(t) nada aparece, para não piscar o conteúdo empilhado */
+.palco:not([data-pronto]) :global(.mundo){visibility:hidden}
+
+.palco :global(.mundo){position:absolute;left:0;top:0;width:1440px;height:1440px;transform-origin:0 0}
+.palco :global(.cam){position:absolute;left:0;top:0;width:1440px;height:1440px;transform-origin:0 0}
+.palco :global(.forma){position:absolute;left:0;top:0}
+.palco :global(.c){position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:22px;white-space:nowrap;pointer-events:none}
+.palco :global(.tab){font-variant-numeric:tabular-nums}
+.palco :global(.ripple){position:absolute;left:-60px;top:-60px;width:120px;height:120px;border-radius:50%;border:3px solid #141413;visibility:hidden}
+.palco :global(.cursor){position:absolute;left:0;top:0;width:46px;height:46px;transform-origin:4px 3px}
+
+/* card 01 */
+.palco :global(.conta){width:860px;height:320px;display:flex;flex-direction:column;justify-content:space-between;white-space:nowrap}
+
+/* card 02 */
+.palco :global(.selo){display:inline-flex;align-items:center;gap:10px;font-size:28px;font-weight:600;padding:0 26px;height:56px;border-radius:28px;white-space:nowrap}
+.palco :global(.selo-ok){background:#1677E8;color:#fff}
+.palco :global(.selo-nao){background:#E4E0D6;color:#3D3D3A}
+.palco :global(.linha){position:absolute;left:280px;width:880px;transform:translateY(-50%);display:flex;align-items:center;justify-content:space-between;gap:24px;white-space:nowrap}
+.palco :global(.linha > span:first-child){display:flex;flex-direction:column;gap:6px}
+.palco :global(.linha b){font-size:38px;font-weight:600;letter-spacing:-.01em;color:#141413}
+.palco :global(.linha small){font-size:26px;color:#6F6D66}
+.palco :global(.linha-off b){color:#6F6D66}
+
+/* card 03 */
+.palco :global(.j3){justify-content:space-between;padding:0 64px}
+.palco :global(.j3 b){font-size:54px;font-weight:600;letter-spacing:-.015em;color:#141413}
+.palco :global(.j3 small){font-size:28px;font-weight:500;color:#6F6D66;letter-spacing:0}
+.palco :global(.j3 span){font-size:34px;color:#6F6D66}
+.palco :global(.empilha){display:flex;flex-direction:column;gap:2px;line-height:1.05}
+.palco :global(.cab3 b){font-size:42px}
+.palco :global(.cab3 span){font-size:30px}
+.palco :global(.k3){justify-content:flex-end}
+.palco :global(.k3 b){font-size:50px}
+.palco :global(.vazio){font-size:48px !important;color:#B9B4A8 !important;letter-spacing:.04em}
+
+/* card 04 */
+.palco :global(.j4){justify-content:flex-start;gap:26px;padding:0 64px;font-size:40px;font-weight:600;letter-spacing:-.01em;color:#141413}
+.palco :global(.nao){position:absolute;left:50%;top:50%;font-size:240px;font-weight:700;letter-spacing:-.05em;line-height:1;color:#1677E8;white-space:nowrap;transform-origin:50% 50%}

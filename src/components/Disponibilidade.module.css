@@ -1,0 +1,60 @@
+/* Disponibilidade: status da implantação, os três passos do contribuinte e o quadro de ajuda.
+   Toda a animação é GSAP (Disponibilidade.tsx). Sem movimento, a página mostra o estado final.
+   Os seletores começam por .disp para vencer os estilos de .prose (p, h2, h3). */
+
+.disp{margin-top:110px}
+.disp .topo{max-width:652px;margin:0 auto}
+.disp .topo h2{margin:14px 0 20px}
+.disp .lead{color:var(--grafite)}
+
+/* selo "Em implantação" com ponto pulsando */
+.disp .selo{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 10px;border-radius:999px;background:var(--azul-claro);color:var(--azul);font-size:13px;font-weight:600}
+.disp .selo i{position:relative;width:8px;height:8px;border-radius:50%;background:var(--azul)}
+.disp .selo i::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--azul);opacity:0}
+
+/* ---------- três passos ---------- */
+.disp .passos{position:relative;margin:56px 0 0;padding:34px 30px 32px;background:var(--branco);border:1px solid var(--hair);border-radius:18px;box-shadow:0 20px 40px -32px rgba(16,35,63,.35)}
+.disp .passos ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr)}
+
+/* trilha do número 1 ao 3: base clara, preenchimento azul e o cometa na ponta */
+.disp .trilho{position:absolute;left:calc(30px + 22px);right:calc((100% - 60px) / 3 - 22px + 30px);top:calc(34px + 21px);height:2px;background:var(--azul-claro);border-radius:2px}
+.disp .preenche{position:absolute;inset:0;background:linear-gradient(90deg,var(--azul),#5AA2F5);border-radius:inherit;transform-origin:left center}
+.disp .cometa{position:absolute;top:50%;left:100%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#fff;opacity:0;
+  box-shadow:0 0 0 3px var(--azul),0 0 14px 4px rgba(22,119,232,.55),-18px 0 16px -4px rgba(22,119,232,.45)}
+
+.disp .passo{position:relative;display:flex;flex-direction:column;gap:18px;padding-right:28px}
+.disp .passo + .passo{margin-top:0}
+.disp .num{position:relative;z-index:1;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--azul);color:#fff;font-size:17px;font-weight:700;box-shadow:0 0 0 6px var(--branco)}
+.disp .anel{position:absolute;inset:0;border-radius:50%;border:2px solid var(--azul);opacity:0;pointer-events:none}
+.disp .conector{display:none}
+.disp .passo h3{margin:0 0 6px;font-size:20px;letter-spacing:-.015em;color:var(--azul-fundo)}
+.disp .passo p{font-size:15px;line-height:1.5;color:var(--cinza);max-width:26ch}
+
+/* ---------- quadro de ajuda ---------- */
+.disp .ajuda{position:relative;overflow:hidden;margin-top:18px;padding:22px 24px;border-radius:18px;background:linear-gradient(100deg,#EAF2FD,#F3F7FD);border:1px solid #D6E4F8;display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:22px}
+.disp .reflexo{position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:translateX(-120%);pointer-events:none}
+.disp .interroga{position:relative;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--azul-fundo);color:#fff;font-size:22px;font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 8px 18px -8px rgba(16,35,63,.6)}
+.disp .ajuda h3{position:relative;margin:0;font-size:19px;letter-spacing:-.01em;color:var(--azul-fundo);padding-right:22px;border-right:1px solid #C9DAF3;white-space:nowrap}
+.disp .ajuda p{position:relative;font-size:14.5px;line-height:1.5;color:var(--grafite);max-width:52ch}
+.disp .botao{position:relative;display:inline-flex;align-items:center;gap:10px;padding:11px 20px;border-radius:999px;border:1.5px solid var(--azul);color:var(--azul);font-size:15px;font-weight:600;text-decoration:none;white-space:nowrap;transition:background .25s,color .25s,box-shadow .25s}
+.disp .botao span[data-seta]{display:inline-block}
+.disp .botao:hover{background:var(--azul);color:#fff;box-shadow:0 10px 22px -8px rgba(22,119,232,.7)}
+.disp .leitor{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+@media (prefers-reduced-motion:no-preference){
+  .disp .selo i::after{animation:ping 2s ease-out infinite}
+}
+@keyframes ping{0%{opacity:.6;transform:scale(1)}80%,100%{opacity:0;transform:scale(2.6)}}
+
+@media (max-width:820px){
+  .disp .passos{padding:26px 22px}
+  .disp .passos ol{grid-template-columns:1fr;gap:26px}
+  .disp .trilho{display:none}
+  .disp .passo{flex-direction:row;align-items:flex-start;padding-right:0}
+  /* conector vertical entre um número e o próximo */
+  .disp .conector{display:block;position:absolute;left:21px;top:50px;bottom:-20px;width:2px;background:linear-gradient(180deg,var(--azul),#5AA2F5);transform-origin:center top;border-radius:2px}
+  .disp .ajuda{grid-template-columns:auto 1fr;gap:14px 16px}
+  .disp .ajuda h3{border-right:0;padding-right:0}
+  .disp .ajuda p,.disp .botao{grid-column:1/-1}
+  .disp .botao{justify-self:start}
+}

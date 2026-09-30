@@ -1,0 +1,398 @@
+<title>SISConforme Acesso Seguro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Réplica da seção "Segurança" do site (paleta de Seguranca.module.css); o card 01 recebe o motion 1440x1440 escalado.
+   Visual único e claro, igual ao site. */
+:root{
+  color-scheme:light;
+  --azul:#1677E8; --azul-fundo:#10233F; --petroleo:#174A5B; --branco:#FFFFFF;
+  --laranja:#D87535; --grafite:#20252B; --cinza:#68717C;
+  --borda:#E4E0D6; --borda-forte:#CFC9BC; --ivory:#FAF9F5; --canvas:#ECE9E3; --ink:#141413;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --ui:"Geist","Inter",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--ivory);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;margin:0;padding:0 16px}
+p{margin:0}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.01em;text-wrap:balance}
+.wide{max-width:900px;margin:0 auto}
+.proto{max-width:900px;margin:0 auto;padding-top:28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--cinza)}
+.proto b{color:var(--grafite);font-weight:600}
+
+.topo{display:flex;gap:26px;align-items:flex-start;margin-top:64px}
+.escudo{flex:none;width:76px;height:76px;border-radius:22px;background:var(--azul-fundo);color:var(--branco);display:grid;place-items:center}
+.sobre{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--azul);margin-bottom:10px}
+.topo h2{font-size:clamp(30px,3.2vw,38px);letter-spacing:-.022em;line-height:1.1;margin:0 0 18px;color:var(--azul-fundo)}
+.intro{max-width:62ch;font-size:17.5px;line-height:1.6;color:var(--grafite)}
+
+.grade{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:48px}
+.card{position:relative;overflow:hidden;background:var(--branco);border:1px solid var(--borda);border-radius:16px;padding:28px 28px 30px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.linha{position:absolute;left:0;right:0;top:0;height:3px;background:var(--azul)}
+.cab{display:flex;flex-direction:column}
+.num{font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--laranja);font-variant-numeric:tabular-nums;margin-bottom:10px}
+.cab h3{font-size:22px;letter-spacing:-.015em;color:var(--azul-fundo)}
+.pergunta{font-size:15px;line-height:1.3;color:var(--cinza);margin-top:4px}
+.texto{font-size:16px;line-height:1.55;color:var(--grafite)}
+.sem{font-size:13.5px;line-height:1.4;color:var(--cinza)}
+.card small{font-size:12.5px;color:var(--cinza)}
+
+.empresas{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.empresas li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-radius:10px;background:#F4F1EA;border:1px solid var(--borda);font-size:15px;font-weight:600;color:var(--azul-fundo)}
+.empresas li>span:first-child{display:flex;flex-direction:column;line-height:1.3}
+.empresas small{font-weight:400}
+.status{flex:none;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px}
+.liberado{background:#E1ECEF;color:var(--petroleo)}
+.negado{background:#FBE8DB;color:#B85A1F}
+.bloq>span:first-child{color:var(--cinza)}
+.fontes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.fonte{background:#F4F1EA;border:1px solid var(--borda);border-radius:10px;padding:14px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.fonte b{font-size:15px;color:var(--azul-fundo)}
+.nota{font-size:14px;line-height:1.5;color:var(--cinza);margin-top:auto}
+.nao{font-size:44px;line-height:1;font-weight:600;letter-spacing:-.03em;color:var(--azul-fundo);margin-top:6px}
+.aviso{margin-top:auto;padding:4px 0 4px 14px;border-left:2px solid var(--azul);font-size:14px;line-height:1.45;color:var(--grafite)}
+.base{display:flex;gap:22px;align-items:center;margin-top:28px;padding:22px 4px 64px;border-top:1px solid var(--borda)}
+.baseTit{flex:none;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--petroleo);padding-right:22px;border-right:1px solid var(--borda)}
+.base p{font-size:14px;line-height:1.5;color:var(--cinza)}
+
+/* ---------- palco do motion ---------- */
+.palco{display:flex;flex-direction:column;gap:10px}
+.stage{position:relative;width:100%;aspect-ratio:1/1;max-width:100%;border-radius:12px;overflow:hidden;background:var(--canvas);border:1px solid var(--borda)}
+.world{position:absolute;left:0;top:0;width:1440px;height:1440px;transform-origin:0 0;font-family:var(--ui);color:var(--ink)}
+.cam{position:absolute;left:0;top:0;width:1440px;height:1440px;transform-origin:0 0}
+.shape{position:absolute;left:0;top:0}
+.c{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:22px;white-space:nowrap;pointer-events:none}
+.logo{position:absolute;left:440px;top:440px;width:560px;height:560px}
+.lbl{position:absolute;display:flex;align-items:center;gap:16px;font-size:46px;font-weight:600;letter-spacing:-.01em;transform:translate(-50%,-50%);white-space:nowrap}
+.tab{font-variant-numeric:tabular-nums}
+#cursor{position:absolute;left:0;top:0;width:46px;height:46px;transform-origin:4px 3px}
+
+.ctrl{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--cinza)}
+.ctrl button{all:unset;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--grafite);padding:5px 10px;border-radius:8px;border:1px solid var(--borda);background:var(--branco)}
+.ctrl button:focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+.ctrl input{flex:1;min-width:0;accent-color:var(--azul)}
+#tempo{font-variant-numeric:tabular-nums;min-width:74px;text-align:right}
+
+.overlay{position:fixed;inset:0;z-index:10;background:rgba(20,20,19,.88);display:grid;place-items:center;padding:16px}
+.overlay .palco{width:min(92vw,calc(92vh - 50px))}
+.overlay .ctrl{color:#D6D2C8}
+
+@media (max-width:760px){
+  .topo{flex-direction:column;gap:18px}
+  .grade{grid-template-columns:1fr}
+  .card{padding:24px 20px 26px}
+  .base{flex-direction:column;align-items:flex-start;gap:10px}
+  .baseTit{border-right:0;padding-right:0}
+}
+@media (max-width:420px){ .fontes{grid-template-columns:1fr} }
+</style>
+
+<div class="proto"><span><b>Protótipo</b> · seção Segurança com o motion do card 01 (acesso só por gov.br)</span><span>120 BPM · 32 tempos · 16 s em loop · sem áudio</span></div>
+
+<section class="wide">
+  <div class="topo">
+    <div class="escudo"><svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 4 40 10v12c0 10.5-6.8 18.6-16 22-9.2-3.4-16-11.5-16-22V10z"/><path d="M19 22v-3a5 5 0 0 1 10 0v3"/><path d="M17.5 22h13v9.5h-13z"/></svg></div>
+    <div>
+      <p class="sobre">Segurança</p>
+      <h2>Seus dados fiscais são protegidos.</h2>
+      <p class="intro">Dado fiscal é sigiloso por lei. O art. 198 do CTN veda a divulgação da situação econômica do contribuinte, e a LGPD rege o tratamento de dados pessoais de sócios e representantes. O SISConforme foi desenhado a partir dessas duas regras.</p>
+    </div>
+  </div>
+
+  <div class="grade">
+    <section class="card">
+      <span class="linha"></span>
+      <div class="cab"><span class="num">01</span><h3>Acesso seguro</h3><p class="pergunta">Quem pode entrar?</p></div>
+      <p class="texto">O acesso é feito somente pela conta gov.br (Login Único).</p>
+      <div id="casa">
+        <div class="palco" id="palco">
+          <div class="stage" id="stage" role="img" aria-label="Animação: a empresa entra no SISConforme somente pela conta gov.br">
+            <div class="world" id="world">
+              <div class="cam" id="cam">
+                <svg class="logo" id="logo" viewBox="85 124 1021 1021" aria-hidden="true">
+                  <defs><clipPath id="agua"><rect id="aguaRect" x="85" y="124" width="1021" height="1021"/></clipPath></defs>
+                  <g id="water" clip-path="url(#agua)" fill="#1677E8"></g>
+                  <g id="outline" fill="none" stroke="#141413" stroke-width="9" stroke-linejoin="round" stroke-linecap="butt"></g>
+                </svg>
+
+                <div class="shape" id="B">
+                  <div class="c" id="bBtn" style="color:#fff;font-size:46px;font-weight:600;gap:18px"><span data-ic="id"></span><span>Entrar com gov.br</span><span style="font-weight:400;opacity:.72">· Login Único</span></div>
+                  <div class="c" data-spin id="bSpin"></div>
+                  <div class="c" id="bCheck" style="font-size:48px;font-weight:600"></div>
+                  <div class="c" id="bConta">
+                    <div style="width:700px;height:320px;display:flex;flex-direction:column;justify-content:space-between;white-space:nowrap">
+                      <div style="display:flex;flex-direction:column;gap:12px">
+                        <div style="display:flex;align-items:center;gap:14px;font-size:28px;color:#6F6D66;font-weight:500"><span data-ic="id" style="color:#141413"></span>Conta gov.br · Login Único</div>
+                        <div style="font-size:46px;font-weight:600;letter-spacing:-.015em">Maria Exemplo</div>
+                        <div class="tab" style="font-size:30px;color:#3D3D3A">CPF •••.000.000-•• · Empresa Exemplo Ltda</div>
+                      </div>
+                      <div style="display:flex;justify-content:space-between;align-items:center">
+                        <span class="tab" style="font-size:28px;color:#6F6D66">CNPJ 00.000.000/0001-00</span>
+                        <span style="background:#141413;color:#fff;font-size:32px;font-weight:600;padding:0 40px;height:80px;border-radius:40px;display:flex;align-items:center">Continuar</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="c" id="bFinal" style="color:#fff;font-size:46px;font-weight:600;gap:20px"></div>
+                </div>
+              </div>
+              <span id="ripple" style="position:absolute;left:-60px;top:-60px;width:120px;height:120px;border-radius:50%;border:3px solid #141413;visibility:hidden"></span>
+              <svg id="cursor" viewBox="0 0 46 46" aria-hidden="true"><path d="M5 3 L5 36 L14 28 L20 42 L26 39.5 L20 26 L32 26 Z" fill="#141413" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div class="ctrl">
+            <button id="play" type="button">Pausar</button>
+            <input id="scrub" type="range" min="0" max="16" step="0.01" value="0" aria-label="Posição no tempo">
+            <span id="tempo">1.1</span>
+            <button id="big" type="button">Ampliar</button>
+          </div>
+        </div>
+      </div>
+      <p class="sem">Não existem senhas próprias do portal para vazar ou esquecer.</p>
+    </section>
+
+    <section class="card">
+      <span class="linha"></span>
+      <div class="cab"><span class="num">02</span><h3>Acesso por empresa</h3><p class="pergunta">Quem pode ver os dados?</p></div>
+      <p class="texto">Cada empresa acessa somente os próprios dados. O contador acessa apenas as empresas que representa por procuração eletrônica.</p>
+      <ul class="empresas">
+        <li><span>Sua empresa <small>seus próprios dados</small></span><span class="status liberado">Liberado</span></li>
+        <li><span>Empresa representada <small>contador, com procuração eletrônica</small></span><span class="status liberado">Liberado</span></li>
+        <li class="bloq"><span>Outras empresas <small>nem para contadores sem procuração</small></span><span class="status negado">Sem acesso</span></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <span class="linha"></span>
+      <div class="cab"><span class="num">03</span><h3>Dados utilizados</h3><p class="pergunta">O que é comparado?</p></div>
+      <p class="texto">O SISConforme compara dados de:</p>
+      <div class="fontes">
+        <div class="fonte"><b>NFS-e</b><small>Notas fiscais de serviço</small></div>
+        <div class="fonte"><b>PGDAS</b><small>Simples Nacional</small></div>
+        <div class="fonte"><b>Cartão e Pix</b><small>Via SEFIN-RO</small></div>
+      </div>
+      <p class="nota">Os dados de pagamentos são compartilhados pela SEFIN-RO, conforme convênio, e usados exclusivamente para fins fiscais.</p>
+    </section>
+
+    <section class="card">
+      <span class="linha"></span>
+      <div class="cab"><span class="num">04</span><h3>Somente consulta</h3><p class="pergunta">O sistema pode alterar os dados?</p></div>
+      <p class="nao">Não.</p>
+      <p class="texto">O SISConforme consulta informações já validadas. Qualquer emissão ou alteração segue os procedimentos oficiais de cada sistema.</p>
+      <p class="aviso">Somente leitura: o portal não altera as bases consultadas.</p>
+    </section>
+  </div>
+
+  <div class="base">
+    <span class="baseTit">Base legal</span>
+    <p>O tratamento das informações observa as regras de sigilo fiscal do art. 198 do Código Tributário Nacional (CTN) e as normas de proteção de dados da LGPD.</p>
+  </div>
+</section>
+
+<script>
+(() => {
+/* ---------- símbolo oficial (BrandMark.tsx): 3 casas, telhado + arco ---------- */
+const CASAS = [
+ ["M387.7 162.3C390.3 162.1 393.0 162.2 395.6 162.5C407.1 164.1 414.7 172.5 423.1 179.7C431.1 186.8 439.0 193.9 447.0 201.0L516.3 262.3C527.8 272.6 542.2 284.6 553.4 295.5C554.9 297.1 555.1 302.0 554.7 304.3C552.1 317.8 533.8 327.7 523.1 334.7C508.0 322.1 492.5 308.3 477.6 295.3L390.3 219.3C355.3 247.4 320.4 275.6 285.6 304.1C273.8 313.4 261.4 324.0 249.7 333.7C263.9 334.1 294.6 331.2 305.9 337.3C311.9 340.6 316.2 346.2 318.1 352.8C320.1 359.6 319.2 366.9 315.8 373.0C306.3 390.1 285.3 386.5 268.5 386.6L226.8 386.7C210.9 386.8 194.1 387.1 178.2 386.4C174.6 386.2 170.8 384.7 167.7 382.8C161.5 379.0 157.2 372.9 155.5 365.8C154.0 359.1 155.2 351.3 159.0 345.5C165.6 335.6 201.0 308.6 211.7 299.8L316.3 214.1L352.6 184.5C363.9 175.2 373.0 165.1 387.7 162.3Z",
+  "M228.3 398.7C230.1 398.5 232.2 398.4 234.0 398.4C245.4 399.0 255.3 406.4 258.9 417.1C262.0 426.1 260.4 455.5 260.3 466.6L259.6 601.7C259.6 622.8 258.1 664.9 262.1 684.1C267.1 707.2 278.3 728.6 294.6 745.8C320.7 773.3 350.4 785.8 387.9 786.7C388.1 808.0 389.1 818.2 394.1 839.1C387.1 839.6 380.0 839.5 373.0 839.0C347.4 837.0 322.6 829.2 300.3 816.4C256.9 791.7 223.0 749.0 210.0 700.6C206.9 689.5 205.1 678.0 204.6 666.5C203.8 652.3 204.4 633.3 204.4 618.7L204.5 531.7L204.9 463.7C204.9 450.5 204.7 437.2 205.3 424.0C206.0 409.6 215.4 402.2 228.3 398.7Z"],
+ ["M589.0 306.2C593.7 305.8 597.0 305.6 601.7 306.8C605.6 307.8 609.2 309.6 612.4 312.0C619.9 317.7 631.9 328.8 639.3 335.3L691.5 381.3L735.6 420.2C744.3 427.7 760.5 440.2 765.8 449.5C758.7 467.9 748.1 472.5 732.1 483.6C713.7 466.9 693.0 449.8 674.0 433.4L594.8 364.4C559.4 392.0 524.0 420.5 488.9 448.6C475.3 459.3 461.8 470.2 448.3 481.1C461.5 481.4 493.1 479.2 503.4 483.1C509.8 485.5 515.7 490.6 518.3 497.1C521.0 503.7 520.9 511.7 517.9 518.2C515.1 524.5 509.7 529.8 503.1 532.1C499.8 533.2 496.1 533.7 492.5 533.9C471.1 535.0 449.2 533.9 427.7 533.9C411.0 534.0 392.7 535.2 376.2 534.0C372.1 533.7 368.2 532.7 364.5 530.8C358.0 527.5 353.7 522.1 351.7 515.2C349.7 508.4 350.3 500.5 353.8 494.3C355.9 490.8 358.8 487.8 361.9 485.1C374.2 474.4 387.4 464.4 400.2 454.0L489.0 382.0L547.3 334.8C557.0 327.0 566.9 319.0 576.6 311.3C579.8 308.8 585.0 307.3 589.0 306.2Z",
+  "M426.1 545.7C427.2 545.6 428.4 545.5 429.5 545.5C437.1 545.4 444.5 548.3 450.0 553.8C460.5 564.3 458.2 579.8 458.1 593.5C458.0 606.4 457.9 619.2 458.0 632.1L457.6 786.0C458.1 866.6 517.5 922.5 597.5 921.4C597.3 943.4 598.5 952.2 603.0 973.5C596.2 974.3 588.6 974.4 581.8 974.3C551.2 973.8 519.1 962.8 493.4 946.7C449.7 919.5 418.6 876.2 406.8 826.1C401.5 802.5 402.7 779.5 402.4 755.4L402.1 650.1L402.1 598.7C402.0 575.8 397.3 552.2 426.1 545.7Z"],
+ ["M807.9 452.7C812.6 452.9 816.7 453.6 821.0 455.6C830.8 460.0 856.7 485.2 866.4 493.8L929.3 549.9L989.7 603.4C1001.6 613.8 1013.6 624.3 1025.3 634.8C1028.1 637.7 1032.3 641.3 1033.8 645.0C1034.6 647.2 1035.4 650.6 1035.6 652.8C1036.4 659.8 1034.3 666.8 1029.8 672.2C1025.3 677.8 1018.7 681.2 1011.5 681.7C996.7 682.9 984.4 668.7 974.1 659.6L939.5 629.1L806.4 511.6C789.9 524.1 773.5 537.2 757.2 550.0C724.9 576.0 690.6 601.9 658.0 627.7L688.1 627.6C705.0 627.6 723.5 627.2 728.5 648.1C730.1 655.0 728.8 662.3 724.9 668.3C715.6 682.7 697.1 680.2 682.2 680.2L640.7 680.2L603.4 680.3C592.1 680.3 579.6 682.0 570.5 674.9C555.1 663.1 557 642.5 571.9 631.3C579.8 625.3 587.8 618.7 595.4 612.6L660.1 561.4L749.4 490.3L775.6 469.6C787.6 460.1 791.9 454.1 807.9 452.7Z",
+  "M960.7 671.8C979.9 670.8 990.7 683.3 990.9 701.9L990.8 848.5L990.8 903.4C990.8 926.2 991.9 944.6 986.5 967.1C978.9 998.2 962.9 1026.7 940.3 1049.4C903.5 1086.4 853.5 1107.2 801.4 1107.3C750.9 1107.7 702.4 1087.9 666.6 1052.4C633.6 1019.6 613.1 975.7 612.9 928.9C612.9 923.1 612.8 917.4 612.8 911.7L612.4 872.7L611.7 771.9L611.6 735.6C611.6 729.5 611.3 720.3 612.2 714.6C612.7 710.9 613.9 707.4 615.8 704.2C619.4 697.9 625.4 693.4 632.4 691.8C639.9 689.8 647.9 691.1 654.4 695.2C659.9 698.6 666.1 706.2 666.8 712.4C668.4 727.1 667.6 745.8 667.6 760.7L667.3 879.0C667.3 901.3 665.3 935.1 669.9 955.9C685.7 1027.3 761.8 1070.9 832.0 1053.2C878.3 1041.5 917.4 1009.5 932.5 963.1C939.1 942.9 937.5 920.4 937.4 899.4L937.3 852.6L936.8 736.7C936.7 711.6 929.4 678.6 960.7 671.8Z"]
+];
+const NS = "http://www.w3.org/2000/svg";
+const $ = id => document.getElementById(id);
+const outlineG = $("outline"), waterG = $("water");
+const casaPaths = CASAS.map(ps => ps.map(d => {
+  const w = document.createElementNS(NS, "path"); w.setAttribute("d", d); waterG.appendChild(w);
+  const o = document.createElementNS(NS, "path"); o.setAttribute("d", d); o.setAttribute("pathLength", "1"); o.setAttribute("stroke-dasharray", "1 1"); outlineG.appendChild(o);
+  return o;
+}));
+
+/* ---------- ícones: mesmo viewBox 48, mesmo traço 3.5 ---------- */
+const IC = {
+  id: '<circle cx="24" cy="17" r="7.5"/><path d="M9 41c2.2-8.5 8-12.5 15-12.5s12.8 4 15 12.5"/>'
+};
+const icon = (k, size = 52) => `<svg viewBox="0 0 48 48" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
+document.querySelectorAll("[data-ic]").forEach(el => { el.innerHTML = icon(el.dataset.ic, el.closest("#bConta") ? 44 : 52); el.style.display = "flex"; });
+const checkSVG = (size, cls) => `<svg viewBox="0 0 48 48" width="${size}" height="${size}" style="flex:none"><circle cx="24" cy="24" r="22" fill="#1677E8"/><path class="${cls}" d="M14 24.5l6.5 6.5L34 17.5" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1 1"/></svg>`;
+$("bCheck").innerHTML = checkSVG(64, "ck") + "<span>Identidade confirmada</span>";
+$("bFinal").innerHTML = checkSVG(60, "ck") + "<span>Acesso por identidade verificada</span>";
+document.querySelectorAll("[data-spin]").forEach(el => el.innerHTML =
+  '<svg viewBox="0 0 100 100" width="96" height="96"><circle cx="50" cy="50" r="38" fill="none" stroke="#DEDBD2" stroke-width="8"/><circle class="arc" cx="50" cy="50" r="38" fill="none" stroke="#141413" stroke-width="8" stroke-linecap="round" pathLength="1" stroke-dasharray="0.28 0.72"/></svg>');
+
+/* ---------- springs: resposta ao degrau em forma fechada ---------- */
+const P = {
+  shape: { w: 10, z: 0.9 }, fast: { w: 16, z: 0.82 }, slow: { w: 8, z: 0.95 },
+  cursor: { w: 8, z: 1 }, drag: { w: 5, z: 1 }, cam: { w: 5, z: 1 }, ui: { w: 18, z: 1 }, press: { w: 45, z: 1 },
+  draw: { w: 4, z: 1 }, drain: { w: 5, z: 1 }, undraw: { w: 6, z: 1 }, water: { w: 3, z: 1 }, ck: { w: 12, z: 1 },
+  strike: { w: 5, z: 1 }, ripple: { w: 7, z: 1 }
+};
+function sp(dt, p) {
+  if (dt <= 0) return 0;
+  const { w, z } = p;
+  if (z >= 1) return 1 - Math.exp(-w * dt) * (1 + w * dt);
+  const wd = w * Math.sqrt(1 - z * z);
+  return 1 - Math.exp(-z * w * dt) * (Math.cos(wd * dt) + (z * w / wd) * Math.sin(wd * dt));
+}
+const S = (t, t0, p = "ui") => p === "jump" ? (t >= t0 ? 1 : 0) : sp(t - t0, P[p]);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+
+/* soma de um spring por mudança de alvo: continua função pura de t */
+function build(keys, def = "shape") {
+  const f = {};
+  keys.forEach(k => { for (const n in k.set) (f[n] ||= []).push({ t: k.t, v: k.set[n], p: (k.pf && k.pf[n]) || k.p || def }); });
+  return f;
+}
+function val(list, t) {
+  const arr = Array.isArray(list[0].v);
+  let v = arr ? list[0].v.slice() : list[0].v;
+  for (let i = 1; i < list.length; i++) {
+    const s = S(t, list[i].t, list[i].p), a = list[i].v, b = list[i - 1].v;
+    if (arr) for (let j = 0; j < v.length; j++) v[j] += (a[j] - b[j]) * s; else v += (a - b) * s;
+  }
+  return v;
+}
+const ev = (tr, t) => { const o = {}; for (const n in tr) o[n] = val(tr[n], t); return o; };
+const rgba = c => `rgba(${clamp(c[0], 0, 255) | 0},${clamp(c[1], 0, 255) | 0},${clamp(c[2], 0, 255) | 0},${clamp(c[3]).toFixed(3)})`;
+
+const INK = [20, 20, 19, 1], INK0 = [20, 20, 19, 0], WHITE = [255, 255, 255, 1];
+const HAIR = [222, 219, 210, 1];
+const T = 16; // 8 compassos x 4 tempos x 0,5 s (120 BPM)
+
+/* Regra de sincronia: o cursor para no alvo pelo menos 1 s antes do clique,
+   e a mudança da forma começa exatamente no instante do aperto (tc). */
+const CLK = {
+  logo: 4.0,       // clica na logo       -> vira o botão "Entrar com gov.br"
+  botao: 5.5,      // clica no botão      -> loader
+  continuar: 9.5   // clica em Continuar  -> pílula final
+};
+
+/* ---------- a forma única: logo → botão gov.br → loader → check → conta → pílula → logo ---------- */
+const TB = build([
+  { t: 0, set: { l: 440, r: 1000, top: 440, bot: 1000, rad: 140, bg: INK0, bc: INK0, bw: 0 } },
+  { t: CLK.logo, set: { l: 250, r: 1190, top: 630, bot: 810, rad: 90, bg: INK, bc: INK, bw: 0 } },
+  { t: CLK.botao, set: { l: 630, r: 810, top: 630, bot: 810, rad: 90, bg: WHITE, bc: INK, bw: 3 } },
+  { t: 6.5, set: { l: 340, r: 1100, top: 650, bot: 790, rad: 70 } },
+  { t: 7.5, set: { l: 320, r: 1120, top: 520, bot: 920, rad: 40, bc: HAIR } },
+  { t: CLK.continuar, set: { l: 180, r: 1260, top: 640, bot: 800, rad: 80, bg: INK, bc: INK, bw: 0 } },
+  { t: 12.0, set: { l: 620, r: 820, top: 620, bot: 820, rad: 100 } },
+  { t: 12.5, set: { l: 440, r: 1000, top: 440, bot: 1000, rad: 140, bg: INK0, bc: INK0 } }
+]);
+/* ---------- cursor ---------- */
+const TC = build([
+  { t: 0, set: { x: 1130, y: 1150 } },
+  { t: 2.5, set: { x: 760, y: 790 } },    // alvo: logo       (clique 4.0)
+  { t: 4.3, set: { x: 860, y: 760 } },    // alvo: botão      (clique 5.5)
+  { t: 5.9, set: { x: 1080, y: 990 } },
+  { t: 8.1, set: { x: 945, y: 835 } },    // alvo: Continuar  (clique 9.5)
+  { t: 9.9, set: { x: 1130, y: 1150 } }   // volta ao ponto do quadro 1
+], "cursor");
+const TK = build([
+  { t: 0, set: { z: 1 } }, { t: CLK.logo, set: { z: 1.25 } }, { t: CLK.botao, set: { z: 1.5 } }, { t: 6.5, set: { z: 1.3 } },
+  { t: 7.5, set: { z: 1.12 } }, { t: CLK.continuar, set: { z: 1.2 } }, { t: 12.0, set: { z: 1.35 } }, { t: 12.5, set: { z: 1.0 } }
+], "cam");
+
+const CLICKS = Object.values(CLK);
+const press = (t, tc) => S(t, tc, "press") - S(t, tc + 0.16, "press");
+const win = (t, a, b) => clamp(S(t, a) - S(t, b));
+
+const els = { B: $("B"), cam: $("cam"), cur: $("cursor"), logo: $("logo"), aguaRect: $("aguaRect"), ripple: $("ripple") };
+const CONTENT = [
+  ["bBtn", CLK.logo + 0.3, CLK.botao], ["bSpin", CLK.botao + 0.3, 6.5], ["bCheck", 6.75, 7.5],
+  ["bConta", 7.8, CLK.continuar], ["bFinal", CLK.continuar + 0.3, 12.0]
+].map(([id, a, b]) => ({ el: $(id), a, b, ck: $(id).querySelector(".ck"), arc: $(id).querySelector(".arc") }));
+
+function fade(el, o) {
+  el.style.opacity = o.toFixed(3);
+  el.style.filter = o > 0.995 ? "none" : `blur(${((1 - o) * 16).toFixed(2)}px)`;
+  el.style.visibility = o < 0.002 ? "hidden" : "visible";
+}
+function paint(el, g, scale, op) {
+  el.style.transform = `translate(${g.l.toFixed(2)}px,${g.top.toFixed(2)}px) scale(${scale.toFixed(4)})`;
+  el.style.transformOrigin = `${((g.r - g.l) / 2).toFixed(1)}px ${((g.bot - g.top) / 2).toFixed(1)}px`;
+  el.style.width = Math.max(0, g.r - g.l).toFixed(2) + "px";
+  el.style.height = Math.max(0, g.bot - g.top).toFixed(2) + "px";
+  el.style.borderRadius = Math.max(0, g.rad).toFixed(2) + "px";
+  el.style.background = rgba(g.bg);
+  el.style.boxShadow = `inset 0 0 0 ${Math.max(0, g.bw).toFixed(2)}px ${rgba(g.bc)}`;
+  el.style.opacity = clamp(op).toFixed(3);
+}
+
+/* ---------- seek(t): todo estilo sai de t, nada guardado entre quadros ---------- */
+function seek(t) {
+  t = ((t % T) + T) % T;
+  const cam = ev(TK, t), cur = ev(TC, t);
+
+  // logo: traço desenha, água sobe; no fim a água desce e o traço se desfaz
+  fade(els.logo, clamp(1 - S(t, CLK.logo) + S(t, 12.45)));
+  casaPaths.forEach((ps, i) => {
+    const p = clamp(S(t, 0.1 + i * 0.35, "draw") - S(t, 14.3 + i * 0.12, "undraw"));
+    ps.forEach(o => { o.setAttribute("stroke-dashoffset", (1 - p).toFixed(4)); o.style.visibility = p < 0.002 ? "hidden" : "visible"; });
+  });
+  const water = clamp(S(t, 1.6, "water") - S(t, 13.5, "drain"));
+  els.aguaRect.setAttribute("y", (124 + 1021 * (1 - water)).toFixed(2));
+
+  // a forma: afunda no aperto e já começa a mudar no mesmo quadro
+  const b = ev(TB, t);
+  paint(els.B, b, 1 - 0.04 * CLICKS.reduce((s, c) => s + press(t, c), 0), S(t, 3.9, "jump") - S(t, 12.55));
+
+  // conteúdos: cada troca tem entrada e saída próprias, com blur curto
+  CONTENT.forEach(c => {
+    fade(c.el, win(t, c.a, c.b));
+    if (c.ck) c.ck.setAttribute("stroke-dashoffset", (1 - clamp(S(t, c.a + 0.1, "ck"))).toFixed(4));
+    if (c.arc) { c.arc.style.transformOrigin = "50px 50px"; c.arc.style.transform = `rotate(${(t * 420) % 360}deg)`; }
+  });
+
+  // câmera e cursor (cursor fora da câmera: tamanho constante)
+  els.cam.style.transform = `translate(720px,720px) scale(${cam.z.toFixed(4)}) translate(-720px,-720px)`;
+  const sx = 720 + (cur.x - 720) * cam.z, sy = 720 + (cur.y - 720) * cam.z;
+  const pr = CLICKS.reduce((s, c) => s + press(t, c), 0);
+  els.cur.style.transform = `translate(${sx.toFixed(2)}px,${sy.toFixed(2)}px) scale(${(1 - 0.2 * clamp(pr)).toFixed(3)})`;
+
+  // anel discreto no ponto do aperto, nascendo no mesmo quadro do clique
+  const tc = CLICKS.filter(c => t >= c && t < c + 0.9).pop();
+  if (tc !== undefined) {
+    const k = S(t, tc, "ripple");
+    els.ripple.style.visibility = "visible";
+    els.ripple.style.opacity = (0.45 * (1 - k)).toFixed(3);
+    els.ripple.style.transform = `translate(${(sx + 4).toFixed(1)}px,${(sy + 3).toFixed(1)}px) scale(${(0.2 + 0.8 * k).toFixed(3)})`;
+  } else els.ripple.style.visibility = "hidden";
+
+  const beat = Math.floor(t / 0.5 + 1e-6);
+  $("tempo").textContent = `${Math.floor(beat / 4) + 1}.${(beat % 4) + 1} · ${t.toFixed(1)}s`;
+}
+window.seek = seek;
+
+/* ---------- reprodução: rAF só calcula t; seek continua puro ---------- */
+const stage = $("stage"), world = $("world");
+new ResizeObserver(() => { world.style.transform = `scale(${stage.clientWidth / 1440})`; }).observe(stage);
+const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let playing = !reduz, base = performance.now(), paused = reduz ? 10.8 : 0;
+const btn = $("play"), scrub = $("scrub");
+btn.textContent = playing ? "Pausar" : "Reproduzir";
+function frame(now) {
+  const t = playing ? ((now - base) / 1000) % T : paused;
+  seek(t); if (playing) scrub.value = t.toFixed(2);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+btn.addEventListener("click", () => {
+  if (playing) { paused = ((performance.now() - base) / 1000) % T; playing = false; }
+  else { base = performance.now() - paused * 1000; playing = true; }
+  btn.textContent = playing ? "Pausar" : "Reproduzir";
+});
+scrub.addEventListener("input", () => { playing = false; paused = +scrub.value; btn.textContent = "Reproduzir"; });
+
+const palco = $("palco"), casa = $("casa"), big = $("big");
+let ov = null;
+function fechar() { if (!ov) return; casa.appendChild(palco); ov.remove(); ov = null; big.textContent = "Ampliar"; }
+big.addEventListener("click", () => {
+  if (ov) return fechar();
+  ov = document.createElement("div"); ov.className = "overlay";
+  ov.addEventListener("click", e => { if (e.target === ov) fechar(); });
+  ov.appendChild(palco); document.body.appendChild(ov); big.textContent = "Fechar";
+});
+addEventListener("keydown", e => { if (e.key === "Escape") fechar(); if (e.key === " " && e.target === document.body) { e.preventDefault(); btn.click(); } });
+})();
+</script>

@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SISConforme Disponibilidade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Seção "Disponibilidade" contada com a Dona Ana (mesmos desenhos, cores e tipografia de HistoriaDonaAna).
+   Ritmo calmo: trocas longas com ease-in-out, sem mola, sem cursor e sem cliques na cena.
+   render(t) é função pura do tempo: dá para guiar pelo scroll depois, como na história. */
+:root{
+  color-scheme:light;
+  --azul:#1677E8; --azul-fundo:#10233F; --azul-claro:#DCE9FB; --branco:#FFFFFF;
+  --grafite:#20252B; --cinza:#68717C; --hair:#E4E0D6; --areia:#F4F1EA; --ivory:#FAF9F5;
+  --ink:#141413; --ink-2:#2E353D; --muted:#6F6D66; --stone:#CFC9BC;
+  --clay:#D87535; --clay-deep:#B85A1F; --green:#3C9A6B; --gold:#D4A12A;
+  --skin:#c68a62; --skin-sh:#a96f4b; --hairc:#2b1d16;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--areia);color:var(--grafite);font-family:var(--sans);-webkit-font-smoothing:antialiased;margin:0;padding:0 16px 72px}
+p{margin:0}
+h2,h3{margin:0;font-weight:600;letter-spacing:-.01em;text-wrap:balance;color:var(--azul-fundo)}
+.wide{max-width:1000px;margin:0 auto}
+.proto{max-width:1000px;margin:0 auto;padding-top:28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--cinza)}
+.proto b{color:var(--grafite);font-weight:600}
+
+.topo{max-width:652px;margin:64px auto 0;text-align:center}
+.selo{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 10px;border-radius:999px;background:var(--azul-claro);color:var(--azul);font-size:13px;font-weight:600}
+.selo i{position:relative;width:8px;height:8px;border-radius:50%;background:var(--azul)}
+.selo i::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--azul);opacity:0}
+.topo h2{font-size:clamp(30px,3.2vw,38px);letter-spacing:-.022em;line-height:1.1;margin:14px 0 18px}
+.lead{font-size:17.5px;line-height:1.6;color:var(--grafite)}
+
+/* ---------- o cartão da história ---------- */
+.hist{position:relative;margin-top:52px;background:#f7f9fb;border:1px solid var(--hair);border-radius:24px;overflow:hidden;
+  display:grid;grid-template-columns:30% 1fr;grid-template-areas:"caps caps" "ana cena";padding:40px 32px 0}
+.caps{grid-area:caps;position:relative;height:150px;text-align:center}
+.cap{position:absolute;left:0;right:0;top:0;opacity:0;will-change:opacity,transform}
+.cap .k{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--clay-deep);margin-bottom:10px}
+.cap .t{font-size:clamp(22px,2.8vw,34px);line-height:1.15;font-weight:600;letter-spacing:-.025em;color:var(--ink)}
+.cap .s{font-size:clamp(14px,1.3vw,16.5px);color:var(--muted);margin:10px auto 0;line-height:1.5;max-width:600px}
+
+.ana{grid-area:ana;position:relative;align-self:end;width:100%;max-width:300px;aspect-ratio:200/260;will-change:opacity,transform}
+.ana svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;opacity:0}
+.cena{grid-area:cena;position:relative;align-self:end;padding-bottom:26px}
+.objs{display:block;width:100%;height:auto;overflow:visible;transform-origin:50% 60%}
+.txt{font-family:var(--sans)}
+
+/* celular do passo 3 */
+.phone{position:absolute;left:50%;top:44%;width:min(46%,250px);opacity:0;font-size:clamp(9px,1.25vw,12.5px);will-change:opacity,transform}
+.phone .body{background:var(--ink);border-radius:2.4em;padding:.8em;box-shadow:0 30px 60px -20px rgba(0,0,0,.4)}
+.phone .scr{background:var(--ivory);border-radius:1.7em;padding:1.1em 1.1em 1.3em;display:flex;flex-direction:column;gap:.9em}
+.phone .status{display:flex;justify-content:space-between;font-size:.9em;font-weight:600;color:var(--ink)}
+.phone .app{display:flex;align-items:center;gap:.5em;font-size:.9em;color:var(--muted)}
+.phone .app i{width:1.1em;height:1.1em;border-radius:.3em;background:var(--azul)}
+.phone .tt{font-size:1.25em;font-weight:600;line-height:1.25;color:var(--ink);letter-spacing:-.01em}
+.phone .tt small{display:block;font-size:.72em;font-weight:500;color:var(--clay-deep);margin-top:.3em;letter-spacing:0}
+.phone ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.6em}
+.phone li{display:flex;align-items:center;gap:.7em;background:#fff;border:1px solid var(--hair);border-radius:.9em;padding:.75em .8em;font-size:1em;font-weight:500;color:var(--ink-2)}
+.phone li .bx{flex:none;position:relative;width:1.6em;height:1.6em;border-radius:50%;border:2px solid var(--stone);background:#fff}
+.phone li .bx::after{content:"";position:absolute;inset:-2px;border-radius:50%;background:var(--green) no-repeat center/60% url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");opacity:var(--ok,0);transform:scale(calc(.7 + .3 * var(--ok,0)))}
+.phone .btn{border-radius:.9em;padding:.9em;text-align:center;font-weight:600;font-size:1em;color:#fff;background:var(--ink)}
+
+/* rodapé do cartão: capítulos + progresso */
+.caps-nav{grid-column:1/-1;display:flex;align-items:center;gap:10px;margin:0 -32px;padding:14px 20px;border-top:1px solid var(--hair);background:#fff}
+.cap-btn{all:unset;cursor:pointer;flex:1;display:flex;flex-direction:column;gap:8px;font-size:13px;font-weight:600;color:var(--cinza);padding:4px 6px;border-radius:8px}
+.cap-btn:focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+.cap-btn .tr{height:4px;border-radius:2px;background:#E7E3DA;overflow:hidden}
+.cap-btn .tr i{display:block;height:100%;width:100%;background:var(--azul);transform-origin:left center;transform:scaleX(0)}
+.cap-btn[data-ativo]{color:var(--azul-fundo)}
+.pausa{all:unset;cursor:pointer;flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--hair);color:var(--grafite)}
+.pausa:focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+
+/* ajuda */
+.ajuda{margin-top:18px;padding:22px 24px;border-radius:18px;background:linear-gradient(100deg,#EAF2FD,#F3F7FD);border:1px solid #D6E4F8;display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:22px}
+.interroga{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--azul-fundo);color:#fff;font-size:22px;font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 8px 18px -8px rgba(16,35,63,.6)}
+.ajuda h3{font-size:19px;padding-right:22px;border-right:1px solid #C9DAF3;white-space:nowrap}
+.ajuda p{font-size:14.5px;line-height:1.5;color:var(--grafite);max-width:52ch}
+.botao{display:inline-flex;align-items:center;gap:10px;padding:11px 20px;border-radius:999px;border:1.5px solid var(--azul);color:var(--azul);font-size:15px;font-weight:600;text-decoration:none;white-space:nowrap;transition:background .25s,color .25s,box-shadow .25s}
+.botao span[aria-hidden]{transition:transform .25s}
+.botao:hover{background:var(--azul);color:#fff;box-shadow:0 8px 18px -8px rgba(22,119,232,.7)}
+.botao:hover span[aria-hidden]{transform:translateX(3px)}
+.sr,.leitor{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* Dona Ana: respiração, piscada e detalhes (mais lentos que na história) */
+.ana svg{transform-origin:50% 100%}
+@media (prefers-reduced-motion:no-preference){
+  .selo i::after{animation:ping 2s ease-out infinite}
+  .interroga{animation:boia 3.6s ease-in-out infinite}
+  .ana svg{animation:respira 4.4s ease-in-out infinite}
+  .ana .olhos{transform-box:fill-box;transform-origin:center;animation:pisca 5.2s infinite}
+  .ana .coca{transform-box:view-box;transform-origin:146px 238px;animation:coca .9s ease-in-out infinite alternate}
+  .ana .pensa{animation:pensa 2.6s ease-out infinite}
+  .brilho{transform-box:fill-box;transform-origin:center;animation:brilho 2.2s ease-in-out infinite}
+  .flutua{animation:flutua 5s ease-in-out infinite}
+}
+@keyframes ping{0%{opacity:.6;transform:scale(1)}80%,100%{opacity:0;transform:scale(2.6)}}
+@keyframes boia{0%,100%{translate:0 0}50%{translate:0 -3px}}
+@keyframes respira{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.012) translateY(-1px)}}
+@keyframes pisca{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes coca{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
+@keyframes pensa{0%{transform:translateY(4px);opacity:0}30%{opacity:1}100%{transform:translateY(-12px);opacity:0}}
+@keyframes brilho{0%,100%{transform:scale(.7) rotate(0);opacity:.5}50%{transform:scale(1.1) rotate(20deg);opacity:1}}
+@keyframes flutua{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+@media (max-width:720px){
+  .hist{grid-template-columns:88px 1fr;grid-template-areas:"ana caps" "cena cena";padding:24px 16px 0;column-gap:12px}
+  .caps{height:190px;text-align:left}
+  .cap .s{margin-left:0}
+  .ana{align-self:start;max-width:88px}
+  .caps-nav{margin:0 -16px;padding:12px}
+  .cap-btn{font-size:12px}
+  .phone{width:min(62%,250px);top:38%}
+  .ajuda{grid-template-columns:auto 1fr;gap:14px 16px}
+  .ajuda h3{border-right:0;padding-right:0}
+  .ajuda p,.botao{grid-column:1/-1}
+  .botao{justify-self:start}
+}
+</style>
+
+<div class="proto"><span><b>Protótipo</b> · Disponibilidade contada com a Dona Ana (compare → entenda → corrija)</span><span>28 s em loop · ritmo calmo · sem áudio</span></div>
+
+<section class="wide">
+  <div class="topo">
+    <span class="selo"><i></i>Em implantação</span>
+    <h2 id="disponibilidade">Disponibilidade</h2>
+    <p class="lead">O SISConforme está em implantação. A primeira fase atende empresas prestadoras de serviço com inscrição municipal em Porto Velho, incluindo optantes do Simples Nacional. O acesso para escritórios de contabilidade e o painel interno da auditoria entram na sequência.</p>
+  </div>
+
+  <div class="hist" id="hist">
+    <div class="caps" aria-hidden="true">
+      <div class="cap"><p class="k">Passo 1</p><p class="t">Compare seus dados.</p><p class="s">De um lado, o que a Dona Ana recebeu no cartão e no Pix. Do outro, o que ela declarou. São as mesmas informações que o Fisco também tem.</p></div>
+      <div class="cap"><p class="k">Passo 2</p><p class="t">Entenda a diferença.</p><p class="s">Em maio, R$ 26.240 recebidos no cartão ficaram sem nota fiscal. O portal mostra o que não confere e o valor, sem termos difíceis.</p></div>
+      <div class="cap"><p class="k">Passo 3</p><p class="t">Corrija pelo portal.</p><p class="s">Ela emite as notas que faltaram e retifica a declaração, sem sair do portal e sem burocracia.</p></div>
+      <div class="cap"><p class="k">Pronto</p><p class="t">Tudo confere.</p><p class="s">A situação da Dona Ana está regularizada, sem multa e sem ir à Prefeitura.</p></div>
+    </div>
+
+    <div class="ana" id="ana" aria-hidden="true"></div>
+
+    <div class="cena" aria-hidden="true">
+      <svg class="objs" id="objs" viewBox="0 0 600 430"></svg>
+      <div class="phone" id="phone">
+        <div class="body"><div class="scr">
+          <div class="status"><span>09:41</span><span>5G</span></div>
+          <div class="app"><i></i>SISConforme</div>
+          <div class="tt">Maio de 2026<small>R$ 26.240 sem nota fiscal</small></div>
+          <ol>
+            <li id="it1"><span class="bx"></span>Emitir as notas que faltaram</li>
+            <li id="it2"><span class="bx"></span>Retificar o PGDAS de maio</li>
+          </ol>
+          <div class="btn" id="pbtn">Enviar correção</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="caps-nav">
+      <button class="pausa" id="pausa" type="button" aria-label="Pausar animação"></button>
+      <button class="cap-btn" type="button" data-ir="0"><span>1 · Compare</span><span class="tr"><i></i></span></button>
+      <button class="cap-btn" type="button" data-ir="9"><span>2 · Entenda</span><span class="tr"><i></i></span></button>
+      <button class="cap-btn" type="button" data-ir="17.5"><span>3 · Corrija</span><span class="tr"><i></i></span></button>
+    </div>
+
+    <ol class="sr">
+      <li>Passo 1, compare seus dados: a Dona Ana vê lado a lado os R$ 97,5 mil que recebeu no cartão e no Pix e os R$ 71,3 mil que declarou.</li>
+      <li>Passo 2, entenda a diferença: em maio, R$ 26.240 recebidos no cartão ficaram sem nota fiscal.</li>
+      <li>Passo 3, corrija pelo portal: ela emite as notas que faltaram e retifica o PGDAS. Tudo confere, sem multa e sem ir à Prefeitura.</li>
+    </ol>
+  </div>
+
+  <aside class="ajuda">
+    <span class="interroga" aria-hidden="true">?</span>
+    <h3>Precisa de ajuda?</h3>
+    <p>Dúvidas sobre o SISConforme podem ser encaminhadas à Secretaria Municipal de Economia, pelos canais oficiais de atendimento da Prefeitura de Porto Velho.</p>
+    <a class="botao" href="https://semecdigital.portovelho.ro.gov.br/fale-conosco" target="_blank" rel="noopener noreferrer">Fale conosco<span aria-hidden="true">→</span><span class="leitor">(abre em nova aba)</span></a>
+  </aside>
+</section>
+
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const INK = "#141413", STONE = "#C9C5BA", MUTED = "#6F6D66", CLAY = "#D87535", DEEP = "#B85A1F", GREEN = "#3C9A6B", GOLD = "#D4A12A";
+
+/* ---------- Dona Ana (desenho de Ana.tsx), uma camada por expressão ---------- */
+const LINE = `fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"`;
+const star = (x, y, r, d) => `<path class="brilho" style="animation-delay:${d}s" fill="${GOLD}" d="M${x} ${y - r} l${r * .28} ${r * .72} l${r * .72} ${r * .28} l${-r * .72} ${r * .28} l${-r * .28} ${r * .72} l${-r * .28} ${-r * .72} l${-r * .72} ${-r * .28} l${r * .72} ${-r * .28}z"/>`;
+const FACES = {
+  neutra: { brows: "M78 104 Q86 99 94 103 M106 103 Q114 99 122 104",
+    eyes: '<circle cx="86" cy="118" r="4.2"/><circle cx="114" cy="118" r="4.2"/>',
+    mouth: `<path d="M89 138 Q100 147 111 138" ${LINE}/>` },
+  confusa: { tilt: 5, brows: "M78 100 Q86 95 94 99 M106 103 Q114 101 122 103",
+    eyes: '<circle cx="89" cy="114" r="4.2"/><circle cx="117" cy="114" r="4.2"/>',
+    mouth: `<path d="M95 141 Q103 140 110 135" ${LINE}/>`,
+    front: `<g class="coca"><path d="M146 238 L184 172 L154 102" fill="none" stroke="var(--clay-deep)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/><circle cx="152" cy="96" r="10" fill="var(--skin)"/></g>
+      <g fill="none" stroke="#9D988D" stroke-width="3" stroke-linecap="round"><path class="pensa" d="M34 66 q6 -10 12 0 t12 0 t12 0"/><path class="pensa" style="animation-delay:1.2s" d="M40 50 q5 -8 10 0 t10 0"/></g>` },
+  atenta: { brows: "M78 103 Q86 97 94 101 M106 101 Q114 97 122 103",
+    eyes: '<circle cx="87" cy="117" r="4.4"/><circle cx="115" cy="117" r="4.4"/>',
+    mouth: `<path d="M92 139 Q100 144 108 139" ${LINE}/>` },
+  aliviada: { brows: "M78 101 Q86 96 94 100 M106 100 Q114 96 122 101",
+    eyes: `<path d="M80 119 Q86 113 92 119 M108 119 Q114 113 120 119" ${LINE}/>`,
+    mouth: `<path d="M87 135 Q100 153 113 135 Z" fill="${INK}"/><path d="M93 142 Q100 148 107 142 Z" fill="#D97757"/>`,
+    front: `<path d="M56 236 Q76 252 112 222" fill="none" stroke="var(--clay-deep)" stroke-width="20" stroke-linecap="round"/>
+      <rect x="112" y="178" width="34" height="60" rx="6" fill="${INK}"/><rect x="116" y="184" width="26" height="46" rx="3" fill="#FAF9F5"/>
+      <path d="M122 206 l5 5 l10 -11" fill="none" stroke="${GREEN}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="116" cy="220" r="9" fill="var(--skin)"/>${star(160, 84, 10, 0)}${star(40, 72, 6, .7)}${star(170, 130, 5, 1.3)}` }
+};
+function anaSVG(nome) {
+  const f = FACES[nome], tilt = `rotate(${f.tilt || 0} 100 165)`;
+  return `<svg viewBox="0 0 200 260" data-expr="${nome}">
+    <path transform="${tilt}" d="M56 118 C50 70 82 54 102 56 C130 58 152 78 146 122 L150 172 Q138 182 126 170 L126 146 L74 146 L74 170 Q62 182 50 172 Z" fill="var(--hairc)"/>
+    <path d="M36 262 C38 204 68 186 100 186 C132 186 162 204 164 262 Z" fill="#D97757"/>
+    <path d="M86 186 L100 214 L114 186 Z" fill="#FAF9F5"/>
+    <path d="M100 214 L84 190 L74 196 L92 240 Z M100 214 L116 190 L126 196 L108 240 Z" fill="var(--clay-deep)" opacity=".55"/>
+    <rect x="90" y="150" width="20" height="40" rx="8" fill="var(--skin-sh)"/><circle cx="100" cy="206" r="3" fill="${GOLD}"/>
+    <g transform="${tilt}">
+      <ellipse cx="62" cy="120" rx="7" ry="10" fill="var(--skin-sh)"/><ellipse cx="138" cy="120" rx="7" ry="10" fill="var(--skin-sh)"/>
+      <circle cx="61" cy="133" r="3.4" fill="${GOLD}"/><circle cx="139" cy="133" r="3.4" fill="${GOLD}"/>
+      <ellipse cx="100" cy="116" rx="38" ry="44" fill="var(--skin)"/>
+      <ellipse cx="80" cy="132" rx="7" ry="4.5" fill="#D97757" opacity=".35"/><ellipse cx="120" cy="132" rx="7" ry="4.5" fill="#D97757" opacity=".35"/>
+      <path d="M100 118 Q97 128 101 130" fill="none" stroke="var(--skin-sh)" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M61 112 C58 72 88 60 104 64 C128 68 142 86 139 114 C130 92 114 84 98 86 C80 88 68 98 61 112 Z" fill="var(--hairc)"/>
+      <path d="${f.brows}" fill="none" stroke="var(--hairc)" stroke-width="3.6" stroke-linecap="round"/>
+      <g class="olhos" fill="${INK}">${f.eyes}</g>${f.mouth}
+    </g>${f.front || ""}</svg>`;
+}
+$("ana").innerHTML = Object.keys(FACES).map(anaSVG).join("");
+const rostos = Object.fromEntries([...$("ana").children].map(s => [s.dataset.expr, s]));
+
+/* ---------- cena (mesma linguagem de objetos.tsx): duas pilhas lado a lado ---------- */
+const BASE = 330, PASSO = 11, XS = [180, 420], N = [15, 11];
+const coin = (cx, y, col) => `<ellipse cx="${cx}" cy="${y + 5}" rx="38" ry="9.5" fill="${col}" opacity=".55"/><ellipse cx="${cx}" cy="${y}" rx="38" ry="9.5" fill="${col}" stroke="#fff" stroke-width="1.5"/>`;
+const badge = (x, y, txt, col, id) => { const w = txt.length * 9.2 + 30; return `<g id="${id}" opacity="0"><rect x="${x - w / 2}" y="${y - 18}" width="${w}" height="36" rx="18" fill="${col}"/><text x="${x}" y="${y + 6}" text-anchor="middle" class="txt" font-weight="600" font-size="17" fill="#fff">${txt}</text></g>`; };
+const doc = (title, col, body) => `<rect width="96" height="124" rx="4" fill="#fff" stroke="${STONE}" stroke-width="2"/><rect width="96" height="24" rx="4" fill="${col}"/><rect y="16" width="96" height="8" fill="${col}"/><text x="48" y="17" text-anchor="middle" class="txt" font-size="11" font-weight="700" fill="#fff">${title}</text>${body}`;
+const cartao = `<rect width="150" height="96" rx="12" fill="${GOLD}"/><rect x="16" y="30" width="26" height="20" rx="4" fill="#F2D98A" stroke="#B8881C" stroke-width="1.5"/><path d="M29 30v20M16 40h26" stroke="#B8881C" stroke-width="1.2"/>
+  <g fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".9"><path d="M122 32q6 8 0 16"/><path d="M129 28q9 12 0 24"/></g>
+  <g fill="#fff" opacity=".9">${[0, 1, 2, 3].map(i => `<circle cx="${18 + i * 8}" cy="70" r="2.4"/><circle cx="${58 + i * 8}" cy="70" r="2.4"/>`).join("")}</g>
+  <text x="16" y="86" class="txt" font-size="9" font-weight="600" fill="#fff" letter-spacing="1">CARTÃO · PIX</text>`;
+const nota = doc("NFS-e", CLAY, `<g stroke="${STONE}" stroke-width="2" stroke-linecap="round"><path d="M10 38h76M10 47h60M10 56h76M10 65h50"/></g><path d="M10 82h76" stroke="${INK}"/><text x="86" y="98" text-anchor="end" class="txt" font-size="10" font-weight="700" fill="${INK}">TOTAL</text>`);
+const pgdas = doc("PGDAS-D", GREEN, [0, 1, 2, 3].map(i => `<rect x="10" y="${36 + i * 18}" width="10" height="10" rx="2" fill="none" stroke="${GREEN}" stroke-width="2"/><path d="M12 ${41 + i * 18}l3 3l5-6" fill="none" stroke="${GREEN}" stroke-width="2" stroke-linecap="round"/><path d="M28 ${41 + i * 18}h${i % 2 ? 44 : 58}" stroke="${STONE}" stroke-width="2" stroke-linecap="round"/>`).join("") + `<text x="48" y="116" text-anchor="middle" class="txt" font-size="8" font-weight="600" fill="${MUTED}">SIMPLES NACIONAL</text>`);
+const topo = BASE - 14 * PASSO;
+$("objs").innerHTML = `
+  <g id="mundo">
+    <g id="o0" opacity="0"><g class="flutua"><g transform="translate(105 26)">${cartao}</g></g></g>
+    <g id="o1" opacity="0"><g class="flutua" style="animation-delay:.8s"><g transform="translate(348 14) rotate(-6 48 62)">${pgdas}</g><g transform="translate(398 24) rotate(5 48 62)">${nota}</g></g></g>
+    ${XS.map((x, i) => `
+      <g id="fant${i}" opacity="0">${i ? [11, 12, 13, 14].map(k => `<ellipse cx="${x}" cy="${BASE - k * PASSO}" rx="38" ry="9.5" fill="none" stroke="${DEEP}" stroke-width="1.6" stroke-dasharray="5 4"/>`).join("") : ""}</g>
+      ${Array.from({ length: 15 }, (_, k) => `<g data-moeda="${i}-${k}" opacity="0">${coin(x, BASE - k * PASSO, i ? (k > 10 ? GREEN : GREEN) : GOLD)}</g>`).join("")}
+      <text id="v${i}" x="${x}" y="384" text-anchor="middle" class="txt" font-weight="700" font-size="22" fill="${INK}"></text>
+      <text id="r${i}" x="${x}" y="408" text-anchor="middle" class="txt" font-weight="500" font-size="14.5" fill="${MUTED}" opacity="0">${i ? "declarado em notas e PGDAS" : "recebido no cartão e Pix"}</text>`).join("")}
+    <line id="linha" x1="${XS[0] - 38}" y1="${topo}" x2="${XS[0] - 38}" y2="${topo}" stroke="${DEEP}" stroke-width="2.5" stroke-dasharray="7 6"/>
+    ${badge(300, 150, "Diferença: R$ 26.240", DEEP, "gap")}
+    ${badge(300, 150, "✓ Tudo confere", GREEN, "ok")}
+    <g id="brilhos" opacity="0">${star(160, 150, 11, 0)}${star(448, 146, 9, .5)}${star(40, 250, 8, 1)}${star(566, 250, 10, .3)}</g>
+  </g>`;
+
+/* ---------- tempo: sem molas, só entradas e saídas longas ---------- */
+const T = 28;
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const suave = x => x * x * (3 - 2 * x);                 // ease-in-out
+const saiDe = x => 1 - Math.pow(1 - x, 3);             // ease-out cúbico, sem passar do ponto
+const entra = (t, a, d = 1) => suave(seg(t, a, a + d));
+const janela = (t, a, b, d = 0.9) => Math.min(entra(t, a, d), 1 - entra(t, b - d, d));
+const mil = v => "R$ " + v.toFixed(1).replace(".", ",") + " mil";
+
+/* capítulos: [início, fim] */
+const CAPS = [[0, 8.6], [9.0, 17.2], [17.6, 23.6], [23.8, 27.2]];
+const EXPR = [[0, "neutra"], [10.0, "confusa"], [13.2, "atenta"], [22.2, "aliviada"]];
+const ESCALA = [[0, 9], [9, 17.5], [17.5, T]];   // o que cada passo do rodapé cobre
+
+const els = {
+  hist: $("hist"), caps: [...document.querySelectorAll(".cap")], ana: $("ana"), mundo: $("mundo"),
+  o: [$("o0"), $("o1")], fant: $("fant1"), moedas: XS.map((_, i) => Array.from({ length: 15 }, (_, k) => document.querySelector(`[data-moeda="${i}-${k}"]`))),
+  v: [$("v0"), $("v1")], r: [$("r0"), $("r1")], linha: $("linha"), gap: $("gap"), ok: $("ok"), brilhos: $("brilhos"),
+  phone: $("phone"), it: [$("it1"), $("it2")], pbtn: $("pbtn"), navs: [...document.querySelectorAll(".cap-btn")]
+};
+const escalar = (el, cx, cy, s) => el.setAttribute("transform", `translate(${cx} ${cy}) scale(${s}) translate(${-cx} ${-cy})`);
+
+function render(t) {
+  t = ((t % T) + T) % T;
+  const tudo = entra(t, 0, 1.2) * (1 - entra(t, 26.8, 1.2));   // a cena aparece e some devagar no loop
+
+  // legendas
+  CAPS.forEach(([a, b], i) => {
+    const o = janela(t, a + (i ? 0 : -1), b, 0.9) * (i ? 1 : entra(t, 0.2, 1));
+    const c = els.caps[i];
+    c.style.opacity = o.toFixed(3);
+    c.style.transform = `translateY(${((1 - o) * 12).toFixed(2)}px)`;
+    c.style.visibility = o < 0.01 ? "hidden" : "visible";
+  });
+
+  // Dona Ana: entra devagar; as expressões se misturam em 0,6 s
+  const ae = saiDe(seg(t, 0.4, 2.0)) * (1 - entra(t, 26.8, 1.2));
+  els.ana.style.opacity = ae.toFixed(3);
+  els.ana.style.transform = `translateX(${((1 - ae) * -18).toFixed(2)}%)`;
+  let atual = "neutra", desde = -9, antes = "aliviada";
+  EXPR.forEach(([tt, n], i) => { if (t >= tt) { antes = atual; atual = n; desde = tt; } });
+  const mx = t < 0.6 ? 1 : entra(t, desde, 0.6);
+  for (const n in rostos) rostos[n].style.opacity = (n === atual ? mx : n === antes && atual !== antes ? 1 - mx : 0).toFixed(3);
+
+  // passo 1: os dois lados chegam e as moedas se empilham devagar
+  els.mundo.setAttribute("opacity", tudo.toFixed(3));
+  els.o.forEach((o, i) => {
+    const d = saiDe(seg(t, 1.2 + i * 0.5, 2.6 + i * 0.5));
+    o.setAttribute("opacity", d.toFixed(3));
+    o.setAttribute("transform", `translate(0 ${(-26 * (1 - d)).toFixed(2)})`);
+  });
+  els.moedas.forEach((pilha, i) => pilha.forEach((m, k) => {
+    let a;
+    if (k < N[i]) a = 2.8 + k * (3.4 / 15);               // pilhas sobem juntas
+    else if (i === 1) a = 22.8 + (k - 11) * 0.35;         // no passo 3, as moedas que faltavam
+    else { m.setAttribute("opacity", 0); return; }
+    const d = seg(t, a, a + 0.45);
+    m.setAttribute("opacity", suave(d).toFixed(3));
+    m.setAttribute("transform", `translate(0 ${(-22 * (1 - saiDe(d))).toFixed(2)})`);
+  }));
+  const cont = [suave(seg(t, 2.8, 6.2)), suave(seg(t, 2.8, 5.3))];
+  els.v[0].textContent = cont[0] > 0 ? mil(97.5 * cont[0]) : "";
+  els.v[1].textContent = cont[1] > 0 ? mil(71.3 * cont[1] + 26.2 * suave(seg(t, 22.8, 24.4))) : "";
+  els.r.forEach(r => r.setAttribute("opacity", entra(t, 5.6, 1).toFixed(3)));
+
+  // passo 2: a linha mostra onde as pilhas deveriam se encontrar, e o valor da diferença aparece
+  const lg = suave(seg(t, 9.8, 11.6));
+  const somePasso2 = 1 - entra(t, 22.6, 1);
+  els.linha.setAttribute("x2", (XS[0] - 38 + (XS[1] - XS[0] + 76) * lg).toFixed(1));
+  els.linha.setAttribute("opacity", (lg > 0 ? somePasso2 : 0).toFixed(3));
+  els.fant.setAttribute("opacity", (entra(t, 11.0, 1) * (1 - entra(t, 23.4, 1))).toFixed(3));
+  const g = entra(t, 11.8, 1) * somePasso2;
+  els.gap.setAttribute("opacity", g.toFixed(3));
+  escalar(els.gap, 300, 150, (0.92 + 0.08 * g).toFixed(4));
+
+  // passo 3: o celular sobe com calma, os itens são marcados um a um e desce
+  const dim = entra(t, 17.8, 1) * (1 - entra(t, 21.9, 1));
+  els.mundo.setAttribute("opacity", (tudo * (1 - 0.8 * dim)).toFixed(3));
+  const pi = saiDe(seg(t, 17.9, 19.3)), po = suave(seg(t, 21.6, 22.8));
+  els.phone.style.opacity = Math.min(pi, 1 - po).toFixed(3);
+  els.phone.style.transform = `translate(-50%, calc(-50% + ${((1 - pi) * 60 + po * 60).toFixed(2)}px))`;
+  els.it[0].style.setProperty("--ok", entra(t, 19.8, 0.6).toFixed(3));
+  els.it[1].style.setProperty("--ok", entra(t, 20.6, 0.6).toFixed(3));
+  const env = t >= 21.2 && t < 23.5;
+  els.pbtn.textContent = env ? "✓ Correção enviada" : "Enviar correção";
+  els.pbtn.style.background = env ? GREEN : INK;
+
+  // tudo confere
+  const ok = entra(t, 24.0, 1) * (1 - entra(t, 26.8, 1.2));
+  els.ok.setAttribute("opacity", ok.toFixed(3));
+  escalar(els.ok, 300, 150, (0.92 + 0.08 * ok).toFixed(4));
+  els.brilhos.setAttribute("opacity", (entra(t, 24.4, 1.2) * (1 - entra(t, 26.8, 1.2))).toFixed(3));
+
+  // rodapé: progresso de cada passo
+  els.navs.forEach((n, i) => {
+    const [a, b] = ESCALA[i];
+    n.querySelector("i").style.transform = `scaleX(${seg(t, a, b).toFixed(4)})`;
+    n.toggleAttribute("data-ativo", t >= a && t < b);
+  });
+}
+window.render = render;
+
+/* ---------- reprodução (só com a seção na tela) ---------- */
+const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let tocando = !reduz, t = reduz ? 25.6 : 0, ultimo = performance.now(), visivel = true;
+const pausa = $("pausa");
+const icone = () => {
+  pausa.innerHTML = tocando
+    ? '<svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><rect x="3" y="2" width="3.4" height="12" rx="1"/><rect x="9.6" y="2" width="3.4" height="12" rx="1"/></svg>'
+    : '<svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M4 2.2v11.6L13.5 8z"/></svg>';
+  pausa.setAttribute("aria-label", tocando ? "Pausar animação" : "Continuar animação");
+};
+icone();
+function quadro(agora) {
+  if (tocando && visivel) t = (t + (agora - ultimo) / 1000) % T;
+  ultimo = agora;
+  render(t);
+  requestAnimationFrame(quadro);
+}
+requestAnimationFrame(quadro);
+new IntersectionObserver(([e]) => { visivel = e.isIntersecting; }).observe(els.hist);
+pausa.addEventListener("click", () => { tocando = !tocando; icone(); });
+els.navs.forEach(n => n.addEventListener("click", () => { t = +n.dataset.ir; }));
+window.irPara = v => { tocando = false; t = v; icone(); };
+})();
+</script>
+</html>

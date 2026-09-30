@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SISConforme Disponibilidade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Seção "Disponibilidade" com a metáfora do quebra-cabeça: os dados da empresa são peças que precisam se encaixar.
+   Compare = as peças chegam; Entenda = uma não encaixa e o buraco mostra o valor; Corrija = a peça nova sai do portal e fecha o quadro.
+   render(t) é função pura do tempo (dá para guiar pelo scroll depois). */
+:root{
+  color-scheme:light;
+  --azul:#1677E8; --azul-fundo:#10233F; --azul-claro:#DCE9FB; --branco:#FFFFFF;
+  --grafite:#20252B; --cinza:#68717C; --hair:#E4E0D6; --areia:#F4F1EA; --ivory:#FAF9F5;
+  --ink:#141413; --muted:#6F6D66; --clay:#D87535; --clay-deep:#B85A1F; --green:#3C9A6B; --gold:#D4A12A;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--areia);color:var(--grafite);font-family:var(--sans);-webkit-font-smoothing:antialiased;margin:0;padding:0 16px 72px}
+p{margin:0}
+h2,h3{margin:0;font-weight:600;letter-spacing:-.01em;text-wrap:balance;color:var(--azul-fundo)}
+.wide{max-width:1000px;margin:0 auto}
+.proto{max-width:1000px;margin:0 auto;padding-top:28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--cinza)}
+.proto b{color:var(--grafite);font-weight:600}
+
+.topo{max-width:652px;margin:64px auto 0;text-align:center}
+.selo{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 10px;border-radius:999px;background:var(--azul-claro);color:var(--azul);font-size:13px;font-weight:600}
+.selo i{position:relative;width:8px;height:8px;border-radius:50%;background:var(--azul)}
+.selo i::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--azul);opacity:0}
+.topo h2{font-size:clamp(30px,3.2vw,38px);letter-spacing:-.022em;line-height:1.1;margin:14px 0 18px}
+.lead{font-size:17.5px;line-height:1.6;color:var(--grafite)}
+
+/* ---------- cartão da animação ---------- */
+.hist{position:relative;margin-top:52px;background:#f7f9fb;border:1px solid var(--hair);border-radius:24px;overflow:hidden;padding:40px 32px 0}
+.caps{position:relative;height:120px;text-align:center}
+.cap{position:absolute;left:0;right:0;top:0;opacity:0;will-change:opacity,transform}
+.cap .k{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--clay-deep);margin-bottom:10px}
+.cap .t{font-size:clamp(22px,2.8vw,34px);line-height:1.15;font-weight:600;letter-spacing:-.025em;color:var(--ink)}
+.cap .s{font-size:clamp(14px,1.3vw,16.5px);color:var(--muted);margin:10px auto 0;line-height:1.5;max-width:620px}
+.cena{display:block;width:100%;height:auto}
+.cena text{font-family:var(--sans)}
+.peca{filter:drop-shadow(0 8px 14px rgba(16,35,63,.10))}
+
+.nav{display:flex;align-items:center;gap:10px;margin:0 -32px;padding:14px 20px;border-top:1px solid var(--hair);background:#fff}
+.cap-btn{all:unset;cursor:pointer;flex:1;display:flex;flex-direction:column;gap:8px;font-size:13px;font-weight:600;color:var(--cinza);padding:4px 6px;border-radius:8px}
+.cap-btn:focus-visible,.pausa:focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+.cap-btn .tr{height:4px;border-radius:2px;background:#E7E3DA;overflow:hidden}
+.cap-btn .tr i{display:block;height:100%;background:var(--azul);transform-origin:left center;transform:scaleX(0)}
+.cap-btn[data-ativo]{color:var(--azul-fundo)}
+.pausa{all:unset;cursor:pointer;flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--hair);color:var(--grafite)}
+
+.ajuda{margin-top:18px;padding:22px 24px;border-radius:18px;background:linear-gradient(100deg,#EAF2FD,#F3F7FD);border:1px solid #D6E4F8;display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:22px}
+.interroga{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--azul-fundo);color:#fff;font-size:22px;font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 8px 18px -8px rgba(16,35,63,.6)}
+.ajuda h3{font-size:19px;padding-right:22px;border-right:1px solid #C9DAF3;white-space:nowrap}
+.ajuda p{font-size:14.5px;line-height:1.5;color:var(--grafite);max-width:52ch}
+.botao{display:inline-flex;align-items:center;gap:10px;padding:11px 20px;border-radius:999px;border:1.5px solid var(--azul);color:var(--azul);font-size:15px;font-weight:600;text-decoration:none;white-space:nowrap;transition:background .25s,color .25s,box-shadow .25s}
+.botao span[aria-hidden]{transition:transform .25s}
+.botao:hover{background:var(--azul);color:#fff;box-shadow:0 8px 18px -8px rgba(22,119,232,.7)}
+.botao:hover span[aria-hidden]{transform:translateX(3px)}
+.sr,.leitor{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+@media (prefers-reduced-motion:no-preference){
+  .selo i::after{animation:ping 2s ease-out infinite}
+  .interroga{animation:boia 3.6s ease-in-out infinite}
+}
+@keyframes ping{0%{opacity:.6;transform:scale(1)}80%,100%{opacity:0;transform:scale(2.6)}}
+@keyframes boia{0%,100%{translate:0 0}50%{translate:0 -3px}}
+
+@media (max-width:720px){
+  .hist{padding:24px 16px 0}
+  .caps{height:168px}
+  .nav{margin:0 -16px;padding:12px}
+  .cap-btn{font-size:12px}
+  .ajuda{grid-template-columns:auto 1fr;gap:14px 16px}
+  .ajuda h3{border-right:0;padding-right:0}
+  .ajuda p,.botao{grid-column:1/-1}
+  .botao{justify-self:start}
+}
+</style>
+
+<div class="proto"><span><b>Protótipo</b> · Disponibilidade como quebra-cabeça (compare → entenda → corrija)</span><span>20 s em loop · sem áudio</span></div>
+
+<section class="wide">
+  <div class="topo">
+    <span class="selo"><i></i>Em implantação</span>
+    <h2 id="disponibilidade">Disponibilidade</h2>
+    <p class="lead">O SISConforme está em implantação. A primeira fase atende empresas prestadoras de serviço com inscrição municipal em Porto Velho, incluindo optantes do Simples Nacional. O acesso para escritórios de contabilidade e o painel interno da auditoria entram na sequência.</p>
+  </div>
+
+  <div class="hist" id="hist">
+    <div class="caps" aria-hidden="true">
+      <div class="cap"><p class="k">Passo 1</p><p class="t">Compare seus dados.</p><p class="s">Cartão e Pix, notas fiscais e a declaração do Simples são peças do mesmo mês. O portal junta essas peças, que o Fisco também tem.</p></div>
+      <div class="cap"><p class="k">Passo 2</p><p class="t">Entenda a diferença.</p><p class="s">Quando uma peça não encaixa, o portal mostra qual é e quanto vale: aqui, R$ 26.240 recebidos no cartão sem nota fiscal.</p></div>
+      <div class="cap"><p class="k">Passo 3</p><p class="t">Corrija pelo portal.</p><p class="s">Você emite as notas que faltaram e retifica a declaração. A peça que faltava se encaixa.</p></div>
+      <div class="cap"><p class="k">Pronto</p><p class="t">Tudo confere.</p><p class="s">Situação regularizada, de forma simples e sem burocracia.</p></div>
+    </div>
+
+    <svg class="cena" id="cena" viewBox="0 0 1000 560" aria-hidden="true"></svg>
+
+    <div class="nav">
+      <button class="pausa" id="pausa" type="button" aria-label="Pausar animação"></button>
+      <button class="cap-btn" type="button" data-ir="0"><span>1 · Compare</span><span class="tr"><i></i></span></button>
+      <button class="cap-btn" type="button" data-ir="6"><span>2 · Entenda</span><span class="tr"><i></i></span></button>
+      <button class="cap-btn" type="button" data-ir="11"><span>3 · Corrija</span><span class="tr"><i></i></span></button>
+    </div>
+
+    <ol class="sr">
+      <li>Passo 1, compare seus dados: cartão e Pix, notas fiscais e a declaração do Simples se juntam como peças de um quebra-cabeça.</li>
+      <li>Passo 2, entenda a diferença: falta uma peça, de R$ 26.240 recebidos no cartão sem nota fiscal.</li>
+      <li>Passo 3, corrija pelo portal: as notas emitidas e a declaração retificada são a peça que faltava. Tudo confere.</li>
+    </ol>
+  </div>
+
+  <aside class="ajuda">
+    <span class="interroga" aria-hidden="true">?</span>
+    <h3>Precisa de ajuda?</h3>
+    <p>Dúvidas sobre o SISConforme podem ser encaminhadas à Secretaria Municipal de Economia, pelos canais oficiais de atendimento da Prefeitura de Porto Velho.</p>
+    <a class="botao" href="https://semecdigital.portovelho.ro.gov.br/fale-conosco" target="_blank" rel="noopener noreferrer">Fale conosco<span aria-hidden="true">→</span><span class="leitor">(abre em nova aba)</span></a>
+  </aside>
+</section>
+
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const INK = "#141413", MUTED = "#6F6D66", DEEP = "#B85A1F", GREEN = "#3C9A6B", AZUL = "#1677E8";
+
+/* ---------- geometria das peças: grade 2x2, encaixes com "orelha" ---------- */
+const W = 270, H = 180, X0 = 500 - W, Y0 = 290 - H, K = 42;   // K = tamanho do encaixe
+function borda(ax, ay, bx, by, tipo) {
+  if (!tipo) return `L${bx} ${by}`;
+  const L = Math.hypot(bx - ax, by - ay), dx = (bx - ax) / L, dy = (by - ay) / L, nx = dy, ny = -dx;
+  const mx = (ax + bx) / 2, my = (ay + by) / 2;
+  const P = (u, v) => `${(mx + dx * u * K + nx * v * K * tipo).toFixed(1)} ${(my + dy * u * K + ny * v * K * tipo).toFixed(1)}`;
+  return `L${P(-0.34, 0)} C${P(-0.2, 0)} ${P(-0.66, 0.92)} ${P(0, 0.92)} C${P(0.66, 0.92)} ${P(0.2, 0)} ${P(0.34, 0)} L${bx} ${by}`;
+}
+// [cima, direita, baixo, esquerda]: +1 orelha para fora, -1 encaixe para dentro
+const TIPOS = [[0, -1, 1, 0], [0, 0, -1, 1], [-1, 1, 0, 0], [1, 0, 0, -1]];
+const CEL = [[0, 0], [0, 1], [1, 0], [1, 1]];
+function contorno(i) {
+  const [r, c] = CEL[i], [tp, rt, bt, lf] = TIPOS[i];
+  const x = X0 + c * W, y = Y0 + r * H;
+  return `M${x} ${y} ${borda(x, y, x + W, y, tp)} ${borda(x + W, y, x + W, y + H, rt)} ${borda(x + W, y + H, x, y + H, bt)} ${borda(x, y + H, x, y, lf)}Z`;
+}
+const centro = i => [X0 + CEL[i][1] * W + W / 2, Y0 + CEL[i][0] * H + H / 2];
+
+const PECAS = [
+  { rot: "Cartão e Pix", val: "R$ 97,5 mil", sub: "recebidos", fill: "#F8EBC4", st: "#D4A12A", tx: "#8A6510" },
+  { rot: "Notas fiscais", val: "R$ 71,3 mil", sub: "emitidas (NFS-e)", fill: "#F9DFCF", st: "#D87535", tx: DEEP },
+  { rot: "Declaração", val: "R$ 71,3 mil", sub: "PGDAS-D", fill: "#D8EEDF", st: "#3C9A6B", tx: "#2B7350" },
+  { rot: "Correção", val: "R$ 26.240", sub: "notas emitidas", fill: "#DCE9FB", st: "#1677E8", tx: "#0F5BB5" }
+];
+const conteudo = (i, p) => { let [cx, cy] = centro(i); cx += [-8, 6, 0, 6][i]; return `
+  <text x="${cx}" y="${cy - 26}" text-anchor="middle" font-size="18" font-weight="600" fill="${p.tx}">${p.rot}</text>
+  <text x="${cx}" y="${cy + 12}" text-anchor="middle" font-size="32" font-weight="700" fill="${INK}" letter-spacing="-0.5">${p.val}</text>
+  <text x="${cx}" y="${cy + 40}" text-anchor="middle" font-size="15" font-weight="500" fill="${MUTED}">${p.sub}</text>`; };
+
+const [c4x, c4y] = centro(3);
+$("cena").innerHTML = `
+  <defs><filter id="brilho" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="10"/></filter></defs>
+  <g id="mundo">
+    <text id="titulo" x="500" y="74" text-anchor="middle" font-size="17" font-weight="600" fill="${MUTED}" letter-spacing="1.5">MAIO DE 2026 · EMPRESA EXEMPLO LTDA</text>
+    ${[0, 1, 2, 3].map(i => `<path id="vaga${i}" d="${contorno(i)}" fill="#EEECE6" stroke="#CFC9BC" stroke-width="2" stroke-dasharray="7 6"/>`).join("")}
+    <g id="buraco" opacity="0">
+      <path id="buracoForma" d="${contorno(3)}" fill="#FBE8DB" stroke="${DEEP}" stroke-width="2.5" stroke-dasharray="8 6"/>
+      <text x="${c4x}" y="${c4y + 4}" text-anchor="middle" font-size="64" font-weight="700" fill="${DEEP}">?</text>
+      <text x="${c4x}" y="${c4y + 40}" text-anchor="middle" font-size="16" font-weight="600" fill="${DEEP}">falta encaixar</text>
+    </g>
+    <path id="aura" d="${contorno(0)} ${contorno(1)} ${contorno(2)} ${contorno(3)}" fill="${GREEN}" opacity="0" filter="url(#brilho)"/>
+    ${PECAS.map((p, i) => `<g id="p${i}" class="peca" opacity="0"><g id="pi${i}"><path id="pf${i}" d="${contorno(i)}" fill="${p.fill}" stroke="${p.st}" stroke-width="2.5" stroke-linejoin="round"/>${conteudo(i, p)}</g></g>`).join("")}
+    <g id="dif" opacity="0">
+      <circle cx="500" cy="${Y0 + H / 2}" r="22" fill="${DEEP}" stroke="#fff" stroke-width="3"/>
+      <text x="500" y="${Y0 + H / 2 + 8}" text-anchor="middle" font-size="26" font-weight="700" fill="#fff">≠</text>
+    </g>
+    <g id="etiqueta" opacity="0">
+      <rect x="250" y="490" width="500" height="48" rx="24" fill="${DEEP}"/>
+      <text x="500" y="520" text-anchor="middle" font-size="18" font-weight="600" fill="#fff">Faltam R$ 26.240 em notas fiscais</text>
+    </g>
+    <g id="botao" opacity="0">
+      <rect x="370" y="490" width="260" height="48" rx="24" fill="${INK}"/>
+      <text x="500" y="520" text-anchor="middle" font-size="18" font-weight="600" fill="#fff">Corrigir pelo portal  →</text>
+    </g>
+    <g id="ok" opacity="0">
+      <rect x="390" y="490" width="220" height="48" rx="24" fill="${GREEN}"/>
+      <text x="500" y="520" text-anchor="middle" font-size="18" font-weight="600" fill="#fff">✓  Tudo confere</text>
+    </g>
+  </g>`;
+
+/* ---------- tempo ---------- */
+const T = 20;
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const suave = x => x * x * (3 - 2 * x);
+const saiDe = x => 1 - Math.pow(1 - x, 3);
+const entra = (t, a, d = 0.6) => suave(seg(t, a, a + d));
+const janela = (t, a, b, d = 0.6) => Math.min(entra(t, a, d), 1 - entra(t, b - d, d));
+// "clique" de encaixe: sobe e volta, sem passar do ponto
+const encaixe = (t, a) => { const x = seg(t, a, a + 0.35); return Math.sin(Math.PI * x) * 0.035; };
+const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, k) => { const A = hex(a), B = hex(b); return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * k)).join(",")})`; };
+
+/* peças: de onde vêm e quando pousam */
+const VOO = [
+  { a: 0.8, d: 1.1, x: -330, y: -110, r: -16, s: 1 },
+  { a: 1.4, d: 1.1, x: 330, y: -130, r: 14, s: 1 },
+  { a: 2.0, d: 1.1, x: -320, y: 170, r: 12, s: 1 },
+  { a: 12.6, d: 1.3, x: 500 - c4x, y: 514 - c4y, r: -8, s: 0.25 }
+];
+const CAPS = [[0, 6], [6, 11], [11, 15.2], [15.2, 19.4]];
+const ESCALA = [[0, 6], [6, 11], [11, T]];
+
+const el = id => $(id);
+const E = {
+  caps: [...document.querySelectorAll(".cap")], mundo: el("mundo"), titulo: el("titulo"),
+  vagas: [0, 1, 2, 3].map(i => el("vaga" + i)), p: [0, 1, 2, 3].map(i => el("p" + i)), pi: [0, 1, 2, 3].map(i => el("pi" + i)),
+  pf: [0, 1, 2, 3].map(i => el("pf" + i)), buraco: el("buraco"), dif: el("dif"), etiqueta: el("etiqueta"),
+  botao: el("botao"), ok: el("ok"), aura: el("aura"), navs: [...document.querySelectorAll(".cap-btn")]
+};
+const escala = (e, cx, cy, s) => e.setAttribute("transform", `translate(${cx} ${cy}) scale(${s.toFixed(4)}) translate(${-cx} ${-cy})`);
+
+function render(t) {
+  t = ((t % T) + T) % T;
+  const tudo = entra(t, 0, 0.8) * (1 - entra(t, 19.2, 0.8));
+  E.mundo.setAttribute("opacity", tudo.toFixed(3));
+
+  CAPS.forEach(([a, b], i) => {
+    const o = i ? janela(t, a, b) : Math.min(entra(t, 0.1), 1 - entra(t, b - 0.6));
+    const c = E.caps[i];
+    c.style.opacity = o.toFixed(3);
+    c.style.transform = `translateY(${((1 - o) * 10).toFixed(2)}px)`;
+    c.style.visibility = o < 0.01 ? "hidden" : "visible";
+  });
+
+  // passo 1: o tabuleiro aparece e três peças voam até o lugar
+  E.vagas.forEach((v, i) => v.setAttribute("opacity", (entra(t, 0.2 + i * 0.1) * (i === 3 ? 1 - entra(t, 14.0, 0.3) : 1)).toFixed(3)));
+  VOO.forEach((v, i) => {
+    const k = saiDe(seg(t, v.a, v.a + v.d));
+    const [cx, cy] = centro(i);
+    const s = (v.s + (1 - v.s) * k) + encaixe(t, v.a + v.d);
+    E.p[i].setAttribute("opacity", Math.min(1, seg(t, v.a, v.a + 0.3)).toFixed(3));
+    E.p[i].setAttribute("transform", `translate(${(v.x * (1 - k)).toFixed(2)} ${(v.y * (1 - k)).toFixed(2)}) rotate(${(v.r * (1 - k)).toFixed(2)} ${cx} ${cy})`);
+    escala(E.pi[i], cx, cy, s);
+  });
+
+  // passo 2: cartão e notas não batem (≠) e o buraco mostra o que falta
+  const falta = entra(t, 6.3) * (1 - entra(t, 12.9, 0.5));
+  const pulso = 0.5 + 0.5 * Math.cos(Math.max(0, t - 7.0) * 2.4);
+  E.buraco.setAttribute("opacity", (falta * (0.75 + 0.25 * pulso)).toFixed(3));
+  E.dif.setAttribute("opacity", (entra(t, 7.0) * (1 - entra(t, 14.2))).toFixed(3));
+  escala(E.dif, 500, Y0 + H / 2, 0.8 + 0.2 * entra(t, 7.0));
+  E.etiqueta.setAttribute("opacity", janela(t, 7.8, 11.0).toFixed(3));
+
+  // passo 3: o botão do portal é pressionado e a peça nova sai dele
+  const aperta = Math.sin(Math.PI * seg(t, 12.2, 12.5)) * 0.06;
+  E.botao.setAttribute("opacity", janela(t, 11.3, 13.0).toFixed(3));
+  escala(E.botao, 500, 514, 1 - aperta);
+
+  // pronto: as bordas ficam verdes, um brilho envolve o quadro e o selo aparece
+  const verde = entra(t, 14.6, 0.8);
+  E.pf.forEach((f, i) => f.setAttribute("stroke", mix(PECAS[i].st, GREEN, verde)));
+  E.aura.setAttribute("opacity", (0.22 * verde * (1 - entra(t, 19.0, 0.8))).toFixed(3));
+  E.ok.setAttribute("opacity", entra(t, 15.0).toFixed(3));
+  escala(E.ok, 500, 514, 0.9 + 0.1 * entra(t, 15.0));
+
+  E.navs.forEach((n, i) => {
+    const [a, b] = ESCALA[i];
+    n.querySelector("i").style.transform = `scaleX(${seg(t, a, b).toFixed(4)})`;
+    n.toggleAttribute("data-ativo", t >= a && t < b);
+  });
+}
+window.render = render;
+
+/* ---------- no celular o enquadramento fecha no tabuleiro ---------- */
+const cena = $("cena");
+const enquadra = () => cena.setAttribute("viewBox", innerWidth <= 720 ? "205 50 590 500" : "0 0 1000 560");
+enquadra(); addEventListener("resize", enquadra);
+
+/* ---------- reprodução (só com a seção na tela) ---------- */
+const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let tocando = !reduz, t = reduz ? 16.5 : 0, ultimo = performance.now(), visivel = true;
+const pausa = $("pausa");
+const icone = () => {
+  pausa.innerHTML = tocando
+    ? '<svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><rect x="3" y="2" width="3.4" height="12" rx="1"/><rect x="9.6" y="2" width="3.4" height="12" rx="1"/></svg>'
+    : '<svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M4 2.2v11.6L13.5 8z"/></svg>';
+  pausa.setAttribute("aria-label", tocando ? "Pausar animação" : "Continuar animação");
+};
+icone();
+function quadro(agora) {
+  if (tocando && visivel) t = (t + (agora - ultimo) / 1000) % T;
+  ultimo = agora;
+  render(t);
+  requestAnimationFrame(quadro);
+}
+requestAnimationFrame(quadro);
+new IntersectionObserver(([e]) => { visivel = e.isIntersecting; }).observe($("hist"));
+pausa.addEventListener("click", () => { tocando = !tocando; icone(); });
+E.navs.forEach(n => n.addEventListener("click", () => { t = +n.dataset.ir; }));
+window.irPara = v => { tocando = false; t = v; icone(); };
+})();
+</script>
+</html>

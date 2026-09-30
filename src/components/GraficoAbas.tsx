@@ -20,7 +20,8 @@ export interface DadosGrafico {
   cap: string;
 }
 
-const COL = { clay: "#D97757", green: "#3C9A6B", gold: "#D4A12A", slate: "#6B6A66" };
+// séries nas cores da marca: azul, petróleo, laranja e cinza
+const COL = { clay: "#1677E8", green: "#174A5B", gold: "#D87535", slate: "#68717C" };
 const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago"];
 
 export const DADOS_GRAFICO: Record<"a" | "b", DadosGrafico> = {
@@ -142,7 +143,7 @@ export default function GraficoAbas() {
                 x2={W - R}
                 y1={escalaY(v, d.max)}
                 y2={escalaY(v, d.max)}
-                stroke={v ? "#E2DFD6" : "#141413"}
+                stroke={v ? "#E2DFD6" : "#20252B"}
                 strokeWidth={v ? 1 : 1.2}
               />
               <text x={L - 12} y={escalaY(v, d.max) + 4} textAnchor="end" fontSize={12}>
@@ -150,7 +151,7 @@ export default function GraficoAbas() {
               </text>
             </Fragment>
           ))}
-          <line x1={L} x2={L} y1={T} y2={T + IH} stroke="#141413" strokeWidth={1.2} />
+          <line x1={L} x2={L} y1={T} y2={T + IH} stroke="#20252B" strokeWidth={1.2} />
           {d.type === "line" ? (
             <>
               {MESES.map((m, i) => (
@@ -176,7 +177,7 @@ export default function GraficoAbas() {
                       cy={escalaY(v, d.max)}
                       r={5.5}
                       fill={s.c}
-                      stroke="#2b2a27"
+                      stroke="#20252B"
                       strokeWidth={1}
                     >
                       <title>{`${s.n} · ${MESES[i]}/26: ${v}`}</title>
@@ -199,7 +200,7 @@ export default function GraficoAbas() {
                     width={bw}
                     height={escalaY(0, d.max) - escalaY(v, d.max)}
                     fill={s.c}
-                    stroke="#2b2a27"
+                    stroke="#20252B"
                     strokeWidth={1}
                   />
                   <text x={cx} y={escalaY(v, d.max) - 8} textAnchor="middle" fontSize={13} fontWeight={600}>

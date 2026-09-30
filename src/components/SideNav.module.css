@@ -1,11 +1,11 @@
 .side{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:40;display:grid;gap:12px;padding:10px 0;opacity:0;transition:opacity .3s}
 .side.on{opacity:1}
 .side a{display:flex;align-items:center;gap:12px;text-decoration:none;font-family:var(--sans);font-size:12.5px;color:var(--muted)}
-.side a i{display:block;width:16px;height:1px;background:#9C988F;transition:width .2s,background .2s}
+.side a i{display:block;width:16px;height:1px;background:var(--stone);transition:width .2s,background .2s}
 .side a span{opacity:0;transition:opacity .2s;white-space:nowrap;background:var(--ivory);padding:2px 6px}
 .side:hover a span{opacity:1}
-.side a.active i{width:24px;background:var(--ink);height:1.5px}
-.side a.active{color:var(--ink)}
+.side a.active i{width:24px;background:var(--azul);height:1.5px}
+.side a.active{color:var(--azul-fundo)}
 @media (max-width:1100px){.side{display:none}}
 
 @media (prefers-reduced-motion:reduce){.side a i{transition:none}}

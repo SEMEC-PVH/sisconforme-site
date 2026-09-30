@@ -1,0 +1,34 @@
+.intro{height:280vh;position:relative;background:#0e0d0c}
+.stage{position:sticky;top:0;height:100vh;overflow:hidden;display:flex}
+.panel{position:relative;height:100%;overflow:hidden;flex:1 1 0;min-width:0}
+.panel img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;display:block}
+.panel.c::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,0) 30%,rgba(0,0,0,0) 70%,rgba(0,0,0,.35));pointer-events:none}
+.heroCopy{z-index:1}
+.hint{z-index:1}
+.panel.c{flex:0 0 var(--cw,42%);box-shadow:0 0 0 1px rgba(0,0,0,.6)}
+.heroCopy{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr);place-items:center;text-align:center;color:#F4EFE6;pointer-events:none}
+.heroCopy > *{grid-area:1/1}
+.introducing{font-size:clamp(38px,5vw,60px);font-weight:600;letter-spacing:-.025em;text-shadow:0 2px 30px rgba(0,0,0,.25)}
+.titleblock{display:flex;flex-direction:column;align-items:center;gap:0;pointer-events:auto;width:min(92%,760px);opacity:0;visibility:hidden;transform:translateY(40px) scale(.96)}
+.date{font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.92}
+.titleblock h1{font-size:clamp(52px,9.4vw,120px);line-height:1;letter-spacing:-.035em;margin:22px 0 40px;text-shadow:0 2px 40px rgba(0,0,0,.25)}
+.toc{list-style:none;margin:0;padding:0;width:min(100%,370px);display:grid;gap:6px;font-size:15px}
+.toc a{display:flex;align-items:baseline;gap:8px;text-decoration:none}
+.toc .n{font-family:var(--sans);font-size:11.5px;opacity:.85}
+.toc .dots{flex:1;border-bottom:1px dotted rgba(244,239,230,.45);transform:translateY(-4px)}
+.toc a:hover .t{text-decoration:underline;text-underline-offset:3px}
+.hint{position:absolute;bottom:28px;left:0;right:0;text-align:center;font-family:var(--sans);font-size:13px;color:rgba(244,239,230,.6)}
+/* pré-hidratação: --cw ainda não foi escrito pelo JS (p=0); no mobile o JS parte de 62% (Hero.tsx: estreito = innerWidth < 700) */
+@media (max-width:699px){
+  .panel.c{flex:0 0 var(--cw,62%)}
+}
+/* pré-hidratação com prefers-reduced-motion: o JS força p>=0.6, então a primeira pintura já deve ser o estado final (p=0.6) */
+@media (prefers-reduced-motion:reduce){
+  .panel.c{flex:0 0 85%}
+  .introducing{opacity:0;transform:translateY(-30px)}
+  .titleblock{opacity:1;visibility:visible;transform:none}
+  .hint{opacity:0}
+}
+@media (prefers-reduced-motion:reduce) and (max-width:699px){
+  .panel.c{flex:0 0 100%}
+}

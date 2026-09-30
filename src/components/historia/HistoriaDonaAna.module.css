@@ -15,7 +15,7 @@
 .card {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, #f6e7d8 0%, var(--ivory) 72%);
+  background: #f7f9fb; /* branco gelo */
   overflow: hidden;
   transform-origin: 50% 50%;
   will-change: transform;

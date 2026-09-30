@@ -1,10 +1,10 @@
 .sbs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--rule)}
 .sbs > div{padding:20px 20px 24px}
-.sbs > div + div{border-left:1px solid var(--rule);background:#F3EFE6}
+.sbs > div + div{border-left:1px solid var(--rule);background:var(--branco)}
 .sbs .lab{font-family:var(--sans);font-size:13px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .sbs .lab i{width:9px;height:9px;border-radius:50%;background:var(--slate)}
-.sbs > div + div .lab i{background:var(--clay)}
-.msg{font-family:var(--sans);font-size:14px;line-height:1.55;color:#2c2b28}
+.sbs > div + div .lab i{background:var(--azul)}
+.msg{font-family:var(--sans);font-size:14px;line-height:1.55;color:var(--grafite)}
 .msg p+p{margin-top:10px}
 .msg .mono{font-family:ui-monospace,"Consolas",monospace;font-size:12.5px;background:rgba(0,0,0,.05);padding:10px;border-radius:4px;display:block;white-space:pre-wrap}
 @media (max-width:720px){.sbs{grid-template-columns:1fr}.sbs > div + div{border-left:0;border-top:1px solid var(--rule)}}
