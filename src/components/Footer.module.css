@@ -1,8 +1,28 @@
-.footer{background:var(--night);color:var(--night-muted);font-family:var(--sans);font-size:14px;padding:72px 16px 40px}
+/* Rodapé em cor sólida (azul profundo), sem imagens — a animação fica no Footer.tsx (GSAP). */
+.footer{position:relative;background:var(--night);color:var(--night-muted);font-family:var(--sans);font-size:14px;padding:72px 16px 40px}
+/* linha fina que corre pela borda de cima quando o rodapé aparece */
+.linhaTopo{position:absolute;left:0;right:0;top:0;height:2px;background:var(--azul);transform-origin:left center}
+
 .fIn{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.3fr repeat(4,1fr);gap:40px}
-.footer h3{font:500 14px var(--sans);color:var(--night-ink);margin-bottom:16px}
+.footer .marca{display:inline-flex;align-items:center;gap:10px;color:var(--night-ink);font:600 17px var(--sans);text-decoration:none}
+.marca svg{overflow:visible}
+.marca path{transform-box:fill-box}
+.sobre{margin-top:12px;max-width:30ch;line-height:1.5}
+
+.footer h3{font:500 14px var(--sans);color:var(--night-ink);margin-bottom:10px}
+/* traço azul curto embaixo de cada título de coluna */
+.traco{display:block;width:22px;height:2px;margin-bottom:16px;border-radius:2px;background:var(--azul);transform-origin:left center}
 .footer ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.footer a{text-decoration:none}
-.footer a:hover{color:var(--night-ink)}
-.fBot{max-width:1180px;margin:64px auto 0;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-size:13px;border-top:1px solid rgba(255,255,255,.12);padding-top:22px}
+.footer a{text-decoration:none;color:inherit}
+/* sublinhado que cresce ao passar o mouse */
+.footer ul a{background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;padding-bottom:2px;transition:background-size .3s,color .2s}
+.footer ul a:hover{color:var(--night-ink);background-size:100% 1px}
+
+.fBot{position:relative;max-width:1180px;margin:64px auto 0;padding-top:22px;font-size:13px}
+.linhaBase{position:absolute;left:0;right:0;top:0;height:1px;background:rgba(255,255,255,.12);transform-origin:center}
+.baseIn{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;align-items:center}
+.topo{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.2);color:var(--night-ink)!important;font-weight:600;transition:background .2s,border-color .2s}
+.topo:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.4)}
+.topo span{display:inline-block}
+
 @media (max-width:900px){.fIn{grid-template-columns:1fr 1fr}.fIn > div:first-child{grid-column:1/-1}}
