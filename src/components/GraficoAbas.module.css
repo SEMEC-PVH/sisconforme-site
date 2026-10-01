@@ -6,3 +6,11 @@
 .legend i{width:10px;height:10px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.35)}
 .chart svg{width:100%;height:auto;display:block;overflow:visible}
 .chart text{font-family:var(--sans);fill:var(--grafite)}
+/* celular: o svg (820 de largura) encolhe ~2,5×; o texto cresce na mesma proporção para continuar legível */
+@media (max-width:600px){
+  .chartbox{padding:16px 14px 12px}
+  .chartHead{flex-direction:column;gap:2px}
+  .legend{justify-content:flex-start;margin-top:12px}
+  .chart text{font-size:25px}
+  .chart .eixo{display:none}
+}

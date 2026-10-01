@@ -45,6 +45,7 @@ article{padding:120px 16px 80px}
 .tabs{display:flex;flex-wrap:wrap;gap:4px 18px;font-family:var(--sans);font-size:14.5px;font-weight:600;margin-bottom:14px}
 .tabs button{all:unset;cursor:pointer;color:var(--cinza)}
 .tabs button[aria-selected="true"]{color:var(--azul)}
+@media (max-width:720px){.tabs button{padding-block:8px}}
 .tabs button:focus-visible{outline:2px solid var(--azul);outline-offset:3px}
 
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

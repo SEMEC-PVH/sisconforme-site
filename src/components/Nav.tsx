@@ -1,6 +1,6 @@
 "use client";
 
-import { type PointerEvent, type SyntheticEvent, useRef } from "react";
+import { type PointerEvent, type SyntheticEvent, useEffect, useRef, useState } from "react";
 import { useScrollFrame } from "@/lib/scroll";
 import BrandMark from "./BrandMark";
 import styles from "./Nav.module.css";
@@ -34,6 +34,22 @@ export default function Nav() {
   const ref = useRef<HTMLElement>(null);
   const vidroRef = useRef<HTMLDivElement>(null);
   const listaRef = useRef<HTMLUListElement>(null);
+  // celular: os links ficam num painel aberto pelo botão de menu
+  const [aberto, setAberto] = useState(false);
+
+  useEffect(() => {
+    if (!aberto) return;
+    const fecharNoEsc = (e: KeyboardEvent) => e.key === "Escape" && setAberto(false);
+    const fecharFora = (e: globalThis.PointerEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setAberto(false);
+    };
+    document.addEventListener("keydown", fecharNoEsc);
+    document.addEventListener("pointerdown", fecharFora);
+    return () => {
+      document.removeEventListener("keydown", fecharNoEsc);
+      document.removeEventListener("pointerdown", fecharFora);
+    };
+  }, [aberto]);
 
   useScrollFrame(() => {
     const nav = ref.current;
@@ -81,7 +97,8 @@ export default function Nav() {
 
   return (
     <header className={styles.nav} ref={ref}>
-      <div className={styles.vidro} ref={vidroRef} onPointerMove={moverBrilho}>
+      {/* `aberto` fica na cápsula: o className do header é trocado à mão (escuro/rolou) e o React o sobrescreveria */}
+      <div className={`${styles.vidro} ${aberto ? styles.aberto : ""}`} ref={vidroRef} onPointerMove={moverBrilho}>
         <a
           className={`${styles.logo} ${styles.monta}`}
           href="#top"
@@ -92,10 +109,27 @@ export default function Nav() {
           <BrandMark size={28} />
           <span className={styles.nome}>SISConforme</span>
         </a>
-        <ul ref={listaRef} onMouseLeave={soltar} onBlur={soltar}>
+        <button
+          type="button"
+          className={styles.menu}
+          aria-expanded={aberto}
+          aria-controls="menu-principal"
+          aria-label={aberto ? "Fechar menu" : "Abrir menu"}
+          onClick={() => setAberto((a) => !a)}
+        >
+          <i />
+          <i />
+        </button>
+        <ul id="menu-principal" ref={listaRef} onMouseLeave={soltar} onBlur={soltar}>
           {links.map((l) => (
             <li key={l.txt}>
-              <a className={l.dd ? styles.dd : undefined} href={l.href} onMouseEnter={marcar} onFocus={marcar}>
+              <a
+                className={l.dd ? styles.dd : undefined}
+                href={l.href}
+                onMouseEnter={marcar}
+                onFocus={marcar}
+                onClick={() => setAberto(false)}
+              >
                 {l.txt}
               </a>
             </li>
@@ -103,7 +137,6 @@ export default function Nav() {
         </ul>
         <div className={styles.split}>
           <a href="#disponibilidade">Acessar portal</a>
-          <span aria-hidden="true"></span>
         </div>
       </div>
     </header>

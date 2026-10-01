@@ -102,11 +102,12 @@
   text-transform: uppercase;
   opacity: 0;
 }
+/* no celular as mãos (mín. 560px) passam da tela: o rótulo não sai da parte visível */
 .rotuloFisco {
-  left: 14%;
+  left: max(14%, calc((var(--w) - 100vw) / 2 + 16px));
 }
 .rotuloEmpresa {
-  right: 14%;
+  right: max(14%, calc((var(--w) - 100vw) / 2 + 16px));
 }
 
 .frases {

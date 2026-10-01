@@ -25,7 +25,8 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR" className={inter.variable}>
-      <body>{children}</body>
+      {/* Extensões do navegador (ex.: ColorZilla) injetam atributos no <body> antes da hidratação */}
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }

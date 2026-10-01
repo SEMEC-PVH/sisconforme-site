@@ -159,7 +159,7 @@ export default function GraficoAbas() {
                   {m}/26
                 </text>
               ))}
-              <text x={L + IW / 2} y={H - 4} textAnchor="middle" fontSize={13}>
+              <text className={styles.eixo} x={L + IW / 2} y={H - 4} textAnchor="middle" fontSize={13}>
                 Competência
               </text>
               {d.series.map((s) => (
