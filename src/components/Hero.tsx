@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { gsap } from "@/lib/gsap";
 import { clamp, easeOutCubic } from "@/lib/scroll";
 import styles from "./Hero.module.css";
 
@@ -24,7 +25,15 @@ const CONFIG = {
   nome: [0.46, 0.58],
   frase: [0.52, 0.64],
   cta: [0.6, 0.72],
+  doca: [0.66, 0.8], // faixa de vidro com os 3 passos, no rodapé da tela (protótipo: prototipos/hero/hero-passos.html, opção B)
+  passo: 0.035, // atraso entre um passo e o próximo dentro da faixa
 } as const;
+
+const PASSOS = [
+  { titulo: "Compare seus dados", texto: "Veja as informações que o Fisco também tem." },
+  { titulo: "Entenda a diferença", texto: "Saiba o que não confere e o valor da divergência." },
+  { titulo: "Corrija pelo portal", texto: "Regularize sua situação de forma simples e sem burocracia." },
+];
 
 type Faixa = readonly [number, number];
 const seg = (p: number, [a, b]: Faixa) => clamp((p - a) / (b - a));
@@ -109,7 +118,35 @@ export default function Hero() {
     const nome = q<HTMLHeadingElement>("h1");
     const frase = q<HTMLParagraphElement>("[data-frase]");
     const cta = q<HTMLAnchorElement>("[data-cta]");
+    const doca = q<HTMLOListElement>("[data-doca]");
+    const passos = [...doca.querySelectorAll<HTMLLIElement>("li")];
+    const nums = [...doca.querySelectorAll<HTMLElement>("[data-num]")];
+    const aneis = [...doca.querySelectorAll<HTMLElement>("[data-anel]")];
+    const luzes = [...doca.querySelectorAll<HTMLElement>("[data-luz]")];
     const reduzir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Os números acendem por tempo (GSAP), uma vez, quando a faixa termina de entrar pela rolagem.
+    // Depois, um brilho volta a passar por eles de tempos em tempos enquanto o hero está na tela.
+    let acendeu = false;
+    const brilho = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 2.4 });
+    nums.forEach((n, i) => {
+      brilho
+        .to(n, { keyframes: { scale: [1, 1.12, 1] }, duration: 0.5, ease: "sine.inOut" }, i * 0.35)
+        .fromTo(aneis[i], { scale: 1, autoAlpha: 0.5 }, { scale: 1.9, autoAlpha: 0, duration: 0.8, ease: "power2.out" }, i * 0.35);
+    });
+    const acender = gsap.timeline({ paused: true, onComplete: () => brilho.play() });
+    nums.forEach((n, i) => {
+      const t = i * 0.5;
+      acender
+        .to(n, { backgroundColor: "#1677E8", borderColor: "#7FB6F7", duration: 0.25 }, t)
+        .to(n, { keyframes: { scale: [1, 1.22, 1] }, duration: 0.5, ease: "power2.out" }, t)
+        .fromTo(aneis[i], { scale: 1, autoAlpha: 0.8 }, { scale: 2.3, autoAlpha: 0, duration: 0.9, ease: "power2.out" }, t)
+        .fromTo(luzes[i], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, yoyo: true, repeat: 1 }, t);
+    });
+    const olho = new IntersectionObserver(([e]) => {
+      if (acender.progress() === 1) (e.isIntersecting ? brilho.play() : brilho.pause());
+    });
+    olho.observe(intro);
 
     let W = 0, H = 0, s0 = 1, sF = 1;
     const enchido = [0, 0, 0];
@@ -185,6 +222,19 @@ export default function Hero() {
       surgir(cta, tc, 0, 16);
       cta.style.visibility = tc < 0.02 ? "hidden" : "visible";
       cta.classList.toggle(styles.pulsa, tc >= 1);
+
+      // faixa dos passos: sobe do rodapé e cada passo entra logo atrás do anterior
+      const td = easeOutCubic(seg(p, CONFIG.doca));
+      surgir(doca, td, 0, 48);
+      doca.style.visibility = td < 0.02 ? "hidden" : "visible";
+      passos.forEach((li, i) => {
+        const [a, b] = CONFIG.doca;
+        surgir(li, easeOutCubic(seg(p, [a + 0.04 + i * CONFIG.passo, b + i * CONFIG.passo])), 0, 14);
+      });
+      if (td >= 1 && !acendeu && !reduzir) {
+        acendeu = true;
+        acender.play();
+      }
     };
 
     const agendar = () => {
@@ -225,6 +275,9 @@ export default function Hero() {
     window.addEventListener("scroll", agendar, { passive: true });
     window.addEventListener("resize", aoRedimensionar);
     return () => {
+      olho.disconnect();
+      acender.kill();
+      brilho.kill();
       cancelAnimationFrame(rafEncher);
       cancelAnimationFrame(rafFrame);
       window.removeEventListener("scroll", agendar);
@@ -308,6 +361,26 @@ export default function Hero() {
             </a>
           </div>
         </div>
+        <ol className={styles.doca} data-doca aria-label="Como funciona">
+          {PASSOS.map((passo, i) => (
+            <li key={passo.titulo} className={styles.passo}>
+              <span className={styles.luz} data-luz aria-hidden="true" />
+              <span className={styles.num} data-num>
+                <span className={styles.anel} data-anel aria-hidden="true" />
+                {i + 1}
+              </span>
+              <div>
+                <h2>{passo.titulo}</h2>
+                <p>{passo.texto}</p>
+              </div>
+              {i < PASSOS.length - 1 && (
+                <svg className={styles.seta} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M6 3l5 5-5 5" />
+                </svg>
+              )}
+            </li>
+          ))}
+        </ol>
         <p className={styles.hint} data-hint>
           Role para baixo
         </p>

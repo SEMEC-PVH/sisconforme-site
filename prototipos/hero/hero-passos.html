@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hero com os passos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
+<!--
+  Protótipo: os 3 passos ("Compare / Entenda / Corrija") no estado final do hero (pôr do sol em tela cheia).
+  Três opções empilhadas — role para comparar. Cada uma anima ao entrar na tela e tem botão "Rever animação".
+  Foto: public/img/hero/hero-b-rio.webp (a mesma do hero atual).
+-->
+<style>
+  :root{
+    --azul:#1677E8; --azul-fundo:#10233F; --areia:#F4F1EA; --marfim:#F4EFE6; --laranja:#D87535;
+    --vidro:rgba(255,255,255,.12); --vidro-borda:rgba(255,255,255,.30);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#0e0d0c;font-family:Inter,system-ui,sans-serif;color:var(--marfim);-webkit-font-smoothing:antialiased}
+  p,h1,h2,h3,ol{margin:0}
+
+  /* barra de escolha */
+  .topo{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;
+    background:rgba(14,13,12,.82);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08);font-size:14px}
+  .topo b{font-weight:600}
+  .topo a{color:var(--marfim);text-decoration:none;padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18)}
+  .topo a:hover{background:rgba(255,255,255,.1)}
+  .topo span{color:rgba(244,239,230,.6)}
+
+  /* cada opção ocupa uma tela, como o hero no fim do mergulho */
+  .palco{position:relative;min-height:100vh;min-height:100svh;overflow:hidden;display:grid;isolation:isolate}
+  .palco > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 46%;z-index:-2;transform:scale(1.04)}
+  .palco::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+    background:radial-gradient(ellipse 60% 55% at 50% 50%,rgba(8,10,14,.55),rgba(8,10,14,0) 75%),
+               linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,0) 30%,rgba(0,0,0,0) 65%,rgba(0,0,0,.5))}
+  .etiqueta{position:absolute;top:16px;left:16px;z-index:5;display:flex;gap:8px;align-items:center}
+  .etiqueta strong{background:var(--laranja);color:#fff;font-size:12px;font-weight:700;letter-spacing:.12em;padding:5px 10px;border-radius:999px}
+  .etiqueta em{font-style:normal;font-size:13px;background:rgba(0,0,0,.4);padding:5px 10px;border-radius:999px}
+  .rever{position:absolute;top:16px;right:16px;z-index:5;font:600 13px Inter,sans-serif;color:var(--marfim);background:rgba(0,0,0,.4);
+    border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:7px 14px;cursor:pointer}
+  .rever:hover{background:rgba(255,255,255,.15)}
+
+  /* marca + nome (igual ao hero) */
+  .lockup{--fs:clamp(34px,min(6.4vw,10vh),88px);display:flex;align-items:center;gap:calc(var(--fs)*.28)}
+  .lockup svg{height:calc(var(--fs)*1.45);width:auto;aspect-ratio:712/776;overflow:visible;filter:drop-shadow(0 2px 22px rgba(0,0,0,.35))}
+  .lockup svg path{fill:none;stroke:var(--marfim);stroke-width:30;stroke-linecap:round;stroke-linejoin:round}
+  .lockup svg circle{fill:var(--marfim);transform-box:fill-box;transform-origin:center}
+  .lockup h1{font-size:var(--fs);line-height:1;letter-spacing:-.035em;font-weight:600;text-shadow:0 2px 40px rgba(0,0,0,.3)}
+  .frase{font-size:clamp(16px,min(1.5vw,2.5vh),20px);line-height:1.5;font-weight:500;max-width:34em;text-wrap:balance;text-shadow:0 1px 18px rgba(0,0,0,.55)}
+  .cta{display:inline-flex;align-items:center;gap:10px;padding:12px 20px 12px 22px;border-radius:999px;border:1px solid rgba(244,239,230,.55);
+    background:rgba(14,13,12,.28);backdrop-filter:blur(6px);color:var(--marfim);text-decoration:none;font-size:15px;font-weight:600}
+  .cta svg{width:16px;height:16px}
+
+  /* peças comuns dos passos */
+  .num{position:relative;flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:16px;
+    background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.35)}
+  .num .anel{position:absolute;inset:-1px;border-radius:50%;border:2px solid #7FB6F7;opacity:0}
+  .passo h3{font-size:17px;font-weight:600;letter-spacing:-.01em;color:#fff}
+  .passo p{font-size:14px;line-height:1.45;color:rgba(244,239,230,.82);margin-top:4px}
+  .vidro{background:var(--vidro);border:1px solid var(--vidro-borda);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);
+    box-shadow:inset 0 1px 1px rgba(255,255,255,.45),0 20px 50px -20px rgba(0,0,0,.55)}
+
+  /* ---------- A: passos logo abaixo da frase, numa barra de vidro ---------- */
+  .A .miolo{place-self:center;display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(16px,2.6vh,26px);width:min(94%,1040px);padding:80px 0}
+  .A .barra{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:0;width:100%;padding:22px 26px;border-radius:22px;text-align:left}
+  .A .passo{display:flex;gap:14px;align-items:flex-start;padding:0 18px}
+  .A .passo + .passo{border-left:1px solid rgba(255,255,255,.18)}
+  .A .trilho{position:absolute;left:26px;right:26px;top:0;height:2px;border-radius:2px;overflow:hidden}
+  .A .trilho i{position:absolute;inset:0;background:linear-gradient(90deg,transparent,#7FB6F7,var(--azul),transparent);transform-origin:left}
+
+  /* ---------- B: frase centralizada; passos como uma "doca" no rodapé da tela ---------- */
+  .B .miolo{place-self:center;display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(16px,2.6vh,26px);width:min(92%,760px);margin-top:-12vh}
+  .B .doca{position:absolute;left:50%;bottom:clamp(20px,4vh,36px);translate:-50% 0;width:min(94%,1120px);display:grid;grid-template-columns:repeat(3,1fr);
+    border-radius:20px;overflow:hidden}
+  .B .passo{position:relative;display:flex;gap:14px;align-items:center;padding:18px 22px}
+  .B .passo + .passo{border-left:1px solid rgba(255,255,255,.16)}
+  .B .passo .luz{position:absolute;inset:0;background:linear-gradient(180deg,rgba(22,119,232,.0),rgba(22,119,232,.28));opacity:0;pointer-events:none}
+  .B .seta{position:absolute;right:-9px;top:50%;width:18px;height:18px;margin-top:-9px;z-index:2;color:rgba(255,255,255,.7)}
+
+  /* ---------- C: texto à esquerda, passos empilhados à direita ---------- */
+  .C .miolo{place-self:center;display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(28px,5vw,72px);align-items:center;width:min(92%,1180px);padding:90px 0}
+  .C .esq{display:flex;flex-direction:column;align-items:flex-start;gap:clamp(16px,2.6vh,26px)}
+  .C .esq .frase{max-width:30em}
+  .C .pilha{position:relative;display:flex;flex-direction:column;gap:14px}
+  .C .linhaV{position:absolute;left:41px;top:40px;bottom:40px;width:2px;background:linear-gradient(180deg,#7FB6F7,rgba(127,182,247,.15));transform-origin:top}
+  .C .cartao{position:relative;display:flex;gap:16px;align-items:center;padding:18px 20px;border-radius:18px}
+
+  @media (max-width:860px){
+    .A .barra,.B .doca{grid-template-columns:1fr}
+    .A .passo + .passo,.B .passo + .passo{border-left:0;border-top:1px solid rgba(255,255,255,.16)}
+    .A .passo{padding:14px 4px}
+    .B .doca{position:relative;left:auto;bottom:auto;translate:none;margin:24px auto 24px}
+    .B .miolo{margin-top:0;padding-top:90px}
+    .B .seta{display:none}
+    .C .miolo{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topo">
+  <b>Hero com os passos</b><span>— role para comparar:</span>
+  <a href="#opA">A · Abaixo da frase</a>
+  <a href="#opB">B · Doca no rodapé</a>
+  <a href="#opC">C · Lado a lado</a>
+</nav>
+
+<!-- símbolo oficial (mesmos traços do Hero.tsx) — copiado em cada opção pelo script -->
+<template id="simbolo">
+  <svg viewBox="156 123 712 776" aria-hidden="true">
+    <path pathLength="1" d="M265 284 L175 284 L346 142 L470.5 246"/>
+    <path pathLength="1" d="M218 326 L218 524 A128 128 0 0 0 346 652 L354 652"/>
+    <path pathLength="1" d="M431 398 L341 398 L512 256 L636.5 360"/>
+    <path pathLength="1" d="M384 440 L384 638 A128 128 0 0 0 512 766 L520 766"/>
+    <path pathLength="1" d="M597 512 L507 512 L678 370 L848 512"/>
+    <path pathLength="1" d="M550 554 L550 752 A128 128 0 0 0 806 752 L806 550"/>
+    <circle cx="218" cy="326" r="15"/><circle cx="384" cy="440" r="15"/>
+  </svg>
+</template>
+
+<!-- ===================== A ===================== -->
+<section class="palco A" id="opA" data-opcao="A">
+  <img src="../../public/img/hero/hero-b-rio.webp" alt="">
+  <div class="etiqueta"><strong>A</strong><em>Passos logo abaixo da frase, numa barra de vidro</em></div>
+  <button class="rever" type="button">↻ Rever animação</button>
+  <div class="miolo">
+    <div class="lockup" data-lockup><h1>SISConforme</h1></div>
+    <p class="frase" data-frase>O novo portal da Prefeitura de Porto Velho que cruza informações fiscais e ajuda você a manter a sua empresa em dia, de forma simples e segura.</p>
+    <ol class="barra vidro" data-passos>
+      <span class="trilho"><i data-trilho></i></span>
+      <li class="passo"><span class="num" data-num><span class="anel" data-anel></span>1</span><div><h3>Compare seus dados</h3><p>Veja as informações que o Fisco também tem.</p></div></li>
+      <li class="passo"><span class="num" data-num><span class="anel" data-anel></span>2</span><div><h3>Entenda a diferença</h3><p>Saiba o que não confere e o valor da divergência.</p></div></li>
+      <li class="passo"><span class="num" data-num><span class="anel" data-anel></span>3</span><div><h3>Corrija pelo portal</h3><p>Regularize sua situação de forma simples e sem burocracia.</p></div></li>
+    </ol>
+    <a class="cta" data-cta href="#">Saiba como funciona <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v11M3.5 9 8 13.5 12.5 9"/></svg></a>
+  </div>
+</section>
+
+<!-- ===================== B ===================== -->
+<section class="palco B" id="opB" data-opcao="B">
+  <img src="../../public/img/hero/hero-b-rio.webp" alt="">
+  <div class="etiqueta"><strong>B</strong><em>Frase no centro; passos numa “doca” no rodapé da tela</em></div>
+  <button class="rever" type="button">↻ Rever animação</button>
+  <div class="miolo">
+    <div class="lockup" data-lockup><h1>SISConforme</h1></div>
+    <p class="frase" data-frase>O novo portal da Prefeitura de Porto Velho que cruza informações fiscais e ajuda você a manter a sua empresa em dia, de forma simples e segura.</p>
+    <a class="cta" data-cta href="#">Saiba como funciona <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v11M3.5 9 8 13.5 12.5 9"/></svg></a>
+  </div>
+  <ol class="doca vidro" data-passos>
+    <li class="passo"><span class="luz" data-luz></span><span class="num" data-num><span class="anel" data-anel></span>1</span><div><h3>Compare seus dados</h3><p>Veja as informações que o Fisco também tem.</p></div>
+      <svg class="seta" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg></li>
+    <li class="passo"><span class="luz" data-luz></span><span class="num" data-num><span class="anel" data-anel></span>2</span><div><h3>Entenda a diferença</h3><p>Saiba o que não confere e o valor da divergência.</p></div>
+      <svg class="seta" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg></li>
+    <li class="passo"><span class="luz" data-luz></span><span class="num" data-num><span class="anel" data-anel></span>3</span><div><h3>Corrija pelo portal</h3><p>Regularize sua situação de forma simples e sem burocracia.</p></div></li>
+  </ol>
+</section>
+
+<!-- ===================== C ===================== -->
+<section class="palco C" id="opC" data-opcao="C">
+  <img src="../../public/img/hero/hero-b-rio.webp" alt="">
+  <div class="etiqueta"><strong>C</strong><em>Texto à esquerda, passos empilhados à direita</em></div>
+  <button class="rever" type="button">↻ Rever animação</button>
+  <div class="miolo">
+    <div class="esq">
+      <div class="lockup" data-lockup><h1>SISConforme</h1></div>
+      <p class="frase" data-frase>O novo portal da Prefeitura de Porto Velho que cruza informações fiscais e ajuda você a manter a sua empresa em dia, de forma simples e segura.</p>
+      <a class="cta" data-cta href="#">Saiba como funciona <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v11M3.5 9 8 13.5 12.5 9"/></svg></a>
+    </div>
+    <ol class="pilha" data-passos>
+      <span class="linhaV" data-linhav></span>
+      <li class="cartao passo vidro"><span class="num" data-num><span class="anel" data-anel></span>1</span><div><h3>Compare seus dados</h3><p>Veja as informações que o Fisco também tem.</p></div></li>
+      <li class="cartao passo vidro"><span class="num" data-num><span class="anel" data-anel></span>2</span><div><h3>Entenda a diferença</h3><p>Saiba o que não confere e o valor da divergência.</p></div></li>
+      <li class="cartao passo vidro"><span class="num" data-num><span class="anel" data-anel></span>3</span><div><h3>Corrija pelo portal</h3><p>Regularize sua situação de forma simples e sem burocracia.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<script>
+  gsap.registerPlugin(SplitText);
+  const ACESO = { backgroundColor: "#1677E8", borderColor: "#7FB6F7" };
+
+  /** Entrada comum: foto assenta, símbolo se desenha, nome e frase sobem. */
+  function cabecalho(palco, tl) {
+    const lock = palco.querySelector("[data-lockup]");
+    const tracos = lock.querySelectorAll("path"), pontos = lock.querySelectorAll("circle");
+    const frase = SplitText.create(palco.querySelector("[data-frase]"), { type: "words", mask: "words" });
+    tl.fromTo(palco.querySelector(":scope > img"), { scale: 1.18 }, { scale: 1.04, duration: 2.4, ease: "power3.out" }, 0)
+      .fromTo(tracos, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1, stagger: 0.08, ease: "power2.inOut" }, 0.2)
+      .from(pontos, { scale: 0, duration: 0.4, stagger: 0.1, ease: "back.out(3)" }, 0.9)
+      .from(lock.querySelector("h1"), { autoAlpha: 0, x: -24, filter: "blur(6px)", duration: 0.8, ease: "power3.out" }, 0.5)
+      .from(frase.words, { yPercent: 110, duration: 0.6, ease: "power3.out", stagger: 0.025 }, 0.8);
+    return frase;
+  }
+
+  /** O número i acende: enche de azul, pula e solta um anel. */
+  function acender(palco, i) {
+    const n = palco.querySelectorAll("[data-num]")[i], a = palco.querySelectorAll("[data-anel]")[i];
+    return gsap.timeline()
+      .to(n, { ...ACESO, duration: 0.25 }, 0)
+      .to(n, { keyframes: { scale: [1, 1.22, 1] }, duration: 0.5 }, 0)
+      .fromTo(a, { scale: 1, autoAlpha: 0.8 }, { scale: 2.3, autoAlpha: 0, duration: 0.9, ease: "power2.out" }, 0);
+  }
+
+  const MONTAR = {
+    A(palco, tl) {
+      const passos = palco.querySelectorAll(".passo");
+      tl.from(palco.querySelector("[data-passos]"), { autoAlpha: 0, y: 30, scale: 0.97, duration: 0.8, ease: "power3.out" }, 1.4)
+        .from(passos, { autoAlpha: 0, y: 12, duration: 0.5, stagger: 0.15 }, 1.7)
+        .fromTo(palco.querySelector("[data-trilho]"), { scaleX: 0 }, { scaleX: 1, duration: 1.6, ease: "power2.inOut" }, 1.9);
+      [0, 1, 2].forEach((i) => tl.add(acender(palco, i), 2.0 + i * 0.55));
+      tl.from(palco.querySelector("[data-cta]"), { autoAlpha: 0, y: 14, duration: 0.6 }, 3.4);
+    },
+    B(palco, tl) {
+      const passos = palco.querySelectorAll(".passo"), luzes = palco.querySelectorAll("[data-luz]");
+      tl.from(palco.querySelector("[data-cta]"), { autoAlpha: 0, y: 14, duration: 0.6 }, 1.6)
+        .from(palco.querySelector("[data-passos]"), { autoAlpha: 0, y: 60, duration: 0.9, ease: "power4.out" }, 1.8)
+        .from(passos, { autoAlpha: 0, y: 14, duration: 0.5, stagger: 0.14 }, 2.1)
+        .from(palco.querySelectorAll(".seta"), { autoAlpha: 0, x: -6, duration: 0.4, stagger: 0.2 }, 2.6);
+      [0, 1, 2].forEach((i) => {
+        tl.add(acender(palco, i), 2.5 + i * 0.5)
+          .fromTo(luzes[i], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, yoyo: true, repeat: 1 }, 2.5 + i * 0.5);
+      });
+    },
+    C(palco, tl) {
+      const cartoes = palco.querySelectorAll(".cartao");
+      tl.from(palco.querySelector("[data-cta]"), { autoAlpha: 0, y: 14, duration: 0.6 }, 1.5)
+        .from(cartoes, { autoAlpha: 0, x: 60, rotateY: -18, transformPerspective: 800, duration: 0.9, stagger: 0.18, ease: "power3.out" }, 1.2)
+        .fromTo(palco.querySelector("[data-linhav]"), { scaleY: 0 }, { scaleY: 1, duration: 1.4, ease: "power2.inOut" }, 1.9);
+      [0, 1, 2].forEach((i) => tl.add(acender(palco, i), 2.0 + i * 0.5));
+    },
+  };
+
+  /** Brilho que volta a passar pelos números de tempos em tempos (movimento contínuo). */
+  function brilho(palco) {
+    const nums = palco.querySelectorAll("[data-num]"), aneis = palco.querySelectorAll("[data-anel]");
+    const tl = gsap.timeline({ repeat: -1, repeatDelay: 2.4, paused: true });
+    nums.forEach((n, i) => {
+      tl.to(n, { keyframes: { scale: [1, 1.12, 1] }, duration: 0.5, ease: "sine.inOut" }, i * 0.35)
+        .fromTo(aneis[i], { scale: 1, autoAlpha: 0.5 }, { scale: 1.9, autoAlpha: 0, duration: 0.8 }, i * 0.35);
+    });
+    return tl;
+  }
+
+  document.querySelectorAll("[data-opcao]").forEach((palco) => {
+    const lock = palco.querySelector("[data-lockup]");
+    lock.prepend(document.getElementById("simbolo").content.firstElementChild.cloneNode(true));
+    let tl, frase, loop, respiro;
+    const tocar = () => {
+      tl?.progress(1).kill(); loop?.kill(); respiro?.kill(); frase?.revert();
+      gsap.set(palco.querySelectorAll("[data-num]"), { clearProps: "all" });
+      tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+      frase = cabecalho(palco, tl);
+      MONTAR[palco.dataset.opcao](palco, tl);
+      loop = brilho(palco);
+      tl.eventCallback("onComplete", () => {
+        frase.revert();
+        loop.play();
+        respiro = gsap.to(palco.querySelector(":scope > img"), { scale: 1.1, xPercent: -1.5, duration: 10, ease: "sine.inOut", yoyo: true, repeat: -1 });
+      });
+    };
+    palco.querySelector(".rever").addEventListener("click", tocar);
+    let tocou = false;
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !tocou) { tocou = true; tocar(); }
+      if (loop) e.isIntersecting ? loop.play() : loop.pause();
+    }, { threshold: 0.45 }).observe(palco);
+  });
+</script>
+</body>
+</html>
