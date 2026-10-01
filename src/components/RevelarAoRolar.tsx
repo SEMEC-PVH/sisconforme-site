@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { COM_MOVIMENTO, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { aoEntrar, COM_MOVIMENTO, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 /**
  * Textos e blocos do artigo que surgem com um leve deslize ao entrar na tela.
@@ -30,14 +30,11 @@ export default function RevelarAoRolar({ children }: Readonly<{ children: React.
 
         const tabela = artigo.querySelector("table");
         if (tabela) {
-          gsap.from(tabela.querySelectorAll("tbody tr"), {
-            autoAlpha: 0,
-            y: 16,
-            duration: 0.5,
-            ease: "power2.out",
-            stagger: 0.1,
-            scrollTrigger: { trigger: tabela, start: "top 80%", once: true },
-          });
+          aoEntrar(
+            tabela,
+            gsap.from(tabela.querySelectorAll("tbody tr"), { autoAlpha: 0, y: 16, duration: 0.5, ease: "power2.out", stagger: 0.1 }),
+            "top 80%",
+          );
         }
       });
       return () => mm.revert();

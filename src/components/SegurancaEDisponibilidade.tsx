@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { COM_MOVIMENTO, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { aoEntrar, COM_MOVIMENTO, gsap, useGSAP } from "@/lib/gsap";
 import Disponibilidade from "./Disponibilidade";
 import styles from "./Seguranca.module.css";
 import MotionConsulta from "./seguranca/MotionConsulta";
@@ -52,22 +52,25 @@ export default function SegurancaEDisponibilidade() {
       mm.add(COM_MOVIMENTO, () => {
         // escudo do cabeçalho se desenha
         const tracos = raiz.querySelectorAll("[data-traco]");
-        gsap.fromTo(
-          tracos,
-          { strokeDasharray: 1, strokeDashoffset: 1 },
-          {
-            strokeDashoffset: 0,
-            duration: 1.2,
-            ease: "power2.inOut",
-            stagger: 0.15,
-            scrollTrigger: { trigger: tracos[0], start: "top 85%", once: true },
-            onComplete: () => gsap.set(tracos, { clearProps: "strokeDasharray,strokeDashoffset" }),
-          },
+        aoEntrar(
+          tracos[0],
+          gsap.fromTo(
+            tracos,
+            { strokeDasharray: 1, strokeDashoffset: 1 },
+            {
+              strokeDashoffset: 0,
+              duration: 1.2,
+              ease: "power2.inOut",
+              stagger: 0.15,
+              onComplete: () => gsap.set(tracos, { clearProps: "strokeDasharray,strokeDashoffset" }),
+            },
+          ),
         );
 
         // cada cartão: a linha de destaque corre e o número sobe
         raiz.querySelectorAll<HTMLElement>("[data-card]").forEach((card) => {
-          const tl = gsap.timeline({ scrollTrigger: { trigger: card, start: "top 85%", once: true } });
+          const tl = gsap.timeline();
+          aoEntrar(card, tl);
           tl.from(card.querySelector("[data-linha]"), { scaleX: 0, duration: 0.9, ease: "power3.inOut" }, 0.2).from(
             card.querySelector(`.${styles.num}`),
             { autoAlpha: 0, y: 10, duration: 0.5, ease: "power2.out" },
@@ -75,13 +78,11 @@ export default function SegurancaEDisponibilidade() {
           );
         });
 
-        // as animações contínuas (CSS) só rodam enquanto a seção está na tela
-        ScrollTrigger.create({
-          trigger: raiz,
-          start: "top bottom",
-          end: "bottom top",
-          toggleClass: { targets: raiz, className: styles.vivo },
-        });
+        // as animações contínuas (CSS) só rodam enquanto a seção está na tela.
+        // (um IntersectionObserver basta aqui; não precisa de ScrollTrigger)
+        const olho = new IntersectionObserver(([e]) => raiz.classList.toggle(styles.vivo, e.isIntersecting));
+        olho.observe(raiz);
+        return () => olho.disconnect();
       });
       return () => mm.revert();
     },
