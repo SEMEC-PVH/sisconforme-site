@@ -1,4 +1,5 @@
 import { clamp } from "@/lib/scroll";
+import { caminho } from "@/lib/caminho";
 
 /**
  * Roteiro da seção "Uma nova relação": frases que sobem com a rolagem enquanto a seção
@@ -81,7 +82,7 @@ export const larguraAperto = (larguraCss: number, densidade: number): LarguraApe
 
 /** Caminho do quadro `i` (0 = primeiro) do aperto de mãos. */
 export const quadroAperto = (i: number, largura: LarguraAperto): string =>
-  `/img/aperto/${largura}/f${String(i + 1).padStart(3, "0")}.webp`;
+  caminho(`/img/aperto/${largura}/f${String(i + 1).padStart(3, "0")}.webp`);
 
 /** Onde o vídeo começa e termina, em progresso: começa logo depois de "Hoje" e fecha com "os dois.". */
 const APERTO_INICIO = centro(I_HOJE) + PASSO * 0.2;

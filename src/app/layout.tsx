@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { caminho } from "@/lib/caminho";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: "SISConforme",
   description: "Portal de autorregularização do ISSQN de Porto Velho.",
-  openGraph: { title: "SISConforme", images: ["/img/og-image.jpg"] },
+  openGraph: { title: "SISConforme", images: [caminho("/img/og-image.jpg")] },
 };
 
 export const viewport: Viewport = {

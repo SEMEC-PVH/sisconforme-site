@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import { clamp, easeOutCubic } from "@/lib/scroll";
+import { caminho } from "@/lib/caminho";
 import styles from "./Hero.module.css";
 
 /*
@@ -311,7 +312,7 @@ export default function Hero() {
           <g data-mundo>
             <g data-casa1 clipPath="url(#hb-c1)">
               <g clipPath="url(#hb-w1)">
-                <image href="/img/hero/hero-b-caixas.webp" x="94" y="26" width="440" height="660" preserveAspectRatio="xMidYMid slice" />
+                <image href={caminho("/img/hero/hero-b-caixas.webp")} x="94" y="26" width="440" height="660" preserveAspectRatio="xMidYMid slice" />
               </g>
             </g>
           </g>
@@ -319,7 +320,7 @@ export default function Hero() {
           {/* casa 2: orla e Rio Madeira. Fica no espaço da TELA para chegar à tela cheia sem perder nitidez */}
           <g data-casa2 clipPath="url(#hb-c2)">
             <g data-casa2onda clipPath="url(#hb-w2)">
-              <image data-img2 href="/img/hero/hero-b-rio.webp" x="0" y="0" width="1280" height="720" preserveAspectRatio="xMidYMid slice" />
+              <image data-img2 href={caminho("/img/hero/hero-b-rio.webp")} x="0" y="0" width="1280" height="720" preserveAspectRatio="xMidYMid slice" />
             </g>
           </g>
 
@@ -327,7 +328,7 @@ export default function Hero() {
           <g data-mundo>
             <g data-casa3 clipPath="url(#hb-c3)">
               <g clipPath="url(#hb-w3)">
-                <image href="/img/hero/hero-b-bandeira.webp" x="507" y="370" width="342" height="510" preserveAspectRatio="xMidYMid slice" />
+                <image href={caminho("/img/hero/hero-b-bandeira.webp")} x="507" y="370" width="342" height="510" preserveAspectRatio="xMidYMid slice" />
               </g>
             </g>
             <g data-contorno>
