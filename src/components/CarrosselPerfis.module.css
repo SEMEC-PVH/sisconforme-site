@@ -13,3 +13,11 @@
 @media (prefers-reduced-motion:reduce){
   .track{transition:none}
 }
+
+/* sem JS: as abas não deslizam o trilho, então os quatro perfis ficam empilhados e todos legíveis */
+@media (scripting:none){
+  .carousel :global(.tabs){display:none}
+  .trackWrap{overflow:visible;margin-right:0}
+  .track{flex-direction:column;gap:16px}
+  .card{flex:none;opacity:1}
+}

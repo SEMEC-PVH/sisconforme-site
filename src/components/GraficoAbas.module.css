@@ -14,3 +14,10 @@
   .chart text{font-size:25px}
   .chart .eixo{display:none}
 }
+
+/* sem JS: as abas não trocam, então somem e todos os gráficos ficam empilhados */
+.soSemJs{display:none}
+@media (scripting:none){
+  .abas{display:none}
+  .soSemJs{display:block;margin-top:40px}
+}

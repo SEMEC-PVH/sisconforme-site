@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useRef, useState } from "react";
+import { Fragment, type Ref, useRef, useState } from "react";
 import { COM_MOVIMENTO, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import styles from "./GraficoAbas.module.css";
 
@@ -65,6 +65,8 @@ const IH = H - T - B;
 
 export const escalaY = (v: number, max: number): number => T + IH - (v / max) * IH;
 
+const xLinha = (i: number) => L + (IW * (i + 0.5)) / MESES.length;
+
 export default function GraficoAbas() {
   const [aba, setAba] = useState<"a" | "b">("a");
   const d = DADOS_GRAFICO[aba];
@@ -83,11 +85,15 @@ export default function GraficoAbas() {
           const n = l.getTotalLength();
           gsap.set(l, { strokeDasharray: n, strokeDashoffset: n });
         });
-        const desenho = gsap
-          .timeline({ paused: true })
-          .to(linhas, { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut", stagger: 0.15 })
-          .from(svg.querySelectorAll("circle"), { scale: 0, transformOrigin: "center", duration: 0.3, stagger: 0.02 }, "-=0.6")
-          .from(svg.querySelectorAll("rect"), { scaleY: 0, transformOrigin: "50% 100%", duration: 0.8, ease: "power2.out", stagger: 0.12 }, 0);
+        // cada aba só tem um tipo de marca (linhas e pontos, ou barras): animar o que não existe faz o GSAP avisar no console
+        const desenho = gsap.timeline({ paused: true });
+        if (d.type === "line") {
+          desenho
+            .to(linhas, { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut", stagger: 0.15 })
+            .from(svg.querySelectorAll("circle"), { scale: 0, transformOrigin: "center", duration: 0.3, stagger: 0.02 }, "-=0.6");
+        } else {
+          desenho.from(svg.querySelectorAll("rect"), { scaleY: 0, transformOrigin: "50% 100%", duration: 0.8, ease: "power2.out", stagger: 0.12 });
+        }
         if (jaVisto.current) {
           desenho.play();
         } else {
@@ -107,14 +113,9 @@ export default function GraficoAbas() {
     { dependencies: [aba], scope: svgRef, revertOnUpdate: true },
   );
 
-  const niveis: number[] = [];
-  for (let v = 0; v <= d.max; v += d.step) niveis.push(v);
-
-  const xLinha = (i: number) => L + (IW * (i + 0.5)) / MESES.length;
-
   return (
     <div className={`wide block ${styles.chart}`}>
-      <div className="tabs" role="tablist">
+      <div className={`tabs ${styles.abas}`} role="tablist">
         <button role="tab" aria-selected={aba === "a"} onClick={() => setAba("a")}>
           Divergências por competência
         </button>
@@ -122,6 +123,26 @@ export default function GraficoAbas() {
           Regularização após o alerta
         </button>
       </div>
+      <Grafico d={d} svgRef={svgRef} />
+      {/* sem JS as abas não trocam: os outros gráficos aparecem logo abaixo (só nesse caso, via CSS) */}
+      <div className={styles.soSemJs}>
+        {(Object.keys(DADOS_GRAFICO) as ("a" | "b")[])
+          .filter((k) => k !== aba)
+          .map((k) => (
+            <Grafico key={k} d={DADOS_GRAFICO[k]} />
+          ))}
+      </div>
+    </div>
+  );
+}
+
+/** Um gráfico com a legenda e a nota de rodapé. */
+function Grafico({ d, svgRef }: Readonly<{ d: DadosGrafico; svgRef?: Ref<SVGSVGElement> }>) {
+  const niveis: number[] = [];
+  for (let v = 0; v <= d.max; v += d.step) niveis.push(v);
+
+  return (
+    <>
       <div className={styles.chartbox} data-revelar>
         <div className={styles.chartHead}>
           <span>{d.title}</span>
@@ -216,6 +237,6 @@ export default function GraficoAbas() {
         </svg>
       </div>
       <p className="caption">{d.cap}</p>
-    </div>
+    </>
   );
 }
