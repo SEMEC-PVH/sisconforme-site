@@ -80,3 +80,36 @@
   .num{background:#1677E8;border-color:#7FB6F7}
   .pulsa svg{animation:none}
 }
+
+/* fundo estático só para quem está sem JS */
+.semJs{display:none}
+
+/* sem JS: nada anima, então a abertura já mostra o estado final (pôr do sol + texto + passos) em altura normal */
+@media (scripting:none){
+  .intro{height:auto}
+  .stage{position:relative;height:auto;min-height:100vh;min-height:100svh;overflow:visible;
+    display:flex;flex-direction:column;padding:0 16px}
+  .cena{display:none}
+  .semJs{display:block;position:absolute;inset:0;background-size:cover;background-position:center}
+  .veu{opacity:1;background:radial-gradient(ellipse 70% 60% at 50% 45%,rgba(8,10,14,.6),rgba(8,10,14,.15) 80%),
+    linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.05) 30%,rgba(0,0,0,.1) 60%,rgba(0,0,0,.55))}
+  .heroCopy{position:relative;inset:auto;flex:1;padding:clamp(96px,14vh,140px) 0 clamp(28px,5vh,48px)}
+  .titleblock{width:min(100%,760px)}
+  .marca path{stroke-dashoffset:0;opacity:1}
+  .marca circle{transform:none}
+  .titleblock h1,.frase{opacity:1}
+  .cta{opacity:1;visibility:visible}
+  .doca{position:relative;left:auto;bottom:auto;translate:none;width:min(100%,1120px);margin:0 auto;
+    opacity:1;visibility:visible}
+  .num{background:#1677E8;border-color:#7FB6F7}
+  .hint{position:relative;bottom:auto;opacity:1;margin:20px 0 24px}
+}
+/* sem JS no celular: há espaço, então os passos empilham e mostram o texto */
+@media (scripting:none) and (max-width:760px){
+  .doca{grid-template-columns:1fr}
+  .passo{flex-direction:row;align-items:center;gap:14px;padding:14px 16px}
+  .passo + .passo{border-left:0;border-top:1px solid rgba(255,255,255,.16)}
+  .passo h2{font-size:15px}
+  .passo p{display:block;font-size:13.5px}
+  .num{width:34px;height:34px;font-size:14px}
+}

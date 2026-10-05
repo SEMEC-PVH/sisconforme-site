@@ -9,3 +9,7 @@
 @media (max-width:1100px){.side{display:none}}
 
 @media (prefers-reduced-motion:reduce){.side a i{transition:none}}
+
+/* sem JS não há como saber a seção atual nem quando sair do hero: some de vez (a barra do topo já leva às seções),
+   em vez de ficar invisível mas ainda recebendo foco do teclado */
+@media (scripting:none){.side{display:none}}

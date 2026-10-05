@@ -79,6 +79,7 @@ const bloco = (h: number) => ({ width: 800, height: h, display: "flex", flexDire
 export default function MotionEmpresas() {
   return (
     <Palco
+      cena="empresas"
       duracao={T}
       criar={criar}
       parado={6.2}

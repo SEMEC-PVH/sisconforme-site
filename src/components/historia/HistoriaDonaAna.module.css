@@ -475,3 +475,149 @@
     gap: 8px;
   }
 }
+/* sem JavaScript: história como sequência estática, com altura natural.
+   .caps e .scene viram display:contents para que legendas e ilustrações
+   se intercalem na coluna do cartão via order */
+@media (scripting: none) {
+  .hs {
+    height: auto;
+  }
+  .hs .pin {
+    position: relative;
+    height: auto;
+    overflow: visible;
+  }
+  .card {
+    position: relative;
+    inset: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding: 72px 16px 80px;
+    transform: none !important;
+    border-radius: 0 !important;
+  }
+  .caps,
+  .scene {
+    display: contents;
+  }
+  .cap {
+    position: static;
+    width: 100%;
+    max-width: 720px;
+    text-align: center;
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+  }
+  .cap:nth-child(1) {
+    order: 1;
+  }
+  .ana {
+    order: 2;
+  }
+  .cap:nth-child(2) {
+    order: 3;
+    margin-top: 24px;
+  }
+  .letter {
+    order: 4;
+  }
+  .cap:nth-child(3) {
+    order: 5;
+    margin-top: 24px;
+  }
+  .cap:nth-child(4) {
+    order: 6;
+  }
+  .cap:nth-child(5) {
+    order: 7;
+  }
+  .phone {
+    order: 8;
+  }
+  .cap:nth-child(6) {
+    order: 9;
+    margin-top: 24px;
+  }
+  .objs {
+    order: 10;
+  }
+  .cap:nth-child(7) {
+    order: 11;
+  }
+  .ana {
+    position: static;
+    width: min(200px, 50vw);
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .letter {
+    position: static;
+    translate: none;
+    width: min(100%, 420px);
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .paper {
+    font-size: 12px;
+    clip-path: none !important;
+  }
+  .phone {
+    position: static;
+    translate: none;
+    width: 22em;
+    max-width: 100%;
+    font-size: 12px;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .note,
+  .steps li,
+  .btn {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  /* cena SVG no estado final: pilhas completas e selo "Tudo confere" */
+  .objs {
+    width: min(100%, 560px);
+    height: auto;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .objs [data-moeda],
+  .objs [data-objeto],
+  .objs [data-selo="ok"],
+  .objs [data-brilhos] {
+    opacity: 1 !important;
+  }
+  .objs [data-objeto="0"] {
+    transform: translate(35px, 20px);
+  }
+  .objs [data-objeto="1"] {
+    transform: translate(252px, 6px);
+  }
+  .objs [data-objeto="2"] {
+    transform: translate(442px, 6px);
+  }
+  .objs [data-fantasma],
+  .objs [data-linha],
+  .objs [data-selo="gap"] {
+    opacity: 0 !important;
+  }
+  .bar {
+    display: none;
+  }
+  /* com movimento reduzido o roteiro em texto aparece; sem JS as legendas já estão visíveis, então ele volta a ser só para leitores de tela */
+  .hs ol.sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}

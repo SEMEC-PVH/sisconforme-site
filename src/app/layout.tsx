@@ -27,7 +27,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="pt-BR" className={inter.variable}>
       {/* Extensões do navegador (ex.: ColorZilla) injetam atributos no <body> antes da hidratação */}
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        {children}
+        {/* só para quem está sem JavaScript; fica no fim para não brigar com a barra fixa do topo */}
+        <noscript>
+          <div className="aviso-sem-js" role="note">
+            <p>As animações deste site precisam de JavaScript, mas todo o conteúdo está disponível nesta página.</p>
+          </div>
+        </noscript>
+      </body>
     </html>
   );
 }

@@ -91,6 +91,7 @@ const FONTES = [
 export default function MotionFontes() {
   return (
     <Palco
+      cena="fontes"
       duracao={T}
       criar={criar}
       parado={7.4}

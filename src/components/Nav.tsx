@@ -135,6 +135,15 @@ export default function Nav() {
             </li>
           ))}
         </ul>
+        {/* sem JS o botão não funciona: estes dois links abrem/fecham o painel por :target (só aparecem nesse caso, via CSS) */}
+        <a className={`${styles.menu} ${styles.abrirSemJs}`} href="#menu-principal" aria-label="Abrir menu">
+          <i />
+          <i />
+        </a>
+        <a className={`${styles.menu} ${styles.fecharSemJs}`} href="#_" aria-label="Fechar menu">
+          <i />
+          <i />
+        </a>
         <div className={styles.split}>
           <a href="#disponibilidade">Acessar portal</a>
         </div>

@@ -337,6 +337,9 @@ export default function Hero() {
           </g>
         </svg>
 
+        {/* sem JS: o pôr do sol (estado final do mergulho) como fundo fixo; com JS fica escondido */}
+        <div className={styles.semJs} style={{ backgroundImage: `url(${caminho("/img/hero/hero-b-rio.webp")})` }} aria-hidden="true" />
+
         <div className={styles.veu} data-veu />
         <p className={styles.legenda} data-legenda>
           Porto Velho · Rondônia

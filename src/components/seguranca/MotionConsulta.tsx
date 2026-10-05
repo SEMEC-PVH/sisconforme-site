@@ -63,6 +63,7 @@ function criar(raiz: HTMLElement) {
 export default function MotionConsulta() {
   return (
     <Palco
+      cena="consulta"
       duracao={T}
       criar={criar}
       parado={6.5}

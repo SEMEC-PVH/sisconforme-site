@@ -16,11 +16,13 @@ type Props = Readonly<{
   /** quadro mostrado a quem pediu movimento reduzido */
   parado: number;
   rotulo: string;
+  /** nome do vídeo; sem JS, o CSS usa para montar o quadro estático */
+  cena: string;
   children: ReactNode;
 }>;
 
 /** Quadro 1440x1440 escalado para a largura do card. Só roda enquanto está na tela. */
-export default function Palco({ duracao, criar, parado, rotulo, children }: Props) {
+export default function Palco({ duracao, criar, parado, rotulo, cena, children }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -69,7 +71,7 @@ export default function Palco({ duracao, criar, parado, rotulo, children }: Prop
   }, [criar, duracao, parado]);
 
   return (
-    <div ref={ref} className={`${styles.palco} ${geist.variable}`} role="img" aria-label={rotulo}>
+    <div ref={ref} className={`${styles.palco} ${geist.variable}`} role="img" aria-label={rotulo} data-cena={cena}>
       <div className="mundo" data-m="mundo">
         <div className="cam" data-m="cam">
           {children}

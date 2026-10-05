@@ -156,6 +156,18 @@
   .nav ul a:active{background:var(--pilula)}
   .nav ul .dd::after{display:none}
 }
+/* sem JS: o botão não faz nada, então dois links tomam o lugar dele e o painel abre por :target
+   (clicar num link do painel troca o alvo e ele fecha sozinho). Com JS esses links nunca aparecem. */
+.menu.abrirSemJs,.menu.fecharSemJs{display:none}
+@media (scripting:none) and (max-width:900px){
+  button.menu{display:none}
+  .menu.abrirSemJs{display:grid}
+  .nav ul:target ~ .abrirSemJs{display:none}
+  .nav ul:target ~ .fecharSemJs{display:grid}
+  .fecharSemJs i:first-child{transform:translateY(3.8px) rotate(45deg)}
+  .fecharSemJs i:last-child{transform:translateY(-3.8px) rotate(-45deg)}
+  .nav ul:target{opacity:1;visibility:visible;transform:none;transition:opacity .25s,transform .3s cubic-bezier(.22,1,.36,1)}
+}
 @media (max-width:380px){
   .split a{padding:9px 12px;font-size:14px}
 }

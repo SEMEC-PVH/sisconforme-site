@@ -206,8 +206,8 @@
   white-space: nowrap;
 }
 
-/* ---------- movimento reduzido: bloco estático, sem rolagem presa ---------- */
-@media (prefers-reduced-motion: reduce) {
+/* ---------- movimento reduzido ou sem JS: bloco estático, sem rolagem presa ---------- */
+@media (prefers-reduced-motion: reduce), (scripting: none) {
   .pin {
     height: auto;
   }
@@ -264,5 +264,19 @@
   }
   .ch {
     will-change: auto;
+  }
+}
+
+/* sem JS: frases primeiro, depois o aperto de mãos e a legenda */
+@media (scripting: none) {
+  .palco {
+    display: flex;
+    flex-direction: column;
+  }
+  .maos {
+    order: 1;
+  }
+  .legenda {
+    order: 2;
   }
 }

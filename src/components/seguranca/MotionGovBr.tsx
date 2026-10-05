@@ -72,7 +72,7 @@ function Spinner() {
 
 export default function MotionGovBr() {
   return (
-    <Palco duracao={T} criar={criar} parado={6.8} rotulo="Animação: a empresa entra no SISConforme somente pela conta gov.br">
+    <Palco duracao={T} cena="govbr" criar={criar} parado={6.8} rotulo="Animação: a empresa entra no SISConforme somente pela conta gov.br">
       <div className="forma" data-m="forma">
         <div className="c" data-m="botao" style={{ color: "#fff", fontSize: 46, fontWeight: 600, gap: 18 }}>
           <Icone nome="pessoa" />

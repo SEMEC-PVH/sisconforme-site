@@ -227,14 +227,14 @@ export default function Trajetoria() {
           <div className={styles.inundacao} ref={inundacaoRef} />
           <div className={styles.maos} ref={maosRef}>
             <canvas className={styles.maosCanvas} ref={maosCanvasRef} width={1280} height={alturaAperto(1280)} />
-            {/* com "reduzir movimento" aparece só o aperto já fechado */}
+            {/* com "reduzir movimento" ou sem JS aparece só o aperto já fechado */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               className={styles.maosEstatico}
               src={quadroAperto(QUADROS_APERTO - 1, 1280)}
               srcSet={`${quadroAperto(QUADROS_APERTO - 1, 1280)} 1280w, ${quadroAperto(QUADROS_APERTO - 1, 2560)} 2560w`}
               sizes="max(104vw, 560px)"
-              alt=""
+              alt="Aperto de mãos entre o auditor fiscal e a empresa"
               width={1280}
               height={alturaAperto(1280)}
               loading="lazy"

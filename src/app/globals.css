@@ -49,3 +49,12 @@ article{padding:120px 16px 80px}
 .tabs button:focus-visible{outline:2px solid var(--azul);outline-offset:3px}
 
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* ---------- sem JavaScript ---------- */
+/* aviso discreto no fim da página (o <noscript> fica no layout.tsx) */
+.aviso-sem-js{background:var(--night);color:var(--night-muted);font-family:var(--sans);font-size:13px;line-height:1.5;text-align:center;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid rgba(255,255,255,.12)}
+.aviso-sem-js p{max-width:60ch;margin:0 auto;text-wrap:pretty}
+@media (scripting:none){
+  /* blindagem do RevelarAoRolar: o que ele esconde para revelar ao rolar fica sempre à vista */
+  .prose :is(.col > p, .col > h2, .col > h3, .caption, .tabs, [data-revelar]),.prose tbody tr{opacity:1!important;visibility:visible!important}
+}
