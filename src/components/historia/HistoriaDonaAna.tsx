@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { clamp, easeInCubic, easeInOutQuad, easeOutBack, progressoDoScroll, seg, useScrollFrame } from "@/lib/scroll";
+import BotaoGovBr from "../BotaoGovBr";
 import Ana from "./Ana";
 import CenaObjetos, { BASE, MAX_MOEDAS, OBJ, PASSO, PRIMEIRA, VALORES } from "./objetos";
 import { expressaoEm, legendaEm, LEGENDAS, ROTEIRO_ACESSIVEL, type Expressao } from "./roteiro";
@@ -239,9 +240,7 @@ export default function HistoriaDonaAna() {
                 {legenda.sub && <p className={styles.s}>{legenda.sub}</p>}
                 {legenda.cta && (
                   <div className={styles.actions}>
-                    <a className={styles.go} href="#disponibilidade" tabIndex={-1}>
-                      Acessar portal
-                    </a>
+                    <BotaoGovBr tabIndex={-1} />
                     <a className={styles.more} href="#introducao" tabIndex={-1}>
                       Saiba mais ↓
                     </a>
@@ -321,7 +320,7 @@ export default function HistoriaDonaAna() {
             {i === ROTEIRO_ACESSIVEL.length - 1 && (
               <>
                 {" "}
-                <a href="#disponibilidade">Acessar portal</a>.
+                <a href="#disponibilidade">Entrar com gov.br</a>.
               </>
             )}
           </li>

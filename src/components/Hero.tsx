@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "@/lib/gsap";
+import { emLaco, gsap } from "@/lib/gsap";
 import { clamp, easeOutCubic } from "@/lib/scroll";
 import { caminho } from "@/lib/caminho";
 import styles from "./Hero.module.css";
@@ -129,7 +129,7 @@ export default function Hero() {
     // Os números acendem por tempo (GSAP), uma vez, quando a faixa termina de entrar pela rolagem.
     // Depois, um brilho volta a passar por eles de tempos em tempos enquanto o hero está na tela.
     let acendeu = false;
-    const brilho = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 2.4 });
+    const brilho = emLaco(gsap.timeline({ paused: true, repeat: -1, repeatDelay: 2.4 }));
     nums.forEach((n, i) => {
       brilho
         .to(n, { keyframes: { scale: [1, 1.12, 1] }, duration: 0.5, ease: "sine.inOut" }, i * 0.35)
@@ -139,7 +139,7 @@ export default function Hero() {
     nums.forEach((n, i) => {
       const t = i * 0.5;
       acender
-        .to(n, { backgroundColor: "#1677E8", borderColor: "#7FB6F7", duration: 0.25 }, t)
+        .to(n, { backgroundColor: "#223F99", borderColor: "#8FA3DD", duration: 0.25 }, t)
         .to(n, { keyframes: { scale: [1, 1.22, 1] }, duration: 0.5, ease: "power2.out" }, t)
         .fromTo(aneis[i], { scale: 1, autoAlpha: 0.8 }, { scale: 2.3, autoAlpha: 0, duration: 0.9, ease: "power2.out" }, t)
         .fromTo(luzes[i], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, yoyo: true, repeat: 1 }, t);
@@ -149,6 +149,7 @@ export default function Hero() {
     });
     olho.observe(intro);
 
+    let ctaEmFoco = false;
     let W = 0, H = 0, s0 = 1, sF = 1;
     const enchido = [0, 0, 0];
     const inicio = performance.now();
@@ -219,9 +220,12 @@ export default function Hero() {
 
       surgir(nome, easeOutCubic(seg(p, CONFIG.nome)), -24, 0);
       surgir(frase, easeOutCubic(seg(p, CONFIG.frase)), 0, 20);
-      const tc = easeOutCubic(seg(p, CONFIG.cta));
+      // com foco do teclado o botão aparece na hora: escondido ele ficaria fora da ordem do Tab
+      const tc = ctaEmFoco ? 1 : easeOutCubic(seg(p, CONFIG.cta));
       surgir(cta, tc, 0, 16);
-      cta.style.visibility = tc < 0.02 ? "hidden" : "visible";
+      // o CSS começa com visibility:hidden (antes do JS); aqui fica só a opacidade, para seguir alcançável pelo Tab
+      cta.style.visibility = "visible";
+      cta.style.pointerEvents = tc < 0.02 ? "none" : "";
       cta.classList.toggle(styles.pulsa, tc >= 1);
 
       // faixa dos passos: sobe do rodapé e cada passo entra logo atrás do anterior
@@ -275,7 +279,16 @@ export default function Hero() {
     rafEncher = requestAnimationFrame(encher);
     window.addEventListener("scroll", agendar, { passive: true });
     window.addEventListener("resize", aoRedimensionar);
+    const focoNoCta = (e: FocusEvent) => {
+      ctaEmFoco = e.type === "focus" && cta.matches(":focus-visible");
+      frame();
+    };
+    cta.addEventListener("focus", focoNoCta);
+    cta.addEventListener("blur", focoNoCta);
+
     return () => {
+      cta.removeEventListener("focus", focoNoCta);
+      cta.removeEventListener("blur", focoNoCta);
       olho.disconnect();
       acender.kill();
       brilho.kill();

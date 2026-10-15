@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { aoEntrar, gsap, SplitText, useGSAP } from "@/lib/gsap";
+import { aoEntrar, emLaco, gsap, SplitText, useGSAP } from "@/lib/gsap";
 import styles from "./Disponibilidade.module.css";
 
 const FALE_CONOSCO = "https://semecdigital.portovelho.ro.gov.br/fale-conosco";
@@ -25,8 +25,8 @@ export default function Disponibilidade() {
           const { desk } = ctx.conditions as { desk: boolean; cel: boolean };
 
           /* ---------- 1. cabeçalho: selo, título letra a letra, parágrafo linha a linha ---------- */
-          const titulo = SplitText.create(q("[data-titulo]"), { type: "chars", mask: "chars" });
-          const lead = SplitText.create(q("[data-lead]"), { type: "lines", mask: "lines" });
+          const titulo = SplitText.create(q("[data-titulo]"), { type: "chars", mask: "chars", aria: "auto" });
+          const lead = SplitText.create(q("[data-lead]"), { type: "lines", mask: "lines", aria: "none" });
           const cabecalho = gsap.timeline({
             onComplete: () => {
               titulo.revert();
@@ -43,25 +43,25 @@ export default function Disponibilidade() {
           const ajuda = gsap.timeline();
           aoEntrar(q("[data-ajuda]")[0], ajuda, "top 86%");
           ajuda
-            .from(q("[data-ajuda]"), { autoAlpha: 0, y: 30, duration: 0.7, ease: "power3.out" })
+            .from(q("[data-ajuda]"), { opacity: 0, y: 30, duration: 0.7, ease: "power3.out" })
             .from(q("[data-interroga]"), { scale: 0, rotate: -120, duration: 1.1, ease: "elastic.out(1, 0.5)" }, "-=0.35")
             .from(q("[data-ajuda-txt]"), { autoAlpha: 0, x: -14, duration: 0.5, stagger: 0.1 }, "<0.15")
-            .from(q("[data-botao]"), { autoAlpha: 0, x: 18, duration: 0.5, ease: "back.out(2)" }, "<0.2")
+            .from(q("[data-botao]"), { opacity: 0, x: 18, duration: 0.5, ease: "back.out(2)" }, "<0.2")
             .fromTo(q("[data-reflexo]"), { xPercent: 0 }, { xPercent: 360, duration: 1.3, ease: "power2.inOut" }, "<");
 
-          gsap.to(q("[data-interroga]"), { y: -4, duration: 1.8, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 1.5 });
-          gsap.to(q("[data-interroga]"), {
+          emLaco(gsap.to(q("[data-interroga]"), { y: -4, duration: 1.8, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 1.5 }));
+          emLaco(gsap.to(q("[data-interroga]"), {
             keyframes: { rotate: [0, -12, 10, -6, 0] },
             duration: 0.9,
             ease: "sine.inOut",
             repeat: -1,
             repeatDelay: 5,
             delay: 3,
-          });
+          }));
 
           /* depois da entrada, o quadro continua chamando atenção: o reflexo volta a atravessar,
              um anel sai do botão e a seta dá um empurrãozinho — em ciclo, só com o quadro na tela */
-          const chamado = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 3.2 });
+          const chamado = emLaco(gsap.timeline({ paused: true, repeat: -1, repeatDelay: 3.2 }));
           chamado
             .fromTo(q("[data-reflexo]"), { xPercent: 0 }, { xPercent: 360, duration: 1.4, ease: "power2.inOut", immediateRender: false })
             .fromTo(q("[data-botao-anel]"), { scaleX: 1, scaleY: 1, autoAlpha: 0.6 }, { scaleX: 1.12, scaleY: 1.45, autoAlpha: 0, duration: 1.1, ease: "power2.out", immediateRender: false }, 0.55)

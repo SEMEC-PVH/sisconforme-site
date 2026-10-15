@@ -21,3 +21,6 @@
   .track{flex-direction:column;gap:16px}
   .card{flex:none;opacity:1}
 }
+
+/* alto contraste: os cartões ao lado do ativo não ficam esmaecidos */
+:global(html.contraste) .card{opacity:1}

@@ -20,19 +20,21 @@ export default function RevelarAoRolar({ children }: Readonly<{ children: React.
       const mm = gsap.matchMedia();
       mm.add(COM_MOVIMENTO, () => {
         const alvos = artigo.querySelectorAll<HTMLElement>(REVELAVEIS);
-        gsap.set(alvos, { autoAlpha: 0, y: 24 });
+        // opacity (e não autoAlpha/visibility): o que ainda não apareceu continua na ordem do Tab; ao receber foco
+        // o navegador rola até ele e o ScrollTrigger revela
+        gsap.set(alvos, { opacity: 0, y: 24 });
         ScrollTrigger.batch(alvos, {
           start: "top 88%",
           once: true,
           onEnter: (grupo) =>
-            gsap.to(grupo, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power2.out", stagger: 0.08, overwrite: true }),
+            gsap.to(grupo, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out", stagger: 0.08, overwrite: true }),
         });
 
         const tabela = artigo.querySelector("table");
         if (tabela) {
           aoEntrar(
             tabela,
-            gsap.from(tabela.querySelectorAll("tbody tr"), { autoAlpha: 0, y: 16, duration: 0.5, ease: "power2.out", stagger: 0.1 }),
+            gsap.from(tabela.querySelectorAll("tbody tr"), { opacity: 0, y: 16, duration: 0.5, ease: "power2.out", stagger: 0.1 }),
             "top 80%",
           );
         }

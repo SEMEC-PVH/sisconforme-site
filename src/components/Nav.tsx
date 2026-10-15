@@ -2,6 +2,7 @@
 
 import { type PointerEvent, type SyntheticEvent, useEffect, useRef, useState } from "react";
 import { useScrollFrame } from "@/lib/scroll";
+import BotaoGovBr from "./BotaoGovBr";
 import BrandMark from "./BrandMark";
 import styles from "./Nav.module.css";
 
@@ -56,6 +57,9 @@ export default function Nav() {
     if (!nav) return;
     nav.classList.toggle(styles.escuro, fundoEscuro(nav));
     nav.classList.toggle(styles.rolou, window.scrollY > 8);
+    // no topo a barra de acessibilidade ocupa a primeira faixa; a cápsula desce junto e sobe quando ela sai
+    const barra = document.getElementById("barra-acessibilidade");
+    nav.style.top = `${barra ? Math.max(0, barra.offsetHeight - window.scrollY) : 0}px`;
   });
 
   /** Recomeça a montagem da logo (a classe sai e volta para a animação CSS rodar de novo). */
@@ -120,6 +124,8 @@ export default function Nav() {
           <i />
           <i />
         </button>
+        {/* display:contents: vira landmark de navegação sem mudar o layout flex da cápsula */}
+        <nav id="menu" aria-label="Principal" style={{ display: "contents" }}>
         <ul id="menu-principal" ref={listaRef} onMouseLeave={soltar} onBlur={soltar}>
           {links.map((l) => (
             <li key={l.txt}>
@@ -135,6 +141,7 @@ export default function Nav() {
             </li>
           ))}
         </ul>
+        </nav>
         {/* sem JS o botão não funciona: estes dois links abrem/fecham o painel por :target (só aparecem nesse caso, via CSS) */}
         <a className={`${styles.menu} ${styles.abrirSemJs}`} href="#menu-principal" aria-label="Abrir menu">
           <i />
@@ -145,7 +152,7 @@ export default function Nav() {
           <i />
         </a>
         <div className={styles.split}>
-          <a href="#disponibilidade">Acessar portal</a>
+          <BotaoGovBr />
         </div>
       </div>
     </header>

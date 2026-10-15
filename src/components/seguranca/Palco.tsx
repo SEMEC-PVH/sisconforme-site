@@ -123,7 +123,7 @@ export function Icone({ nome, tamanho = 52 }: Readonly<{ nome: keyof typeof TRAC
 export function Check({ tamanho = 56, m }: Readonly<{ tamanho?: number; m?: string }>) {
   return (
     <svg viewBox="0 0 48 48" width={tamanho} height={tamanho} style={{ flex: "none" }} aria-hidden="true">
-      <circle cx="24" cy="24" r="22" fill="#1677E8" />
+      <circle cx="24" cy="24" r="22" fill="#223F99" />
       <path
         data-m={m}
         d="M14 24.5l6.5 6.5L34 17.5"

@@ -1,0 +1,20 @@
+/* Barra de acessibilidade (eMAG): faixa fina no topo, em azul escuro, que sai junto com a rolagem. */
+.barra{position:relative;z-index:60;background:var(--azul-fundo);color:#fff;font:500 13px/1 var(--sans)}
+.dentro{max-width:1180px;margin:0 auto;min-height:36px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:8px 24px;flex-wrap:wrap}
+.barra ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:4px 18px}
+.barra a,.barra button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:10px 0;color:#fff;text-underline-offset:3px}
+.barra a:hover,.barra button:hover{text-decoration:underline}
+.barra a:focus-visible,.barra button:focus-visible{outline:2px solid var(--pvh-amarelo);outline-offset:2px;border-radius:2px}
+.barra button[aria-pressed="true"]{color:var(--pvh-amarelo)}
+.barra kbd{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 4px;border:1px solid rgba(255,255,255,.5);border-radius:3px;font:600 11px/1 var(--sans)}
+
+/* no celular os atalhos de teclado só aparecem quando recebem foco (teclado físico ou leitor de tela) */
+@media (max-width:720px){
+  .dentro{justify-content:center}
+  .atalhos{position:absolute;top:0;left:0}
+  .atalhos li{position:absolute;top:0;left:0}
+  .atalhos a{position:absolute;left:-9999px;white-space:nowrap}
+  .atalhos a:focus{left:8px;top:4px;padding:6px 10px;background:var(--azul-fundo)}
+  .controles{gap:2px 14px;justify-content:center}
+  .barra a,.barra button{font-size:12px}
+}

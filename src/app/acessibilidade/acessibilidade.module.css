@@ -1,0 +1,20 @@
+/* Página de acessibilidade: texto corrido simples, sem animação. */
+.topo{border-bottom:1px solid var(--hair);background:var(--branco)}
+.marca{max-width:760px;margin:0 auto;padding:18px 16px;display:flex;align-items:center;gap:10px;color:var(--azul-fundo);font:600 18px var(--sans);text-decoration:none}
+
+.conteudo{max-width:760px;margin:0 auto;padding:56px 16px 96px;font-family:var(--sans);color:var(--ink-2)}
+.conteudo h1{font-size:clamp(34px,5vw,46px);color:var(--azul-fundo);letter-spacing:-.02em}
+.conteudo h2{font-size:24px;color:var(--azul-fundo);margin:48px 0 14px}
+.conteudo p{font-size:17px;line-height:1.6}
+.conteudo p+p,.conteudo .tabela+p{margin-top:14px}
+.conteudo a{color:var(--azul);text-underline-offset:3px}
+.lead{margin-top:18px;font-size:19px!important;color:var(--ink)}
+.conteudo kbd{display:inline-block;padding:1px 6px;border:1px solid var(--stone);border-bottom-width:2px;border-radius:4px;background:var(--branco);font:600 14px var(--sans);color:var(--ink)}
+
+.tabela{margin-top:16px;overflow-x:auto}
+.tabela table{width:100%;border-collapse:collapse;font-size:15px;min-width:560px}
+.tabela th,.tabela td{padding:10px 12px;border-bottom:1px solid var(--hair);text-align:left;vertical-align:top}
+.tabela thead th{color:var(--azul-fundo);border-bottom:2px solid var(--azul-fundo)}
+.tabela tbody th{font-weight:600;color:var(--ink)}
+
+.voltar{margin-top:56px!important}

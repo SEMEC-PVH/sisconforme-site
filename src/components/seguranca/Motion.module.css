@@ -22,7 +22,7 @@
 
 /* card 02 */
 .palco :global(.selo){display:inline-flex;align-items:center;gap:10px;font-size:28px;font-weight:600;padding:0 26px;height:56px;border-radius:28px;white-space:nowrap}
-.palco :global(.selo-ok){background:#1677E8;color:#fff}
+.palco :global(.selo-ok){background:#223F99;color:#fff}
 .palco :global(.selo-nao){background:#E4E0D6;color:#3D3D3A}
 .palco :global(.linha){position:absolute;left:280px;width:880px;transform:translateY(-50%);display:flex;align-items:center;justify-content:space-between;gap:24px;white-space:nowrap}
 .palco :global(.linha > span:first-child){display:flex;flex-direction:column;gap:6px}
@@ -44,7 +44,7 @@
 
 /* card 04 */
 .palco :global(.j4){justify-content:flex-start;gap:26px;padding:0 64px;font-size:40px;font-weight:600;letter-spacing:-.01em;color:#141413}
-.palco :global(.nao){position:absolute;left:50%;top:50%;font-size:240px;font-weight:700;letter-spacing:-.05em;line-height:1;color:#1677E8;white-space:nowrap;transform-origin:50% 50%}
+.palco :global(.nao){position:absolute;left:50%;top:50%;font-size:240px;font-weight:700;letter-spacing:-.05em;line-height:1;color:#223F99;white-space:nowrap;transform-origin:50% 50%}
 
 /* ---------- sem JS: um quadro parado por vídeo, montado só com CSS ----------
    Sem seek(t) as formas não têm tamanho nem posição; aqui elas recebem o estado já assentado

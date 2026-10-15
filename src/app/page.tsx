@@ -1,6 +1,8 @@
+import BarraAcessibilidade from "@/components/BarraAcessibilidade";
 import CarrosselPerfis from "@/components/CarrosselPerfis";
 import Comunicacao from "@/components/Comunicacao";
 import Cruzamento from "@/components/Cruzamento";
+import FaixaPVH from "@/components/FaixaPVH";
 import Footer from "@/components/Footer";
 import GraficoAbas from "@/components/GraficoAbas";
 import Hero from "@/components/Hero";
@@ -15,9 +17,12 @@ import Trajetoria from "@/components/trajetoria/Trajetoria";
 export default function Home() {
   return (
     <>
+      <BarraAcessibilidade />
       <Nav />
       <SideNav />
+      <main id="conteudo">
       <Hero />
+      <FaixaPVH />
       <HistoriaDonaAna />
       <Trajetoria />
       <RevelarAoRolar>
@@ -28,6 +33,7 @@ export default function Home() {
         <Comunicacao />
         <SegurancaEDisponibilidade />
       </RevelarAoRolar>
+      </main>
       <Footer />
     </>
   );

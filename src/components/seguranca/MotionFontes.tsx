@@ -117,8 +117,8 @@ export default function MotionFontes() {
       ))}
       <div className="forma" data-m="dif">
         <div className="c j3" data-m="dif-c">
-          <b style={{ color: "#1677E8" }}>Diferença</b>
-          <b className="tab" style={{ color: "#1677E8" }}>R$ 12.000,00</b>
+          <b style={{ color: "#223F99" }}>Diferença</b>
+          <b className="tab" style={{ color: "#223F99" }}>R$ 12.000,00</b>
         </div>
       </div>
     </Palco>

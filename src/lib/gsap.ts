@@ -4,6 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
+import { aoMudarPreferencia, preferenciaLigada } from "./preferencias";
 
 gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 
@@ -22,6 +23,28 @@ export function aoEntrar(trigger: Element | null | undefined, anim: gsap.core.An
   anim.pause();
   if (!trigger) return;
   ScrollTrigger.create({ trigger, start, once: true, onEnter: () => anim.play() });
+}
+
+/** Animações em laço infinito (enfeites que voltam sozinhos). Param quando a pessoa pede "Pausar animações". */
+const lacos = new Set<gsap.core.Animation>();
+
+/** Registra um laço: com a pausa ligada ele termina a volta atual e para; ao retomar, volta a girar. */
+export function emLaco<T extends gsap.core.Animation>(anim: T): T {
+  lacos.add(anim);
+  anim.eventCallback("onInterrupt", () => lacos.delete(anim));
+  if (preferenciaLigada("pausado")) anim.repeat(0);
+  return anim;
+}
+
+if (typeof window !== "undefined") {
+  aoMudarPreferencia((p, ligada) => {
+    if (p !== "pausado") return;
+    lacos.forEach((a) => {
+      a.repeat(ligada ? 0 : -1);
+      // um laço que já parou recomeça; os pausados de propósito (fora da tela) seguem pausados
+      if (!ligada && a.progress() === 1 && !a.paused()) a.restart(true);
+    });
+  });
 }
 
 export { gsap, ScrollTrigger, SplitText, useGSAP };

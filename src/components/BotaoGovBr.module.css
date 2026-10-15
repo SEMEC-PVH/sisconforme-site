@@ -1,0 +1,14 @@
+/* Botão de entrada gov.br (Design System gov.br, br-sign-in primário). Cores e medidas do padrão, não da marca do site. */
+.botao{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:none;
+  height:40px;padding:0 24px;border-radius:100em;
+  background:#1351B4;color:#fff;
+  font:600 16px/1 var(--sans);text-decoration:none;white-space:nowrap;
+  transition:background-color .2s;
+}
+.botao b{font-weight:700}
+.botao:hover{background:#2670E8}
+.botao:active{background:#0C326F}
+/* foco do padrão gov.br: contorno tracejado amarelo */
+.botao:focus-visible{outline:4px dashed #C2850C;outline-offset:4px}
+.icone{width:14px;height:14px;flex:none}

@@ -1,28 +1,28 @@
-/* Rodapé em cor sólida (azul profundo), sem imagens — a animação fica no Footer.tsx (GSAP). */
-.footer{position:relative;background:var(--night);color:var(--night-muted);font-family:var(--sans);font-size:14px;padding:72px 16px 40px}
-/* linha fina que corre pela borda de cima quando o rodapé aparece */
-.linhaTopo{position:absolute;left:0;right:0;top:0;height:2px;background:var(--azul);transform-origin:left center}
+/* Rodapé institucional (vindo do sisconforme-web): azul PVH, ícones em amarelo, barra de links com borda amarela. */
+.footer{background:var(--pvh-azul);color:#fff;font-family:var(--sans);font-weight:300;text-align:center}
+.footer a{color:inherit;text-decoration:none}
 
-.fIn{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.3fr repeat(4,1fr);gap:40px}
-.footer .marca{display:inline-flex;align-items:center;gap:10px;color:var(--night-ink);font:600 17px var(--sans);text-decoration:none}
-.marca svg{overflow:visible}
-.marca path{transform-box:fill-box}
-.sobre{margin-top:12px;max-width:30ch;line-height:1.5}
+.colunas{display:grid;gap:24px;margin:24px 0;justify-content:center;align-items:start;text-align:center}
+@media (min-width:801px){.colunas{grid-auto-flow:column;grid-auto-columns:auto}}
 
-.footer h3{font:500 14px var(--sans);color:var(--night-ink);margin-bottom:10px}
-/* traço azul curto embaixo de cada título de coluna */
-.traco{display:block;width:22px;height:2px;margin-bottom:16px;border-radius:2px;background:var(--azul);transform-origin:left center}
-.footer ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.footer a{text-decoration:none;color:inherit}
-/* sublinhado que cresce ao passar o mouse */
-.footer ul a{background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;padding-bottom:2px;transition:background-size .3s,color .2s}
-.footer ul a:hover{color:var(--night-ink);background-size:100% 1px}
+.contato{display:grid;gap:24px;justify-content:center}
+.logo{display:block;height:auto;margin:0 auto}
+.contato ul{list-style:none;margin:0;padding:0;display:grid;gap:20px}
+.contato li{display:flex;align-items:flex-start;gap:8px;text-align:start}
+.contato svg{flex:none;color:var(--pvh-amarelo)}
+.endereco{font-style:italic}
 
-.fBot{position:relative;max-width:1180px;margin:64px auto 0;padding-top:22px;font-size:13px}
-.linhaBase{position:absolute;left:0;right:0;top:0;height:1px;background:rgba(255,255,255,.12);transform-origin:center}
-.baseIn{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;align-items:center}
-.topo{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.2);color:var(--night-ink)!important;font-weight:600;transition:background .2s,border-color .2s}
-.topo:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.4)}
-.topo span{display:inline-block}
+.redes{display:grid;gap:8px;align-items:start;justify-content:center;margin:0 32px}
+.redes h3{font-size:20px;font-weight:600;color:#fff}
+.icones{display:flex;gap:20px;justify-content:center;margin-bottom:12px}
+.icones a{display:block;color:#C7D5FF;transition:color .2s}
+.icones a:hover{color:var(--pvh-amarelo)}
+.seguidores{margin:auto;padding:16px;border-radius:12px;background:#C7D5FF;color:var(--pvh-azul)}
+@media (max-width:801px){.quebra{display:none}}
 
-@media (max-width:900px){.fIn{grid-template-columns:1fr 1fr}.fIn > div:first-child{grid-column:1/-1}}
+/* espaço por padding, não margem: a margem da lista "vazava" para fora do rodapé e deixava uma faixa clara embaixo */
+.base{border-top:.75px solid var(--pvh-amarelo);padding:12px 24px calc(12px + env(safe-area-inset-bottom,0px))}
+.base ul{list-style:none;display:grid;justify-content:center;align-items:center;margin:0;padding:8px 0;font-size:14px;color:rgba(255,255,255,.75)}
+.base a{display:inline-block;padding:8px 12px;transition:color .2s,background-color .2s}
+.base a:hover{color:var(--pvh-amarelo);background:#1e40af}
+@media (min-width:1280px){.base ul{display:flex;flex-wrap:wrap}.direitos{margin-right:auto}}

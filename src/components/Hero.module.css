@@ -53,10 +53,10 @@
 .passo + .passo{border-left:1px solid rgba(255,255,255,.16)}
 .passo h2{margin:0;font-size:17px;font-weight:600;letter-spacing:-.01em;color:#fff}
 .passo p{margin:4px 0 0;font-size:14px;line-height:1.45;color:rgba(244,239,230,.82)}
-.luz{position:absolute;inset:0;background:linear-gradient(180deg,rgba(22,119,232,0),rgba(22,119,232,.28));opacity:0;pointer-events:none}
+.luz{position:absolute;inset:0;background:linear-gradient(180deg,rgba(34,63,153,0),rgba(34,63,153,.28));opacity:0;pointer-events:none}
 .num{position:relative;flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:16px;
   background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.35)}
-.anel{position:absolute;inset:-1px;border-radius:50%;border:2px solid #7FB6F7;opacity:0;pointer-events:none}
+.anel{position:absolute;inset:-1px;border-radius:50%;border:2px solid #8FA3DD;opacity:0;pointer-events:none}
 .seta{position:absolute;right:-9px;top:50%;width:18px;height:18px;margin-top:-9px;z-index:2;color:rgba(255,255,255,.7)}
 
 /* celular: só número e título, para a faixa caber no rodapé sem cobrir a frase */
@@ -77,7 +77,7 @@
   .titleblock h1,.frase{opacity:1}
   .cta{opacity:1;visibility:visible}
   .doca{opacity:1;visibility:visible}
-  .num{background:#1677E8;border-color:#7FB6F7}
+  .num{background:#223F99;border-color:#8FA3DD}
   .pulsa svg{animation:none}
 }
 
@@ -101,7 +101,7 @@
   .cta{opacity:1;visibility:visible}
   .doca{position:relative;left:auto;bottom:auto;translate:none;width:min(100%,1120px);margin:0 auto;
     opacity:1;visibility:visible}
-  .num{background:#1677E8;border-color:#7FB6F7}
+  .num{background:#223F99;border-color:#8FA3DD}
   .hint{position:relative;bottom:auto;opacity:1;margin:20px 0 24px}
 }
 /* sem JS no celular: há espaço, então os passos empilham e mostram o texto */

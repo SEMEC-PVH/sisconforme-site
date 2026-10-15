@@ -21,7 +21,7 @@ export interface DadosGrafico {
 }
 
 // séries nas cores da marca: azul, petróleo, laranja e cinza
-const COL = { clay: "#1677E8", green: "#174A5B", gold: "#D87535", slate: "#68717C" };
+const COL = { clay: "#223F99", green: "#2F7A3A", gold: "#D87535", slate: "#68717C" };
 const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago"];
 
 export const DADOS_GRAFICO: Record<"a" | "b", DadosGrafico> = {

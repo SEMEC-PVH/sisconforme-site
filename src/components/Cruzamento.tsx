@@ -4,11 +4,14 @@ export default function Cruzamento() {
   return (
     <>
       <div className="wide block">
-        <div className={styles.tscroll}>
+        {/* rolável no celular: precisa receber foco para rolar pelo teclado */}
+        <div className={styles.tscroll} tabIndex={0} role="region" aria-label="Comparação entre o SISConforme e os outros canais">
           <table className={styles.cmp}>
             <thead>
               <tr>
-                <th></th>
+                <th>
+                  <span className="sr-only">Critério</span>
+                </th>
                 <th className={styles.hl}>SISConforme</th>
                 <th>Fiscalização de ofício</th>
                 <th>Atendimento presencial</th>
