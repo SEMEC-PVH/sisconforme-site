@@ -20,6 +20,8 @@ import {
   larguraAperto,
   quadroAperto,
   quadroDoAperto,
+  quadroDoBalanco,
+  QUADRO_ENCAIXE,
   visibilidade,
 } from "@/components/trajetoria/roteiro";
 
@@ -73,18 +75,24 @@ describe("roteiro da trajetória", () => {
     expect(fusao(centro(I_FIM) + 0.03)).toBe(1);
   });
 
-  it("o quadro do aperto vai do primeiro ao último, sempre avançando, e dá mais rolagem ao aperto que ao começo parado", () => {
+  it("a rolagem leva do primeiro quadro ao encaixe, sempre avançando, e dá mais rolagem à aproximação que ao começo parado", () => {
     expect(quadroDoAperto(0)).toBe(0);
-    expect(quadroDoAperto(1)).toBe(QUADROS_APERTO - 1);
+    expect(quadroDoAperto(1)).toBe(QUADRO_ENCAIXE);
     let anterior = -1;
     for (let t = 0; t <= 1; t += 0.001) {
       const q = quadroDoAperto(t);
       expect(q).toBeGreaterThanOrEqual(anterior);
       anterior = q;
     }
-    // metade da rolagem já passou do começo parado (quadros 1–12) e ainda não fechou o aperto (37–62)
+    // metade da rolagem já passou do começo parado (quadros 1–12) e ainda não encaixou
     expect(quadroDoAperto(0.5)).toBeGreaterThan(12);
-    expect(quadroDoAperto(0.5)).toBeLessThan(62);
+    expect(quadroDoAperto(0.5)).toBeLessThan(QUADRO_ENCAIXE);
+  });
+
+  it("o balanço vai do encaixe ao último quadro, em quadros inteiros", () => {
+    expect(quadroDoBalanco(0)).toBe(QUADRO_ENCAIXE);
+    expect(quadroDoBalanco(1)).toBe(QUADROS_APERTO - 1);
+    for (let b = 0; b <= 1; b += 0.01) expect(Number.isInteger(quadroDoBalanco(b))).toBe(true);
   });
 
   it("os quadros do aperto seguem a numeração dos arquivos", () => {
@@ -97,11 +105,13 @@ describe("roteiro da trajetória", () => {
     expect(alturaAperto(1280)).toBe(510);
   });
 
-  it("telas grandes ou de alta densidade recebem os quadros em 2560 px", () => {
+  it("só telas que ampliariam os quadros de 1280 px mais de 1,5× recebem os de 2560 px", () => {
     expect(larguraAperto(390 * 1.04, 3)).toBe(1280); // celular 3x: ~1217 px reais
     expect(larguraAperto(1200, 1)).toBe(1280);
-    expect(larguraAperto(1997, 1)).toBe(2560); // 1920 px a 104vw
-    expect(larguraAperto(1400, 1.25)).toBe(2560);
+    expect(larguraAperto(1584, 1)).toBe(1280); // monitor de 1920 px
+    expect(larguraAperto(1400, 1.25)).toBe(1280); // 1750 px reais
+    expect(larguraAperto(1997, 1)).toBe(2560);
+    expect(larguraAperto(1440, 2)).toBe(2560); // notebook retina
   });
 
   it("o contorno vem depois da fusão", () => {

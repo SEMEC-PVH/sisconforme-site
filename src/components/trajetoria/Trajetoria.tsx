@@ -8,6 +8,7 @@ import {
   contorno,
   curva,
   deslocamento,
+  DURACAO_BALANCO,
   FRASES,
   fraseAtiva,
   fusao,
@@ -19,6 +20,7 @@ import {
   QUADROS_APERTO,
   quadroAperto,
   quadroDoAperto,
+  quadroDoBalanco,
   TEXTO_CORRIDO,
   TITULO,
   visibilidade,
@@ -159,6 +161,8 @@ export default function Trajetoria() {
     let raf = 0;
     let visivel = false;
     const t0 = performance.now();
+    let anterior = t0;
+    let balanco = progressoAperto(atual) >= 1 ? 1 : 0;
 
     const quadro = (agora: number) => {
       const alvo = progressoDoScroll(pin);
@@ -193,10 +197,17 @@ export default function Trajetoria() {
       frasesWrap.classList.toggle(styles.mistura, luz < 0.999);
       legenda.style.opacity = c.toFixed(3);
 
-      // aperto de mãos: a rolagem escolhe o quadro do vídeo
+      // aperto de mãos: a rolagem conduz a aproximação até o encaixe; o balanço toca sozinho, como vídeo,
+      // quando a rolagem chega ao fim do aperto (e volta no mesmo ritmo se a pessoa rolar para trás)
       const presenca = presencaMaos(p);
+      const aproximacao = progressoAperto(p);
+      const dt = Math.min(0.1, (agora - anterior) / 1000);
+      anterior = agora;
+      const alvoBalanco = aproximacao >= 1 ? 1 : 0;
+      const passoBalanco = dt / DURACAO_BALANCO;
+      balanco = alvoBalanco > balanco ? Math.min(1, balanco + passoBalanco) : Math.max(0, balanco - passoBalanco);
       maos.style.opacity = presenca.toFixed(3);
-      if (presenca > 0) desenharMaos(quadroDoAperto(progressoAperto(p)));
+      if (presenca > 0) desenharMaos(balanco > 0 ? quadroDoBalanco(balanco) : quadroDoAperto(aproximacao));
       // os nomes só aparecem em "os dois.", para não brigar com "o SISConforme une"
       rotulosMaos.forEach((r) => (r.style.opacity = m.toFixed(3)));
 

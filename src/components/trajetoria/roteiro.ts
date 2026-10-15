@@ -76,9 +76,14 @@ export type LarguraAperto = 1280 | 2560;
 export const alturaAperto = (largura: LarguraAperto): number =>
   Math.round((largura * RECORTE_APERTO.altura) / RECORTE_APERTO.largura);
 
-/** Escolhe a resolução pelos pixels reais que as mãos ocupam (largura CSS × densidade da tela). */
+/**
+ * Escolhe a resolução pelos pixels reais que as mãos ocupam (largura CSS × densidade da tela).
+ * Os quadros de 2560 px só entram quando os de 1280 ficariam ampliados mais de 1,5×: trocar duas imagens
+ * de 2560 px por quadro na GPU engasgava a rolagem (~5% dos quadros acima de 20 ms numa tela de 1920 px),
+ * enquanto com 1280 px não houve nenhum.
+ */
 export const larguraAperto = (larguraCss: number, densidade: number): LarguraAperto =>
-  larguraCss * densidade > 1400 ? 2560 : 1280;
+  larguraCss * densidade > 1920 ? 2560 : 1280;
 
 /** Caminho do quadro `i` (0 = primeiro) do aperto de mãos. */
 export const quadroAperto = (i: number, largura: LarguraAperto): string =>
@@ -105,17 +110,27 @@ const MOVIMENTO_APERTO = [
 /** Piso de rolagem por quadro: mesmo os quadros parados ganham um pouco, senão o começo some de vez. */
 const MOVIMENTO_MINIMO = 3;
 
-/** Rolagem acumulada até cada quadro, de 0 (primeiro) a 1 (último), proporcional ao movimento. */
+/**
+ * Quadro em que as mãos terminam de se encaixar. Daí em diante o vídeo é o balanço do aperto: as mãos sobem e
+ * descem rápido, com saltos grandes entre quadros, e conduzido pela rolagem isso parecia travado (cada passo da
+ * roda pulava entre "em cima" e "embaixo"). Por isso a rolagem conduz só a aproximação; o balanço toca no tempo.
+ */
+export const QUADRO_ENCAIXE = 36;
+
+/** Velocidade do balanço, que toca sozinho depois do encaixe. */
+export const QUADROS_POR_SEGUNDO = 24;
+
+/** Rolagem acumulada até cada quadro da aproximação, de 0 (primeiro) a 1 (encaixe), proporcional ao movimento. */
 const MARCOS_APERTO: readonly number[] = (() => {
-  const pesos = MOVIMENTO_APERTO.map((m) => m + MOVIMENTO_MINIMO);
+  const pesos = MOVIMENTO_APERTO.slice(0, QUADRO_ENCAIXE).map((m) => m + MOVIMENTO_MINIMO);
   const total = pesos.reduce((s, m) => s + m, 0);
   let soma = 0;
   return [0, ...pesos.map((m) => (soma += m) / total)];
 })();
 
 /**
- * Quadro (fracionário) do aperto de mãos para o progresso `t` (0–1) do vídeo. Cada quadro recebe uma fatia
- * de rolagem proporcional ao quanto ele muda, então a mesma rolagem dá sempre o mesmo tanto de movimento.
+ * Quadro (fracionário) da aproximação para o progresso `t` (0–1): vai do primeiro quadro ao encaixe. Cada quadro
+ * recebe uma fatia de rolagem proporcional ao quanto ele muda, então a mesma rolagem dá sempre o mesmo movimento.
  */
 export function quadroDoAperto(t: number): number {
   const v = clamp(t);
@@ -123,8 +138,15 @@ export function quadroDoAperto(t: number): number {
   while (i < MARCOS_APERTO.length - 2 && MARCOS_APERTO[i + 1] <= v) i++;
   const a = MARCOS_APERTO[i];
   const b = MARCOS_APERTO[i + 1];
-  return Math.min(QUADROS_APERTO - 1, i + (v - a) / (b - a));
+  return Math.min(QUADRO_ENCAIXE, i + (v - a) / (b - a));
 }
+
+/** Quadro (inteiro, como num vídeo) do balanço para `b` de 0 (encaixe) a 1 (último quadro). */
+export const quadroDoBalanco = (b: number): number =>
+  QUADRO_ENCAIXE + Math.floor(clamp(b) * (QUADROS_APERTO - 1 - QUADRO_ENCAIXE) + 1e-6);
+
+/** Duração do balanço, em segundos. */
+export const DURACAO_BALANCO = (QUADROS_APERTO - 1 - QUADRO_ENCAIXE) / QUADROS_POR_SEGUNDO;
 
 /** Opacidade das mãos: aparecem logo no começo do vídeo. */
 export const presencaMaos = (p: number): number => suave(clamp((p - APERTO_INICIO) / (PASSO * 0.35)));
