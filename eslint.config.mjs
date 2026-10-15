@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // repositório do sistema, clonado só para consulta
+    "sisconforme-web/**",
   ]),
 ]);
 

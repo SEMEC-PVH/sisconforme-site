@@ -21,3 +21,6 @@ npm-debug.log*
 # testes
 test-results/
 playwright-report/
+
+# repositório do sistema (clonado só para consulta)
+sisconforme-web/
