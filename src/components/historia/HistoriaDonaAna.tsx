@@ -8,6 +8,19 @@ import CenaObjetos, { BASE, MAX_MOEDAS, OBJ, PASSO, PRIMEIRA, VALORES } from "./
 import { expressaoEm, legendaEm, LEGENDAS, ROTEIRO_ACESSIVEL, type Expressao } from "./roteiro";
 import styles from "./HistoriaDonaAna.module.css";
 
+// trechos do roteiro em que as pilhas de moedas enchem: o primeiro enchimento
+// (0 → valores declarados) e a subida com as notas emitidas (→ R$ 97,5 mil).
+// Cada um roda no tempo, de ponta a ponta, assim que a rolagem passa do início.
+const ENCHIMENTOS = [
+  [0.33, 0.45],
+  [0.74, 0.83],
+] as const;
+const ENCHE_MS = 900;
+
+function alvoDoEnchimento(p: number, j: number): number {
+  return p >= ENCHIMENTOS[j][0] ? 1 : 0;
+}
+
 function dinheiro(v: number): string {
   return "R$ " + v.toFixed(1).replace(".", ",") + " mil";
 }
@@ -64,9 +77,15 @@ export default function HistoriaDonaAna() {
   const btnRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
 
+  const ultimoP = useRef(0);
+  const enche = useRef([0, 0]);
+  const encheRaf = useRef(0);
+  const encheAntes = useRef(-1);
+
   function render(p: number) {
     const e = elsRef.current;
     if (!e) return;
+    ultimoP.current = p;
     // cartão cresce até a tela cheia
     const g = easeInOutQuad(seg(p, 0, 0.1));
     const sc = 0.36 + 0.64 * g;
@@ -108,18 +127,21 @@ export default function HistoriaDonaAna() {
         `translate(${o.x} ${o.y - 140 * (1 - b)}) rotate(${(1 - d) * o.r} ${(o.w * o.s) / 2} ${(o.h * o.s) / 2})`,
       );
     });
-    // moedas caem uma a uma
+    // moedas caem uma a uma; os enchimentos rodam no tempo (ver ENCHIMENTOS), não presos ao scroll
+    if (estatico.current) enche.current = ENCHIMENTOS.map((_, j) => alvoDoEnchimento(p, j));
+    const [pe1, pe2] = ENCHIMENTOS.map(([a, b], j) => a + enche.current[j] * (b - a));
     e.COIN.forEach((pilha, i) => {
       pilha.forEach((c, k) => {
-        const t = k < PRIMEIRA[i] ? 0.33 + i * 0.012 + k * (0.085 / MAX_MOEDAS) : 0.74 + (i - 1) * 0.01 + (k - 11) * 0.018;
-        const d = seg(p, t, t + 0.015);
+        const primeira = k < PRIMEIRA[i];
+        const t = primeira ? 0.33 + i * 0.012 + k * (0.085 / MAX_MOEDAS) : 0.74 + (i - 1) * 0.01 + (k - 11) * 0.018;
+        const d = seg(primeira ? pe1 : pe2, t, t + 0.015);
         c.setAttribute("opacity", `${clamp(d * 5)}`);
         c.setAttribute("transform", `translate(0 ${-70 * (1 - d * d)})`);
       });
     });
     e.V.forEach((v, i) => {
-      const f = easeInOutQuad(seg(p, 0.33 + i * 0.01, 0.43 + i * 0.01));
-      const val = VALORES[i] * f + (i ? (97.5 - VALORES[i]) * easeInOutQuad(seg(p, 0.74, 0.83)) : 0);
+      const f = easeInOutQuad(seg(pe1, 0.33 + i * 0.01, 0.43 + i * 0.01));
+      const val = VALORES[i] * f + (i ? (97.5 - VALORES[i]) * easeInOutQuad(seg(pe2, 0.74, 0.83)) : 0);
       v.textContent = f > 0 ? dinheiro(val) : "";
     });
     // divergência
@@ -161,6 +183,27 @@ export default function HistoriaDonaAna() {
     e.sparks.setAttribute("opacity", `${seg(p, 0.84, 0.87)}`);
     e.bar.style.width = p * 100 + "%";
   }
+
+  function animarEnchimento() {
+    if (encheRaf.current) return;
+    encheAntes.current = -1;
+    const passo = (agora: number) => {
+      const delta = encheAntes.current < 0 ? 0.02 : (agora - encheAntes.current) / ENCHE_MS;
+      encheAntes.current = agora;
+      let falta = false;
+      enche.current = enche.current.map((v, j) => {
+        const alvo = alvoDoEnchimento(ultimoP.current, j);
+        const novo = alvo > v ? Math.min(alvo, v + delta) : Math.max(alvo, v - delta);
+        if (novo !== alvo) falta = true;
+        return novo;
+      });
+      encheRaf.current = falta ? requestAnimationFrame(passo) : 0;
+      render(ultimoP.current);
+    };
+    encheRaf.current = requestAnimationFrame(passo);
+  }
+
+  useEffect(() => () => cancelAnimationFrame(encheRaf.current), []);
 
   useEffect(() => {
     const objs = objsRef.current;
@@ -222,7 +265,9 @@ export default function HistoriaDonaAna() {
     const vh = window.innerHeight;
     sec.classList.toggle(styles.on, r.top < vh && r.bottom > 0);
     if (r.top > vh || r.bottom < 0) return;
-    render(progressoDoScroll(sec));
+    const p = progressoDoScroll(sec);
+    render(p);
+    if (enche.current.some((v, j) => v !== alvoDoEnchimento(p, j))) animarEnchimento();
   });
 
   return (
