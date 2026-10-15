@@ -19,6 +19,7 @@ import {
   alturaAperto,
   larguraAperto,
   quadroAperto,
+  quadroDoAperto,
   visibilidade,
 } from "@/components/trajetoria/roteiro";
 
@@ -70,6 +71,20 @@ describe("roteiro da trajetória", () => {
     expect(progressoAperto(1)).toBe(1);
     expect(fusao(centro(I_UNE))).toBe(0);
     expect(fusao(centro(I_FIM) + 0.03)).toBe(1);
+  });
+
+  it("o quadro do aperto vai do primeiro ao último, sempre avançando, e dá mais rolagem ao aperto que ao começo parado", () => {
+    expect(quadroDoAperto(0)).toBe(0);
+    expect(quadroDoAperto(1)).toBe(QUADROS_APERTO - 1);
+    let anterior = -1;
+    for (let t = 0; t <= 1; t += 0.001) {
+      const q = quadroDoAperto(t);
+      expect(q).toBeGreaterThanOrEqual(anterior);
+      anterior = q;
+    }
+    // metade da rolagem já passou do começo parado (quadros 1–12) e ainda não fechou o aperto (37–62)
+    expect(quadroDoAperto(0.5)).toBeGreaterThan(12);
+    expect(quadroDoAperto(0.5)).toBeLessThan(62);
   });
 
   it("os quadros do aperto seguem a numeração dos arquivos", () => {

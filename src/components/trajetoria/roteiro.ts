@@ -91,6 +91,41 @@ const APERTO_FIM = centro(I_FIM) + 0.04;
 /** 0 = mãos fora da tela, 1 = aperto de mãos completo. Escolhe o quadro do vídeo. */
 export const progressoAperto = (p: number): number => clamp((p - APERTO_INICIO) / (APERTO_FIM - APERTO_INICIO));
 
+/**
+ * Quanto a imagem muda de um quadro para o seguinte (diferença média por pixel, 0–255), medido nos .webp.
+ * O vídeo é irregular: o começo quase não se mexe e o aperto acontece em poucos quadros com saltos grandes.
+ */
+const MOVIMENTO_APERTO = [
+  0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.5, 0.5, 0.5, 0.5, 0.8, 1.2, 2, 2.8, 4, 5.5, 7.1, 8.7, 10.4, 12.5, 13.3, 14.2, 15,
+  14.4, 14.4, 12.6, 9.4, 8.8, 6.4, 5.6, 4.7, 4.5, 3.8, 3.5, 1.8, 8.3, 24.8, 27.9, 20.2, 9.5, 7.1, 21.4, 28.9, 22.4, 8.8,
+  13.1, 21.9, 21, 8.5, 8.5, 20.2, 22.3, 4.4, 15.4, 19.2, 10.6, 1.5, 12.3, 16.5, 10.3, 6.2, 10.1, 7, 1.3, 3.9, 2.1, 2.4,
+  1.7, 1.6,
+] as const;
+
+/** Piso de rolagem por quadro: mesmo os quadros parados ganham um pouco, senão o começo some de vez. */
+const MOVIMENTO_MINIMO = 3;
+
+/** Rolagem acumulada até cada quadro, de 0 (primeiro) a 1 (último), proporcional ao movimento. */
+const MARCOS_APERTO: readonly number[] = (() => {
+  const pesos = MOVIMENTO_APERTO.map((m) => m + MOVIMENTO_MINIMO);
+  const total = pesos.reduce((s, m) => s + m, 0);
+  let soma = 0;
+  return [0, ...pesos.map((m) => (soma += m) / total)];
+})();
+
+/**
+ * Quadro (fracionário) do aperto de mãos para o progresso `t` (0–1) do vídeo. Cada quadro recebe uma fatia
+ * de rolagem proporcional ao quanto ele muda, então a mesma rolagem dá sempre o mesmo tanto de movimento.
+ */
+export function quadroDoAperto(t: number): number {
+  const v = clamp(t);
+  let i = 0;
+  while (i < MARCOS_APERTO.length - 2 && MARCOS_APERTO[i + 1] <= v) i++;
+  const a = MARCOS_APERTO[i];
+  const b = MARCOS_APERTO[i + 1];
+  return Math.min(QUADROS_APERTO - 1, i + (v - a) / (b - a));
+}
+
 /** Opacidade das mãos: aparecem logo no começo do vídeo. */
 export const presencaMaos = (p: number): number => suave(clamp((p - APERTO_INICIO) / (PASSO * 0.35)));
 

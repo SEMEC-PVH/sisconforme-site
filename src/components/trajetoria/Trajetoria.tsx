@@ -18,6 +18,7 @@ import {
   progressoAperto,
   QUADROS_APERTO,
   quadroAperto,
+  quadroDoAperto,
   TEXTO_CORRIDO,
   TITULO,
   visibilidade,
@@ -98,7 +99,7 @@ export default function Trajetoria() {
     // quadros do aperto de mãos: carregam só quando a seção chega perto da tela
     const quadros: HTMLImageElement[] = [];
     let quadrosPedidos = false;
-    let quadroDesenhado = -1;
+    let quadroDesenhado = "";
     const carregarQuadros = () => {
       if (quadrosPedidos) return;
       quadrosPedidos = true;
@@ -113,22 +114,44 @@ export default function Trajetoria() {
         quadros.push(img);
       }
     };
-    /** Desenha o quadro pedido ou, enquanto ele carrega, o mais próximo já pronto. */
-    const desenharMaos = (alvo: number) => {
-      if (!ctxMaos) return;
+    const pronto = (k: number) => Boolean(quadros[k]?.complete && quadros[k].naturalWidth);
+    /** Quadro pronto mais próximo de `alvo` (enquanto o pedido ainda carrega). */
+    const maisProximo = (alvo: number) => {
       for (let d = 0; d < QUADROS_APERTO; d++) {
-        for (const k of [alvo - d, alvo + d]) {
-          const img = quadros[k];
-          if (img?.complete && img.naturalWidth) {
-            if (k !== quadroDesenhado) {
-              ctxMaos.clearRect(0, 0, maosCanvas.width, maosCanvas.height);
-              ctxMaos.drawImage(img, 0, 0, maosCanvas.width, maosCanvas.height);
-              quadroDesenhado = k;
-            }
-            return;
-          }
-        }
+        for (const k of [alvo - d, alvo + d]) if (pronto(k)) return k;
       }
+      return -1;
+    };
+    /**
+     * Desenha o quadro fracionário `pos`: os dois quadros vizinhos misturados pela fração, para os saltos
+     * do vídeo virarem uma passagem contínua. A soma ("lighter") com pesos 1 − f e f é a média exata,
+     * inclusive no alfa — onde as duas mãos se sobrepõem a imagem continua opaca.
+     */
+    const desenharMaos = (pos: number) => {
+      if (!ctxMaos) return;
+      const a = Math.floor(pos);
+      const b = Math.min(a + 1, QUADROS_APERTO - 1);
+      // fração em 1/32: evita redesenhar por variações invisíveis
+      const f = Math.round((pos - a) * 32) / 32;
+      const mistura = f > 0 && b !== a && pronto(a) && pronto(b);
+      const k = mistura ? a : maisProximo(Math.round(pos));
+      if (k < 0) return;
+      const chave = mistura ? `${a}+${f}` : `${k}`;
+      if (chave === quadroDesenhado) return;
+      const { width: w, height: h } = maosCanvas;
+      ctxMaos.clearRect(0, 0, w, h);
+      if (mistura) {
+        ctxMaos.globalCompositeOperation = "lighter";
+        ctxMaos.globalAlpha = 1 - f;
+        ctxMaos.drawImage(quadros[a], 0, 0, w, h);
+        ctxMaos.globalAlpha = f;
+        ctxMaos.drawImage(quadros[b], 0, 0, w, h);
+        ctxMaos.globalAlpha = 1;
+        ctxMaos.globalCompositeOperation = "source-over";
+      } else {
+        ctxMaos.drawImage(quadros[k], 0, 0, w, h);
+      }
+      quadroDesenhado = chave;
     };
 
     let atual = progressoDoScroll(pin);
@@ -173,7 +196,7 @@ export default function Trajetoria() {
       // aperto de mãos: a rolagem escolhe o quadro do vídeo
       const presenca = presencaMaos(p);
       maos.style.opacity = presenca.toFixed(3);
-      if (presenca > 0) desenharMaos(Math.round(progressoAperto(p) * (QUADROS_APERTO - 1)));
+      if (presenca > 0) desenharMaos(quadroDoAperto(progressoAperto(p)));
       // os nomes só aparecem em "os dois.", para não brigar com "o SISConforme une"
       rotulosMaos.forEach((r) => (r.style.opacity = m.toFixed(3)));
 
