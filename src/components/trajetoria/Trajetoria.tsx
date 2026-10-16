@@ -116,7 +116,45 @@ export default function Trajetoria() {
         quadros.push(img);
       }
     };
-    const pronto = (k: number) => Boolean(quadros[k]?.complete && quadros[k].naturalWidth);
+    /**
+     * Quadros já decodificados (ImageBitmap), numa janela em volta da posição atual. Desenhar o <img> direto
+     * obriga o navegador a decodificar o WebP na hora do drawImage, na thread principal, e ele pode descartar
+     * a versão decodificada depois: cada quadro novo engasgava a rolagem. O createImageBitmap decodifica fora
+     * da thread principal; só a janela fica na memória (cada quadro de 1280 px ocupa ~2,6 MB decodificado).
+     */
+    const bitmaps = new Map<number, ImageBitmap>();
+    const pedidosBitmap = new Set<number>();
+    let centroJanela = 0;
+    const raioJanela = () => (maosCanvas.width > 1280 ? 6 : 16);
+    const manterJanela = (centro: number) => {
+      centroJanela = centro;
+      const raio = raioJanela();
+      for (const [k, bmp] of bitmaps) {
+        if (Math.abs(k - centro) > raio + 4) {
+          bmp.close();
+          bitmaps.delete(k);
+        }
+      }
+      if (typeof createImageBitmap !== "function") return;
+      // pede primeiro os mais próximos, para o quadro da vez ficar pronto antes dos distantes
+      for (let d = 0; d <= raio; d++) {
+        for (const k of d ? [centro + d, centro - d] : [centro]) {
+          const img = quadros[k];
+          if (!img?.complete || !img.naturalWidth || bitmaps.has(k) || pedidosBitmap.has(k)) continue;
+          pedidosBitmap.add(k);
+          createImageBitmap(img)
+            .then((bmp) => {
+              if (Math.abs(k - centroJanela) > raioJanela() + 4) bmp.close();
+              else bitmaps.set(k, bmp);
+            })
+            .catch(() => undefined)
+            .finally(() => pedidosBitmap.delete(k));
+        }
+      }
+    };
+    /** O que desenhar do quadro `k`: o bitmap decodificado, se já existe, senão a própria imagem. */
+    const fonte = (k: number): CanvasImageSource => bitmaps.get(k) ?? quadros[k];
+    const pronto = (k: number) => bitmaps.has(k) || Boolean(quadros[k]?.complete && quadros[k].naturalWidth);
     /** Quadro pronto mais próximo de `alvo` (enquanto o pedido ainda carrega). */
     const maisProximo = (alvo: number) => {
       for (let d = 0; d < QUADROS_APERTO; d++) {
@@ -131,6 +169,7 @@ export default function Trajetoria() {
      */
     const desenharMaos = (pos: number) => {
       if (!ctxMaos) return;
+      manterJanela(Math.round(pos));
       const a = Math.floor(pos);
       const b = Math.min(a + 1, QUADROS_APERTO - 1);
       // fração em 1/32: evita redesenhar por variações invisíveis
@@ -138,20 +177,21 @@ export default function Trajetoria() {
       const mistura = f > 0 && b !== a && pronto(a) && pronto(b);
       const k = mistura ? a : maisProximo(Math.round(pos));
       if (k < 0) return;
-      const chave = mistura ? `${a}+${f}` : `${k}`;
+      // a chave inclui se o quadro já é bitmap: quando a decodificação termina, redesenha com ele
+      const chave = mistura ? `${a}+${f}:${bitmaps.has(a)}${bitmaps.has(b)}` : `${k}:${bitmaps.has(k)}`;
       if (chave === quadroDesenhado) return;
       const { width: w, height: h } = maosCanvas;
       ctxMaos.clearRect(0, 0, w, h);
       if (mistura) {
         ctxMaos.globalCompositeOperation = "lighter";
         ctxMaos.globalAlpha = 1 - f;
-        ctxMaos.drawImage(quadros[a], 0, 0, w, h);
+        ctxMaos.drawImage(fonte(a), 0, 0, w, h);
         ctxMaos.globalAlpha = f;
-        ctxMaos.drawImage(quadros[b], 0, 0, w, h);
+        ctxMaos.drawImage(fonte(b), 0, 0, w, h);
         ctxMaos.globalAlpha = 1;
         ctxMaos.globalCompositeOperation = "source-over";
       } else {
-        ctxMaos.drawImage(quadros[k], 0, 0, w, h);
+        ctxMaos.drawImage(fonte(k), 0, 0, w, h);
       }
       quadroDesenhado = chave;
     };
@@ -208,6 +248,8 @@ export default function Trajetoria() {
       balanco = alvoBalanco > balanco ? Math.min(1, balanco + passoBalanco) : Math.max(0, balanco - passoBalanco);
       maos.style.opacity = presenca.toFixed(3);
       if (presenca > 0) desenharMaos(balanco > 0 ? quadroDoBalanco(balanco) : quadroDoAperto(aproximacao));
+      // antes de as mãos aparecerem, já deixa decodificados os primeiros quadros
+      else if (quadrosPedidos) manterJanela(0);
       // os nomes só aparecem em "os dois.", para não brigar com "o SISConforme une"
       rotulosMaos.forEach((r) => (r.style.opacity = m.toFixed(3)));
 
@@ -241,6 +283,8 @@ export default function Trajetoria() {
     return () => {
       observador.disconnect();
       cancelAnimationFrame(raf);
+      bitmaps.forEach((bmp) => bmp.close());
+      bitmaps.clear();
     };
   }, []);
 

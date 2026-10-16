@@ -4,7 +4,7 @@
   --y-frase: 27%;
   --y-maos: 50%;
   /* largura das mãos: o vídeo termina com a câmera perto, então a altura fica em ~70% da tela */
-  --w-maos: max(min(104vw, 70svh * 2944 / 1172), 560px);
+  --w-maos: max(min(104vw, 70svh * 1920 / 764), 560px);
   --contrib: #2d64ad;
   --contrib-claro: #8fb3e0;
   --contrib-fundo: #1c4a8a;
@@ -74,7 +74,7 @@
   left: 50%;
   top: var(--y-maos);
   width: var(--w);
-  aspect-ratio: 2944 / 1172; /* RECORTE_APERTO em roteiro.ts */
+  aspect-ratio: 1920 / 764; /* RECORTE_APERTO em roteiro.ts */
   margin-left: calc(var(--w) / -2);
   transform: translateY(-50%);
   opacity: 0;
@@ -155,7 +155,7 @@
   left: 16px;
   right: 16px;
   /* logo abaixo do aperto de mãos (a frase sobe perto do topo e não sobra espaço acima dela) */
-  top: calc(var(--y-maos) + var(--w-maos) * 1172 / 2944 / 2 + 16px);
+  top: calc(var(--y-maos) + var(--w-maos) * 764 / 1920 / 2 + 16px);
   margin: 0;
   text-align: center;
   font-size: 12px;

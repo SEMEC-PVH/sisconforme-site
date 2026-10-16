@@ -75,7 +75,7 @@ describe("roteiro da trajetória", () => {
     expect(fusao(centro(I_FIM) + 0.03)).toBe(1);
   });
 
-  it("a rolagem leva do primeiro quadro ao encaixe, sempre avançando, e dá mais rolagem à aproximação que ao começo parado", () => {
+  it("a rolagem leva do primeiro quadro ao encaixe, sempre avançando, proporcional ao movimento", () => {
     expect(quadroDoAperto(0)).toBe(0);
     expect(quadroDoAperto(1)).toBe(QUADRO_ENCAIXE);
     let anterior = -1;
@@ -84,25 +84,32 @@ describe("roteiro da trajetória", () => {
       expect(q).toBeGreaterThanOrEqual(anterior);
       anterior = q;
     }
-    // metade da rolagem já passou do começo parado (quadros 1–12) e ainda não encaixou
-    expect(quadroDoAperto(0.5)).toBeGreaterThan(12);
+    // a aproximação é quase uniforme: metade da rolagem fica perto do meio do caminho até o encaixe
+    expect(quadroDoAperto(0.5)).toBeGreaterThan(QUADRO_ENCAIXE * 0.35);
     expect(quadroDoAperto(0.5)).toBeLessThan(QUADRO_ENCAIXE);
   });
 
-  it("o balanço vai do encaixe ao último quadro, em quadros inteiros", () => {
+  it("o balanço vai do encaixe ao último quadro, em quadros inteiros, e freia no fim sem parar de avançar", () => {
     expect(quadroDoBalanco(0)).toBe(QUADRO_ENCAIXE);
-    expect(quadroDoBalanco(1)).toBe(QUADROS_APERTO - 1);
-    for (let b = 0; b <= 1; b += 0.01) expect(Number.isInteger(quadroDoBalanco(b))).toBe(true);
+    expect(quadroDoBalanco(1)).toBeCloseTo(QUADROS_APERTO - 1, 6);
+    for (let b = 0; b <= 0.6; b += 0.01) expect(Number.isInteger(quadroDoBalanco(b))).toBe(true);
+    const passo = (b: number) => quadroDoBalanco(b + 0.01) - quadroDoBalanco(b);
+    // no freio cada passo é menor que o anterior, mas continua avançando
+    for (let b = 0.62; b < 0.98; b += 0.01) {
+      expect(passo(b)).toBeGreaterThan(0);
+      expect(passo(b)).toBeLessThan(passo(b - 0.01) + 1e-9);
+    }
+    expect(passo(0.985)).toBeLessThan(passo(0.3) * 0.15);
   });
 
   it("os quadros do aperto seguem a numeração dos arquivos", () => {
     expect(quadroAperto(0, 1280)).toBe("/img/aperto/1280/f001.webp");
-    expect(quadroAperto(QUADROS_APERTO - 1, 2560)).toBe("/img/aperto/2560/f071.webp");
+    expect(quadroAperto(QUADROS_APERTO - 1, 2560)).toBe("/img/aperto/2560/f117.webp");
   });
 
-  it("a altura dos quadros segue a proporção do vídeo (2944 × 1172)", () => {
+  it("a altura dos quadros segue a proporção do vídeo (1920 × 764)", () => {
     expect(alturaAperto(2560)).toBe(1019);
-    expect(alturaAperto(1280)).toBe(510);
+    expect(alturaAperto(1280)).toBe(509);
   });
 
   it("só telas que ampliariam os quadros de 1280 px mais de 1,5× recebem os de 2560 px", () => {

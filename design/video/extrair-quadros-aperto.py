@@ -1,14 +1,23 @@
 """Extrai os quadros do aperto de mãos (fundo verde -> transparente) de um vídeo em chroma key.
 
-Uso (vídeo atual, trecho 48 → 118, faixa de 2944 × 1172 a partir do topo):
-  python design/video/extrair-quadros-aperto.py design/video/aperto-de-maos.mp4 public/img/aperto \
-      --inicio 48 --fim 118 --y 0 --altura 1172
+Uso (vídeo atual, faixa de 1920 × 764 a partir de y = 156):
+  python design/video/extrair-quadros-aperto.py design/video/aperto-de-maos-v2-site.mp4 public/img/aperto \
+      --y 156 --altura 764
+
+O aperto-de-maos-v2-site.mp4 junta os 72 primeiros quadros do aperto-de-maos-v2.mp4 (a aproximação, 24 qps)
+com o balanço interpolado a 48 qps, para os saltos do balanço caírem pela metade:
+  ffmpeg -i aperto-de-maos-v2.mp4 -vf "minterpolate=fps=48:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1" v48.mp4
+  ffmpeg -i aperto-de-maos-v2.mp4 -i v48.mp4 -filter_complex "[0:v]trim=end_frame=72,setpts=N/48/TB[a];
+      [1:v]trim=start_frame=144,setpts=N/48/TB[b];[a][b]concat=n=2:v=1[v]" -map "[v]" -r 48 -crf 10 \
+      aperto-de-maos-v2-site.mp4
 
 Gera <saida>/2560/f001.webp … e <saida>/1280/…, numerados a partir de 1. A faixa usa a largura
-inteira do vídeo; --y e --altura escolhem a parte vertical. Requer ffmpeg no PATH, numpy e Pillow.
+inteira do vídeo; --y e --altura escolhem a parte vertical. Requer ffmpeg no PATH (ou o caminho dele na variável
+FFMPEG, como o que vem no pacote imageio-ffmpeg), numpy e Pillow.
 """
 import argparse
 import os
+import re
 import subprocess
 
 import numpy as np
@@ -24,14 +33,15 @@ arg.add_argument("--altura", type=int, help="altura da faixa recortada")
 arg.add_argument("--so", help="quadros de saída a gerar, ex.: 1,30 (para testar)")
 a = arg.parse_args()
 
-W, H0 = map(int, subprocess.check_output(
-    ["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries", "stream=width,height", "-of", "csv=p=0", a.video],
-    text=True).strip().split(","))
+FFMPEG = os.environ.get("FFMPEG", "ffmpeg")
+# o tamanho sai do cabeçalho que o próprio ffmpeg imprime: assim não depende do ffprobe
+info = subprocess.run([FFMPEG, "-hide_banner", "-i", a.video], capture_output=True, text=True).stderr
+W, H0 = map(int, re.search(r"Video:.*?(\d{2,5})x(\d{2,5})", info).groups())
 H = a.altura or H0 - a.y
 so = {int(x) for x in a.so.split(",")} if a.so else None
 
 # format=rgb24 antes do crop: em yuv420 um recorte de altura ímpar seria arredondado
-p = subprocess.Popen(["ffmpeg", "-v", "error", "-i", a.video, "-vf", f"format=rgb24,crop={W}:{H}:0:{a.y}",
+p = subprocess.Popen([FFMPEG, "-v", "error", "-i", a.video, "-vf", f"format=rgb24,crop={W}:{H}:0:{a.y}",
                       "-fps_mode", "passthrough", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 for d in ("2560", "1280"):
     os.makedirs(f"{a.saida}/{d}", exist_ok=True)
