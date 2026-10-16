@@ -1,28 +1,39 @@
-/* Rodapé institucional (vindo do sisconforme-web): azul PVH, ícones em amarelo, barra de links com borda amarela. */
-.footer{background:var(--pvh-azul);color:#fff;font-family:var(--sans);font-weight:300;text-align:center}
+/* Rodapé: azul PVH, três colunas (logo, secretaria e contatos, redes) e a barra de links embaixo. */
+.footer{background:var(--pvh-azul);color:#fff;font-weight:400}
 .footer a{color:inherit;text-decoration:none}
+.footer h2,.footer h3,.footer p{margin:0}
 
-.colunas{display:grid;gap:24px;margin:24px 0;justify-content:center;align-items:start;text-align:center}
-@media (min-width:801px){.colunas{grid-auto-flow:column;grid-auto-columns:auto}}
+.colunas{display:grid;gap:40px;max-width:1120px;margin:0 auto;padding:48px 24px 40px;justify-items:center;text-align:center}
+@media (min-width:900px){
+  .colunas{grid-template-columns:auto minmax(0,1.15fr) minmax(0,.85fr);gap:56px;justify-items:start;text-align:start;align-items:start}
+  .logo{align-self:center}
+}
+.logo{display:block;width:210px;height:auto}
 
-.contato{display:grid;gap:24px;justify-content:center}
-.logo{display:block;height:auto;margin:0 auto}
-.contato ul{list-style:none;margin:0;padding:0;display:grid;gap:20px}
-.contato li{display:flex;align-items:flex-start;gap:8px;text-align:start}
-.contato svg{flex:none;color:var(--pvh-amarelo)}
-.endereco{font-style:italic}
+.semec,.redes{display:grid;gap:12px;align-content:start;max-width:440px}
+.semec p,.redes p{font-size:16px;line-height:1.65;color:rgba(255,255,255,.92)}
+.semec h3,.redes h3{font-size:22px;font-weight:700;color:#fff}
+.semec h3{margin-top:28px}
 
-.redes{display:grid;gap:8px;align-items:start;justify-content:center;margin:0 32px}
-.redes h3{font-size:20px;font-weight:600;color:#fff}
-.icones{display:flex;gap:20px;justify-content:center;margin-bottom:12px}
-.icones a{display:block;color:#C7D5FF;transition:color .2s}
-.icones a:hover{color:var(--pvh-amarelo)}
-.seguidores{margin:auto;padding:16px;border-radius:12px;background:#C7D5FF;color:var(--pvh-azul)}
-@media (max-width:801px){.quebra{display:none}}
+.marca{display:flex;align-items:center;gap:10px;justify-content:center;font-size:22px;font-weight:700;letter-spacing:.01em}
+@media (min-width:900px){.marca{justify-content:flex-start}}
+
+.contato{display:grid;gap:6px;font-style:normal;font-size:16px;line-height:1.55;color:rgba(255,255,255,.92)}
+.contato a:hover{color:var(--pvh-amarelo)}
+
+.redes{padding-top:2px}
+.redes p{margin-top:12px}
+.icones{list-style:none;margin:16px 0 0;padding:0;display:flex;gap:16px;justify-content:center}
+@media (min-width:900px){.icones{justify-content:flex-start}}
+.icones a{display:grid;place-items:center;width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,.12);transition:background-color .2s,color .2s}
+.icones a:hover{background:rgba(255,255,255,.22);color:var(--pvh-amarelo)}
+.redes .seguidores{margin-top:20px;padding:18px 28px;border-radius:8px;background:rgba(255,255,255,.12);font-weight:700;text-align:center;line-height:1.5}
 
 /* espaço por padding, não margem: a margem da lista "vazava" para fora do rodapé e deixava uma faixa clara embaixo */
-.base{border-top:.75px solid var(--pvh-amarelo);padding:12px 24px calc(12px + env(safe-area-inset-bottom,0px))}
-.base ul{list-style:none;display:grid;justify-content:center;align-items:center;margin:0;padding:8px 0;font-size:14px;color:rgba(255,255,255,.75)}
-.base a{display:inline-block;padding:8px 12px;transition:color .2s,background-color .2s}
-.base a:hover{color:var(--pvh-amarelo);background:#1e40af}
-@media (min-width:1280px){.base ul{display:flex;flex-wrap:wrap}.direitos{margin-right:auto}}
+.base{max-width:1120px;margin:0 auto;border-top:1px solid rgba(255,255,255,.18);padding:14px 24px calc(14px + env(safe-area-inset-bottom,0px))}
+.base ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 0;font-size:13px;line-height:1.3;color:rgba(255,255,255,.85);text-align:center}
+.base li{display:flex;align-items:center}
+.base li+li::before{content:"·";padding:0 10px;color:rgba(255,255,255,.5)}
+.base a{display:inline-block;padding:6px 2px;transition:color .2s}
+.base a:hover{color:var(--pvh-amarelo)}
+@media (min-width:1100px){.base ul{flex-wrap:nowrap;justify-content:space-between}.base li+li::before{padding:0 8px}}
